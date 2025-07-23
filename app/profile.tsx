@@ -9,8 +9,10 @@ import {
 } from "convex/react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { Image } from "expo-image";
+import { useAppTheme } from "@/components/ui/theme-provider";
 
 export default function Profile() {
+  const { colors } = useAppTheme();
   const user = useQuery(api.users.currentUser);
 
   return (
@@ -29,10 +31,12 @@ export default function Profile() {
             width: 50,
             height: 50,
             borderRadius: 9999,
+            borderWidth: 1,
+            borderColor: colors.border,
           }}
         />
-        <Text>Hello, {user?.name}</Text>
-        <Text>You are logged in!</Text>
+        <Text style={{ color: colors.text }}>Hello, {user?.name}</Text>
+        <Text style={{ color: colors.text }}>You are logged in!</Text>
         <SignOut />
       </Authenticated>
     </View>
