@@ -30,5 +30,6 @@ export const useIndividualClip = (id: Clip["Id"]) => {
   return useQuery({
     queryKey: ["xn radio, individual clip", id],
     queryFn: () => fetchIndividualClipById(id),
+    staleTime: 1000 * 60 * 60, // every hour
   });
 };

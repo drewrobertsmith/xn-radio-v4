@@ -34,5 +34,6 @@ export const useClips = (id: Program["Id"]) => {
   return useQuery({
     queryKey: ["xn radio, clips", id],
     queryFn: () => fetchClipsById(id),
+    staleTime: 1000 * 60 * 60, // every hour
   });
 };
