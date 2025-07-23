@@ -4,6 +4,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppTheme } from "./ui/theme-provider";
 import { useRouter } from "expo-router";
+import PlayButton from "./play-button";
 
 export default function ClipItem({ item }: { item: Clip }) {
   const { colors } = useAppTheme();
@@ -42,11 +43,7 @@ export default function ClipItem({ item }: { item: Clip }) {
       </TouchableOpacity>
 
       <View>
-        <MaterialIcons
-          name="play-circle-outline"
-          size={40}
-          color={colors.primary}
-        />
+        <PlayButton track={null} size={40} color={colors.primary} />
       </View>
     </View>
   );

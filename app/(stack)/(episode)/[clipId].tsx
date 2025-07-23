@@ -7,6 +7,7 @@ import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useLayout } from "@/context/layout-context";
+import PlayButton from "@/components/play-button";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();
@@ -43,11 +44,7 @@ export default function ClipPage() {
       <Text className="text-2xl font-bold" style={{ color: colors.text }}>
         {data?.Title}
       </Text>
-      <MaterialIcons
-        name="play-circle-filled"
-        size={56}
-        color={colors.primary}
-      />
+      <PlayButton track={null} size={56} color={colors.primary} />
       <View className="w-[100%] flex-row justify-between">
         <Text
           className="text-sm font-[500]"

@@ -16,6 +16,7 @@ import { CustomTabBar } from "@/components/ui/custom-tab-bar";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useCallback } from "react";
 import { PlayerWithWrapper } from "@/components/player-with-wrapper";
+import { AudioProvider } from "@/context/audio-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -79,41 +80,47 @@ export default function RootLayout() {
         <ThemeProvider>
           <LayoutProvider>
             <GestureHandlerRootView style={{ flex: 1 }}>
-              <Tabs tabBar={renderTabBar}>
-                <Tabs.Screen
-                  name="index"
-                  options={{
-                    title: "Radio",
-                    tabBarIcon: ({ color }) => (
-                      <MaterialIcons
-                        name="cell-tower"
-                        size={24}
-                        color={color}
-                      />
-                    ),
-                  }}
-                />
-                <Tabs.Screen
-                  name="(stack)"
-                  options={{
-                    headerShown: false,
-                    title: "Podcasts",
-                    tabBarIcon: ({ color }) => (
-                      <MaterialIcons name="headset" size={24} color={color} />
-                    ),
-                  }}
-                />
-                <Tabs.Screen
-                  name="profile"
-                  options={{
-                    title: "Profile",
-                    tabBarIcon: ({ color }) => (
-                      <MaterialIcons name="tag-faces" size={24} color={color} />
-                    ),
-                  }}
-                />
-              </Tabs>
-              <PlayerWithWrapper />
+              <AudioProvider>
+                <Tabs tabBar={renderTabBar}>
+                  <Tabs.Screen
+                    name="index"
+                    options={{
+                      title: "Radio",
+                      tabBarIcon: ({ color }) => (
+                        <MaterialIcons
+                          name="cell-tower"
+                          size={24}
+                          color={color}
+                        />
+                      ),
+                    }}
+                  />
+                  <Tabs.Screen
+                    name="(stack)"
+                    options={{
+                      headerShown: false,
+                      title: "Podcasts",
+                      tabBarIcon: ({ color }) => (
+                        <MaterialIcons name="headset" size={24} color={color} />
+                      ),
+                    }}
+                  />
+                  <Tabs.Screen
+                    name="profile"
+                    options={{
+                      title: "Profile",
+                      tabBarIcon: ({ color }) => (
+                        <MaterialIcons
+                          name="tag-faces"
+                          size={24}
+                          color={color}
+                        />
+                      ),
+                    }}
+                  />
+                </Tabs>
+                <PlayerWithWrapper />
+              </AudioProvider>
             </GestureHandlerRootView>
           </LayoutProvider>
         </ThemeProvider>

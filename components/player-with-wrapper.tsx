@@ -6,7 +6,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { useAppTheme } from "./ui/theme-provider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import PlayButton from "./play-button";
 
 const { height: screenHeight } = Dimensions.get("window");
 const MINI_PLAYER_HEIGHT = 64;
@@ -74,11 +74,7 @@ export const PlayerWithWrapper = () => {
         <BottomSheetView style={styles.contentContainer} pointerEvents="auto">
           <Image source={image} contentFit="contain" style={styles.albumArt} />
           <Text style={{ color: colors.text }}>Mini Player Content</Text>
-          <MaterialIcons
-            name="play-circle-filled"
-            size={40}
-            color={colors.secondary}
-          />
+          <PlayButton track={null} size={44} color={colors.secondary} />
         </BottomSheetView>
       </BottomSheet>
     </View>
