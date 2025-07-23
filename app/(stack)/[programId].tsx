@@ -1,7 +1,7 @@
 import ClipList from "@/components/clip-list";
 import { useClips } from "@/hooks/useClips";
 import { useLocalSearchParams } from "expo-router";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
 export default function ProgramPage() {
   const { programId } = useLocalSearchParams<{ programId: string }>();
@@ -17,11 +17,13 @@ export default function ProgramPage() {
   }
 
   return (
-    <ClipList
-      data={data}
-      isFetching={isFetching}
-      isLoading={isLoading}
-      refetch={refetch}
-    />
+    <View className="flex-1">
+      <ClipList
+        data={data}
+        isFetching={isFetching}
+        isLoading={isLoading}
+        refetch={refetch}
+      />
+    </View>
   );
 }

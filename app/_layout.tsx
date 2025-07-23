@@ -96,6 +96,7 @@ export default function RootLayout() {
                 <Tabs.Screen
                   name="(stack)"
                   options={{
+                    headerShown: false,
                     title: "Podcasts",
                     tabBarIcon: ({ color }) => (
                       <MaterialIcons name="headset" size={24} color={color} />

@@ -6,11 +6,13 @@ import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useLayout } from "@/context/layout-context";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();
   const { clipId } = useLocalSearchParams<{ clipId: Clip["Id"] }>();
   const { data } = useIndividualClip(clipId);
+  const { tabBarHeight } = useLayout();
 
   return (
     <ScrollView
@@ -20,7 +22,7 @@ export default function ClipPage() {
         gap: 8,
         paddingHorizontal: 8,
         marginVertical: 8,
-        paddingBottom: 16,
+        paddingBottom: tabBarHeight,
       }}
       showsVerticalScrollIndicator={false}
     >

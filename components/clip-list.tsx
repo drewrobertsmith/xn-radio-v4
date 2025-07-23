@@ -4,6 +4,7 @@ import ClipItem from "./clip-item";
 import Separator from "./ui/separator";
 import { Clip } from "@/types/types";
 import { RefetchOptions } from "@tanstack/react-query";
+import { useLayout } from "@/context/layout-context";
 
 type ListProps = {
   data: Clip[];
@@ -18,23 +19,22 @@ export default function ClipList({
   isLoading,
   refetch,
 }: ListProps) {
+  const { tabBarHeight } = useLayout();
   return (
-    <View className="flex-1">
-      <LegendList
-        data={data}
-        keyExtractor={(item) => item.Id}
-        renderItem={({ item }) => <ClipItem item={item} />}
-        refreshing={isFetching && !isLoading}
-        onRefresh={() => refetch({ cancelRefetch: false })}
-        contentContainerStyle={{
-          gap: 8,
-          paddingHorizontal: 8,
-          marginVertical: 8,
-          paddingBottom: 16,
-        }}
-        ItemSeparatorComponent={Separator}
-        recycleItems={true}
-      />
-    </View>
+    <LegendList
+      data={data}
+      keyExtractor={(item) => item.Id}
+      renderItem={({ item }) => <ClipItem item={item} />}
+      refreshing={isFetching && !isLoading}
+      onRefresh={() => refetch({ cancelRefetch: false })}
+      contentContainerStyle={{
+        gap: 8,
+        paddingHorizontal: 8,
+        marginVertical: 8,
+        paddingBottom: tabBarHeight,
+      }}
+      ItemSeparatorComponent={Separator}
+      recycleItems={true}
+    />
   );
 }

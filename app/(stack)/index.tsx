@@ -19,7 +19,7 @@ export default function Podcasts() {
   }
 
   return (
-    <View className="flex-1 p-8">
+    <View className="flex-1 px-2">
       <ProgramsList
         data={data}
         isFetching={isFetching}

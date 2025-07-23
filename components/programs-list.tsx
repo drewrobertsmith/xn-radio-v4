@@ -2,6 +2,7 @@ import { LegendList } from "@legendapp/list";
 import ProgramItem from "./program-item";
 import { Program } from "@/types/types";
 import { RefetchOptions } from "@tanstack/react-query";
+import { useLayout } from "@/context/layout-context";
 
 type ListProps = {
   data: Program[];
@@ -16,6 +17,8 @@ export default function ProgramsList({
   isLoading,
   refetch,
 }: ListProps) {
+  const { tabBarHeight } = useLayout();
+
   return (
     <LegendList
       data={data}
@@ -29,9 +32,8 @@ export default function ProgramsList({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{
         gap: 8,
-      }}
-      style={{
         paddingTop: 8,
+        paddingBottom: tabBarHeight,
       }}
     />
   );
