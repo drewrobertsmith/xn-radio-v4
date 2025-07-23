@@ -44,7 +44,7 @@ export default function ClipPage() {
       <Text className="text-2xl font-bold" style={{ color: colors.text }}>
         {data?.Title}
       </Text>
-      <PlayButton track={null} size={56} color={colors.primary} />
+      <PlayButton track={null} size={72} color={colors.primary} />
       <View className="w-[100%] flex-row justify-between">
         <Text
           className="text-sm font-[500]"

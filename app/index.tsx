@@ -1,25 +1,17 @@
 import { useAppTheme } from "@/components/ui/theme-provider";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
-import { Track } from "@/context/audio-context";
+import { Track, useAudio } from "@/context/audio-context";
 import PlayButton from "@/components/play-button";
-import { Station } from "@/types/types";
 
 const XN_URL =
   "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3";
 
-const XN_STATION: Track = {
+const XN: Track = {
   id: "XNRD",
   url: XN_URL,
   title: "XN Radio LIVE",
   artist: "XN Radio",
-};
-
-const XN: Station = {
-  Id: "XNRD",
-  name: "Xn Radio",
-  callLetters: "XNRD",
-  stream: XN_URL,
 };
 
 export default function Index() {
@@ -44,12 +36,7 @@ export default function Index() {
         <Text className="text-lg" style={{ color: colors.text }}>
           Live Stream Metadata
         </Text>
-        <PlayButton
-          track={XN_STATION}
-          size={88}
-          color={colors.secondary}
-          item={XN}
-        />
+        <PlayButton size={88} track={XN} color={colors.secondary} />
       </View>
     </View>
   );

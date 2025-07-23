@@ -43,7 +43,7 @@ export default function ClipItem({ item }: { item: Clip }) {
       </TouchableOpacity>
 
       <View>
-        <PlayButton track={null} size={40} color={colors.primary} />
+        <PlayButton size={44} color={colors.secondary} track={item} />
       </View>
     </View>
   );

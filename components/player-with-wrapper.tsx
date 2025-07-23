@@ -7,6 +7,7 @@ import { useAppTheme } from "./ui/theme-provider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import PlayButton from "./play-button";
+import { useAudio } from "@/context/audio-context";
 
 const { height: screenHeight } = Dimensions.get("window");
 const MINI_PLAYER_HEIGHT = 64;
@@ -18,6 +19,7 @@ export const PlayerWithWrapper = () => {
   const { tabBarHeight } = useLayout();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
+  const player = useAudio();
 
   const animatedIndex = useSharedValue(0);
 
@@ -81,7 +83,6 @@ export const PlayerWithWrapper = () => {
   );
 };
 
-// Using StyleSheet for better performance and organization
 const styles = StyleSheet.create({
   wrapper: {
     position: "absolute",

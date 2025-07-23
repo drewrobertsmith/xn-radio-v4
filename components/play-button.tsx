@@ -1,51 +1,65 @@
 import { Track, useAudio } from "@/context/audio-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useAppTheme, XNTheme } from "./ui/theme-provider";
-import { Clip, Station } from "@/types/types";
+import { ActivityIndicator } from "react-native";
+import { XNTheme } from "./ui/theme-provider";
 
 type PlayButtonProps = {
-  track: Track | null;
   size: number;
-  color: string;
-  item?: Clip | Station;
+  track?: Track;
+  color: XNTheme["colors"][
+    | "background"
+    | "border"
+    | "card"
+    | "notification"
+    | "primary"
+    | "secondary"
+    | "secondaryText"
+    | "text"];
 };
 
-export default function PlayButton({
-  track,
-  size,
-  color,
-  item,
-}: PlayButtonProps) {
-  const player = useAudio();
+export default function PlayButton({ size, track, color }: PlayButtonProps) {
+  const { playbackState, currentTrack, play, pause, resume } = useAudio();
 
-  let iconState =
-    player.status?.playing && player.currentSource?.id === item?.Id
-      ? "pause-circle-filled"
-      : "play-circle-filled";
-  if (player.status?.isBuffering) {
-    iconState = "pending";
-  }
-
-  const handlePlayPausePress = (track: Track) => {
-    if (player.status?.playing) {
-      player.pause();
-    } else if (player.status?.isBuffering) {
-      return;
+  // Correct, robust logic for handling button presses
+  const handleButtonPress = (track: Track) => {
+    if (playbackState === "playing" && currentTrack?.id === track.id) {
+      pause();
+    } else if (playbackState === "paused" && currentTrack?.id === track.id) {
+      resume();
     } else {
-      player.play(track);
+      play(track);
     }
   };
 
-  return (
-    <MaterialIcons
-      name={
-        iconState as "pause-circle-filled" | "play-circle-filled" | "pending"
-      }
-      size={size}
-      color={color}
-      onPress={() => {
-        handlePlayPausePress(track);
-      }}
-    />
-  );
+  // A function to determine which icon to show.
+  const getIcon = () => {
+    // Show loading indicator if loading this specific track
+    if (playbackState === "loading" && currentTrack?.id === track?.id) {
+      return <ActivityIndicator size={size} color={color} />;
+    }
+
+    // Show pause icon if playing this specific track
+    if (playbackState === "playing" && currentTrack?.id === track?.id) {
+      return (
+        <MaterialIcons
+          name="pause-circle-filled"
+          size={size}
+          color={color}
+          onPress={() => handleButtonPress(track)}
+        />
+      );
+    }
+
+    // Show play icon for all other states (idle, paused, stopped, or different track)
+    return (
+      <MaterialIcons
+        name="play-circle-filled"
+        size={size}
+        color={color}
+        onPress={() => handleButtonPress(track)}
+      />
+    );
+  };
+
+  return getIcon();
 }
