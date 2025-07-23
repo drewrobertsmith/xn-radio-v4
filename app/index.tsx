@@ -37,10 +37,10 @@ export default function Index() {
         />
         <View className="items-center">
           <Text className="text-lg" style={{ color: colors.text }}>
-            {data?.cue_title}
+            {data ? data?.cue_title : "XN Radio"}
           </Text>
           <Text className="text-md" style={{ color: colors.secondaryText }}>
-            {data?.track_artist_name}
+            {data ? data?.track_artist_name : null}
           </Text>
         </View>
 

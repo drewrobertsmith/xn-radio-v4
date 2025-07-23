@@ -42,7 +42,6 @@ const fetchLiveMetadataFromTriton = async (
   const response = await fetch(
     `${url}?mountName=${tritonId}&numberToFetch=${numberToFetch}`,
   );
-  console.log("fetching new metadata");
 
   const result = await response.text();
   const parser = new XMLParser(options);
@@ -71,13 +70,13 @@ export const useMetadata = (
   numberToFetch: number,
 ) => {
   const { playbackState, currentTrack } = useAudio();
-  console.log(currentTrack);
 
   return useQuery({
     queryKey: ["xn radio, station metadata", tritonId],
     queryFn: () => fetchLiveMetadataFromTriton(tritonId, numberToFetch),
     refetchInterval: 1000 * 15,
     staleTime: 1000 * 60 * 3,
+    gcTime: 1000 * 60 * 5,
     enabled: playbackState === "playing" && currentTrack?.id === "XNRD",
   });
 };
