@@ -30,3 +30,9 @@ export interface Station {
   lat?: number | null;
   lng?: number | null;
 }
+
+export interface Metadata {
+  cue_title: string;
+  track_album_name?: string;
+  track_artist_name: string;
+}

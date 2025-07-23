@@ -12,9 +12,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.mediated-reality.xnradio",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "audio"
-        ],
+        "UIBackgroundModes": ["audio"],
         "ITSAppUsesNonExemptEncryption": false,
         "NSAppTransportSecurity": {
           "NSExceptionDomains": {
@@ -23,6 +21,10 @@
               "NSExceptionAllowsInsecureHTTPLoads": true
             },
             "omnycontent.com": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": true
+            },
+            "np.tritondigital.com": {
               "NSIncludesSubdomains": true,
               "NSExceptionAllowsInsecureHTTPLoads": true
             }
