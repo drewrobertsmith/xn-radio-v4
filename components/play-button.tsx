@@ -1,19 +1,27 @@
 import { Track, useAudio } from "@/context/audio-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppTheme, XNTheme } from "./ui/theme-provider";
+import { Clip, Station } from "@/types/types";
 
 type PlayButtonProps = {
   track: Track | null;
   size: number;
   color: string;
+  item?: Clip | Station;
 };
 
-export default function PlayButton({ track, size, color }: PlayButtonProps) {
+export default function PlayButton({
+  track,
+  size,
+  color,
+  item,
+}: PlayButtonProps) {
   const player = useAudio();
 
-  let iconState = player.status?.playing
-    ? "pause-circle-filled"
-    : "play-circle-filled";
+  let iconState =
+    player.status?.playing && player.currentSource?.id === item?.Id
+      ? "pause-circle-filled"
+      : "play-circle-filled";
   if (player.status?.isBuffering) {
     iconState = "pending";
   }

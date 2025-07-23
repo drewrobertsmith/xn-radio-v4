@@ -16,3 +16,17 @@ export interface Clip {
   DurationSeconds: number;
   PublishedUtc: string;
 }
+
+export interface Station {
+  Id: string;
+  callLetters: string;
+  applogoM?: string;
+  stream: string;
+  frequency?: number;
+  band?: string;
+  fallbackstream?: string;
+  name: string;
+  backgroundColor?: string;
+  lat?: number | null;
+  lng?: number | null;
+}
