@@ -1,29 +1,122 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import ThemeProvider from "@/components/ui/theme-provider";
+import "../global.css";
+import { Slot, SplashScreen, Stack, Tabs } from "expo-router";
+import { ConvexReactClient } from "convex/react";
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
+import * as SecureStore from "expo-secure-store";
+import { Platform } from "react-native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { mmkvStorage } from "@/utils/mmkv-storage";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { LayoutProvider } from "@/context/layout-context";
+import { CustomTabBar } from "@/components/ui/custom-tab-bar";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { useCallback } from "react";
+import { PlayerWithWrapper } from "@/components/player-with-wrapper";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+export {
+  // Catch any errors thrown by the Layout component.
+  ErrorBoundary,
+} from "expo-router";
+
+export const unstable_settings = {
+  // Ensure that reloading on `/modal` keeps a back button present.
+  initialRouteName: "(tabs)",
+};
+
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+// SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+    unsavedChangesWarning: false,
   });
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+  const secureStorage = {
+    getItem: SecureStore.getItemAsync,
+    setItem: SecureStore.setItemAsync,
+    removeItem: SecureStore.deleteItemAsync,
+  };
+
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 10, //10 min to align with omny's cache duration
+        gcTime: Infinity,
+      },
+    },
+  });
+
+  const persister = createAsyncStoragePersister({
+    storage: mmkvStorage,
+    throttleTime: 1000,
+  });
+
+  const renderTabBar = useCallback(
+    (props: BottomTabBarProps) => <CustomTabBar {...props} />,
+    [],
+  );
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <ConvexAuthProvider
+      client={convex}
+      storage={
+        Platform.OS === "android" || Platform.OS === "ios"
+          ? secureStorage
+          : undefined
+      }
+    >
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }} // Add an onMount callback to see when hydration is complete
+        onSuccess={() => {
+          console.log("TanStack Query cache restored from MMKV.");
+        }}
+      >
+        <ThemeProvider>
+          <LayoutProvider>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <Tabs tabBar={renderTabBar}>
+                <Tabs.Screen
+                  name="index"
+                  options={{
+                    title: "Radio",
+                    tabBarIcon: ({ color }) => (
+                      <MaterialIcons
+                        name="cell-tower"
+                        size={24}
+                        color={color}
+                      />
+                    ),
+                  }}
+                />
+                <Tabs.Screen
+                  name="(stack)"
+                  options={{
+                    title: "Podcasts",
+                    tabBarIcon: ({ color }) => (
+                      <MaterialIcons name="headset" size={24} color={color} />
+                    ),
+                  }}
+                />
+                <Tabs.Screen
+                  name="profile"
+                  options={{
+                    title: "Profile",
+                    tabBarIcon: ({ color }) => (
+                      <MaterialIcons name="tag-faces" size={24} color={color} />
+                    ),
+                  }}
+                />
+              </Tabs>
+              <PlayerWithWrapper />
+            </GestureHandlerRootView>
+          </LayoutProvider>
+        </ThemeProvider>
+      </PersistQueryClientProvider>
+    </ConvexAuthProvider>
   );
 }

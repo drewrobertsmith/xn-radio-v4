@@ -1,0 +1,68 @@
+import { useAppTheme } from "@/components/ui/theme-provider";
+import { useIndividualClip } from "@/hooks/useIndividualClip";
+import { Clip } from "@/types/types";
+import { formatDate, formatDuration } from "@/utils/formatters";
+import { Image } from "expo-image";
+import { useLocalSearchParams } from "expo-router";
+import { ScrollView, Text, View } from "react-native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+
+export default function ClipPage() {
+  const { colors } = useAppTheme();
+  const { clipId } = useLocalSearchParams<{ clipId: Clip["Id"] }>();
+  const { data } = useIndividualClip(clipId);
+
+  return (
+    <ScrollView
+      className="flex-1"
+      contentContainerStyle={{
+        alignItems: "center",
+        gap: 8,
+        paddingHorizontal: 8,
+        marginVertical: 8,
+        paddingBottom: 16,
+      }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View className="w-[50%]">
+        <Image
+          source={data?.ImageUrl}
+          contentFit="contain"
+          cachePolicy="memory-disk"
+          style={{
+            width: "100%",
+            aspectRatio: 1,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: colors.border,
+          }}
+        />
+      </View>
+      <Text className="text-2xl font-bold" style={{ color: colors.text }}>
+        {data?.Title}
+      </Text>
+      <MaterialIcons
+        name="play-circle-filled"
+        size={56}
+        color={colors.primary}
+      />
+      <View className="w-[100%] flex-row justify-between">
+        <Text
+          className="text-sm font-[500]"
+          style={{ color: colors.secondaryText }}
+        >
+          {formatDate(data?.PublishedUtc)}
+        </Text>
+        <Text
+          className="text-sm font-[500]"
+          style={{ color: colors.secondaryText }}
+        >
+          {formatDuration(data?.DurationSeconds)}
+        </Text>
+      </View>
+      <Text className="text-base" style={{ color: colors.text }}>
+        {data?.Description}
+      </Text>
+    </ScrollView>
+  );
+}
