@@ -1,7 +1,7 @@
 import { useAppTheme } from "@/components/ui/theme-provider";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
-import { Track, useAudio } from "@/context/audio-context";
+import { Track } from "@/context/audio-context";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
 

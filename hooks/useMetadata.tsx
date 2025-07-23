@@ -1,3 +1,4 @@
+import { useAudio } from "@/context/audio-context";
 import { Metadata, Station } from "@/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { XMLParser } from "fast-xml-parser";
@@ -69,9 +70,14 @@ export const useMetadata = (
   tritonId: Station["callLetters"],
   numberToFetch: number,
 ) => {
+  const { playbackState, currentTrack } = useAudio();
+  console.log(currentTrack);
+
   return useQuery({
     queryKey: ["xn radio, station metadata", tritonId],
     queryFn: () => fetchLiveMetadataFromTriton(tritonId, numberToFetch),
     refetchInterval: 1000 * 15,
+    staleTime: 1000 * 60 * 3,
+    enabled: playbackState === "playing" && currentTrack?.id === "XNRD",
   });
 };
