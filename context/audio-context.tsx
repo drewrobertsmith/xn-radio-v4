@@ -6,7 +6,6 @@ import {
 } from "expo-audio";
 import React, {
   createContext,
-  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -17,12 +16,13 @@ export interface Track {
   id: string;
   url: string;
   title: string;
-  artist: string;
+  artist?: string;
   album?: string;
   duration?: number;
   date?: string;
   artwork?: string;
   isLiveStream?: boolean;
+  description?: string;
 }
 
 type PlaybackState =

@@ -4,19 +4,21 @@ import { Text, View } from "react-native";
 import { Track } from "@/context/audio-context";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
+import { Stack, Tabs } from "expo-router";
 
 const XN_URL =
   "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3";
+const xnLogo = require("../assets/images/splash-icon.png");
 
 const XN: Track = {
   id: "XNRD",
   url: XN_URL,
   title: "XN Radio LIVE",
   artist: "XN Radio",
+  artwork: xnLogo,
 };
 
 export default function Index() {
-  const xnLogo = require("../assets/images/splash-icon.png");
   const { colors } = useAppTheme();
   const { data } = useMetadata(XN.id, 1);
 

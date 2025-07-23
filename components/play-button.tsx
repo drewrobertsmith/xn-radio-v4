@@ -5,7 +5,7 @@ import { XNTheme } from "./ui/theme-provider";
 
 type PlayButtonProps = {
   size: number;
-  track?: Track;
+  track: Track;
   color: XNTheme["colors"][
     | "background"
     | "border"

@@ -8,12 +8,23 @@ import { ScrollView, Text, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useLayout } from "@/context/layout-context";
 import PlayButton from "@/components/play-button";
+import { Track } from "@/context/audio-context";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();
   const { clipId } = useLocalSearchParams<{ clipId: Clip["Id"] }>();
-  const { data } = useIndividualClip(clipId);
+  const { data: item } = useIndividualClip(clipId);
   const { tabBarHeight } = useLayout();
+
+  const clipToTrack: Track = {
+    id: item?.Id,
+    title: item?.Title,
+    url: item?.AudioUrl,
+    duration: item?.DurationSeconds,
+    date: item?.PublishedUtc,
+    artwork: item?.ImageUrl,
+    description: item?.Description,
+  };
 
   return (
     <ScrollView
@@ -29,7 +40,7 @@ export default function ClipPage() {
     >
       <View className="w-[50%]">
         <Image
-          source={data?.ImageUrl}
+          source={item?.ImageUrl}
           contentFit="contain"
           cachePolicy="memory-disk"
           style={{
@@ -42,25 +53,25 @@ export default function ClipPage() {
         />
       </View>
       <Text className="text-2xl font-bold" style={{ color: colors.text }}>
-        {data?.Title}
+        {item?.Title}
       </Text>
-      <PlayButton track={null} size={72} color={colors.primary} />
+      <PlayButton track={clipToTrack} size={72} color={colors.secondary} />
       <View className="w-[100%] flex-row justify-between">
         <Text
           className="text-sm font-[500]"
           style={{ color: colors.secondaryText }}
         >
-          {formatDate(data?.PublishedUtc)}
+          {formatDate(item?.PublishedUtc)}
         </Text>
         <Text
           className="text-sm font-[500]"
           style={{ color: colors.secondaryText }}
         >
-          {formatDuration(data?.DurationSeconds)}
+          {formatDuration(item?.DurationSeconds)}
         </Text>
       </View>
       <Text className="text-base" style={{ color: colors.text }}>
-        {data?.Description}
+        {item?.Description}
       </Text>
     </ScrollView>
   );

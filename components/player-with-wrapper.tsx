@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
 import PlayButton from "./play-button";
 import { useAudio } from "@/context/audio-context";
+import { useMetadata } from "@/hooks/useMetadata";
 
 const { height: screenHeight } = Dimensions.get("window");
 const MINI_PLAYER_HEIGHT = 64;
@@ -19,7 +20,8 @@ export const PlayerWithWrapper = () => {
   const { tabBarHeight } = useLayout();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
-  const player = useAudio();
+  const { currentTrack, playbackState } = useAudio();
+  const { data } = useMetadata(currentTrack?.id, 1);
 
   const animatedIndex = useSharedValue(0);
 
@@ -37,9 +39,21 @@ export const PlayerWithWrapper = () => {
     }
   }, [tabBarHeight]);
 
-  if (tabBarHeight === 0) {
+  if (tabBarHeight === 0 || playbackState === "idle") {
     return null;
   }
+
+  const handleSecondaryText = () => {
+    if (currentTrack?.id === "XNRD") {
+      return (
+        <Text className="text-sm" style={{ color: colors.secondaryText }}>
+          {data?.track_artist_name}
+        </Text>
+      );
+    } else {
+      return null;
+    }
+  };
 
   return (
     // 1. The Wrapper View: This is the core of the fix.
@@ -47,7 +61,7 @@ export const PlayerWithWrapper = () => {
     <View
       style={[
         styles.wrapper,
-        { height: screenHeight - area.top, bottom: tabBarHeight + 4 },
+        { height: screenHeight - area.top - 8, bottom: tabBarHeight + 4 },
       ]}
       // This allows touches to pass through the empty space of this wrapper
       // to the tab bar underneath.
@@ -74,9 +88,29 @@ export const PlayerWithWrapper = () => {
         {/* 3. The actual content view. */}
         {/* We set pointerEvents back to "auto" so the mini-player itself is touchable. */}
         <BottomSheetView style={styles.contentContainer} pointerEvents="auto">
-          <Image source={image} contentFit="contain" style={styles.albumArt} />
-          <Text style={{ color: colors.text }}>Mini Player Content</Text>
-          <PlayButton track={null} size={44} color={colors.secondary} />
+          <Image
+            source={currentTrack?.artwork}
+            contentFit="contain"
+            style={[
+              styles.albumArt,
+              { borderColor: colors.border, borderWidth: 1 },
+            ]}
+            cachePolicy="none"
+          />
+          <View className="w-[66%]">
+            <Text
+              style={{ color: colors.text }}
+              numberOfLines={2}
+              ellipsizeMode="tail"
+              className="text-sm font-semibold"
+            >
+              {currentTrack?.id === "XNRD"
+                ? data?.cue_title
+                : currentTrack?.title}
+            </Text>
+            {handleSecondaryText()}
+          </View>
+          <PlayButton track={currentTrack} size={44} color={colors.secondary} />
         </BottomSheetView>
       </BottomSheet>
     </View>
