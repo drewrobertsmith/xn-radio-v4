@@ -23,7 +23,7 @@ export default function ProgramItem({ item }: { item: Program }) {
           style={{
             width: "100%",
             aspectRatio: 1,
-            borderRadius: 8,
+            borderRadius: 16,
             borderWidth: 1,
             borderColor: colors.border,
           }}

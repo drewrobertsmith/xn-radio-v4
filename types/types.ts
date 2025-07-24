@@ -11,6 +11,7 @@ export interface Clip {
   Id: string;
   Title: string;
   Description: string;
+  DescriptionHtml: string;
   ImageUrl: string;
   AudioUrl: string;
   DurationSeconds: number;

@@ -1,11 +1,11 @@
 import ThemeProvider from "@/components/ui/theme-provider";
 import "../global.css";
-import { Slot, SplashScreen, Stack, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { ConvexReactClient } from "convex/react";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { mmkvStorage } from "@/utils/mmkv-storage";
@@ -15,8 +15,8 @@ import { LayoutProvider } from "@/context/layout-context";
 import { CustomTabBar } from "@/components/ui/custom-tab-bar";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useCallback } from "react";
-import { PlayerWithWrapper } from "@/components/player-with-wrapper";
 import { AudioProvider } from "@/context/audio-context";
+import { Player } from "@/components/player";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -119,7 +119,7 @@ export default function RootLayout() {
                     }}
                   />
                 </Tabs>
-                <PlayerWithWrapper />
+                <Player />
               </AudioProvider>
             </GestureHandlerRootView>
           </LayoutProvider>

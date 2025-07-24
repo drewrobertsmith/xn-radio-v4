@@ -29,7 +29,7 @@ export default function ClipItem({ item }: { item: Clip }) {
           className="text-sm font-[500]"
           style={{ color: colors.secondaryText }}
         >
-          {formatDuration(item.DurationSeconds - status?.currentTime)}
+          {formatDuration(item.DurationSeconds - status?.currentTime)} left
         </Text>
       );
     } else {
