@@ -1,129 +1,21 @@
 import { useLayout } from "@/context/layout-context";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import {
-  Dimensions,
-  ImageStyle,
-  Pressable,
-  StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from "react-native";
-import Animated, {
-  AnimatedStyle,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { useAppTheme, XNTheme } from "./ui/theme-provider";
+import { useAppTheme } from "./ui/theme-provider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import PlayButton from "./play-button";
-import { Track, useAudio } from "@/context/audio-context";
+import { useAudio } from "@/context/audio-context";
 import { useMetadata } from "@/hooks/useMetadata";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Image } from "expo-image";
-import { Metadata } from "@/types/types";
+import { PlayerUI } from "./ui/player-ui";
 
 const { height: screenHeight, width } = Dimensions.get("window");
 const MINI_PLAYER_HEIGHT = 64;
-
-const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
-
-interface PlayerUIProps {
-  colors: XNTheme["colors"];
-  currentTrack: Track | null;
-  data: Metadata | null | undefined;
-  animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
-  animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
-  animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
-  onExpand: () => void;
-  onCollapse: () => void;
-  handleSecondaryText: () => React.ReactNode;
-}
-
-function PlayerUIComponent({
-  colors,
-  currentTrack,
-  data,
-  animatedImageStyle,
-  animatedFullPlayerStyle,
-  animatedMiniPlayerStyle,
-  onExpand,
-  onCollapse,
-  handleSecondaryText,
-}: PlayerUIProps) {
-  return (
-    <>
-      {/* --- Full Screen Player --- */}
-      <Animated.View
-        style={[styles.fullPlayerContainer, animatedFullPlayerStyle]}
-        // The full player is only interactive when it's visible
-      >
-        <Pressable onPress={onCollapse} style={styles.collapseButton}>
-          <MaterialIcons name="arrow-drop-down" size={32} color={colors.text} />
-        </Pressable>
-        <AnimatedExpoImage
-          source={currentTrack?.artwork}
-          style={[animatedImageStyle]}
-        />
-        <View style={styles.fullTrackInfo}>
-          <Text
-            style={[styles.fullTitle, { color: colors.text }]}
-            numberOfLines={2}
-          >
-            {currentTrack?.id === "XNRD"
-              ? data?.cue_title
-              : currentTrack?.title}
-          </Text>
-          {handleSecondaryText()}
-        </View>
-        <View style={styles.fullControls}>
-          <PlayButton track={currentTrack} size={88} color={colors.secondary} />
-        </View>
-      </Animated.View>
-
-      {/* --- Mini Player --- */}
-      <Pressable
-        onPress={onExpand}
-        // The mini player is only interactive when it's visible
-      >
-        <Animated.View
-          style={[styles.miniPlayerContainer, animatedMiniPlayerStyle]}
-        >
-          <AnimatedExpoImage
-            source={currentTrack?.artwork}
-            contentFit="contain"
-            style={[
-              styles.albumArt,
-              { borderColor: colors.border, borderWidth: 1 },
-              animatedImageStyle,
-            ]}
-            cachePolicy="none"
-          />
-          <View className="w-[66%]">
-            <Text
-              style={{ color: colors.text }}
-              numberOfLines={2}
-              ellipsizeMode="tail"
-              className="text-sm font-semibold"
-            >
-              {currentTrack?.id === "XNRD"
-                ? data?.cue_title
-                : currentTrack?.title}
-            </Text>
-            {handleSecondaryText()}
-          </View>
-          <PlayButton track={currentTrack} size={44} color={colors.secondary} />
-        </Animated.View>
-      </Pressable>
-    </>
-  );
-}
-
-const PlayerUI = memo(PlayerUIComponent);
 
 export const Player = () => {
   const { colors } = useAppTheme();
@@ -289,38 +181,5 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-  },
-  fullPlayerContainer: {
-    position: "absolute",
-    // Add your full screen player styles here
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  collapseButton: {
-    padding: 8, // Increases touchable area
-  },
-  fullTrackInfo: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 32,
-  },
-  fullTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  fullControls: {
-    marginTop: 40,
-  },
-  miniPlayerContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  albumArt: {
-    height: 50,
-    width: 50,
-    borderRadius: 8,
   },
 });
