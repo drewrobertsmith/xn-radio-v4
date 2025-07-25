@@ -1,6 +1,7 @@
 import {
   AudioPlayer,
   AudioStatus,
+  setAudioModeAsync,
   useAudioPlayer,
   useAudioPlayerStatus,
 } from "expo-audio";
@@ -11,6 +12,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { Alert } from "react-native";
 
 export interface Track {
   id: string;
@@ -53,6 +55,29 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
   const [playbackState, setPlaybackState] = useState<PlaybackState>("idle");
   const [error, setError] = useState<string | null>(null);
+
+  // configure the audio session on mount
+  useEffect(() => {
+    const configureAudioSession = async () => {
+      try {
+        await setAudioModeAsync({
+          shouldPlayInBackground: true,
+          playsInSilentMode: true,
+          interruptionModeAndroid: "doNotMix",
+          interruptionMode: "doNotMix",
+        });
+        console.log("Audio session configured for background playback.");
+      } catch (e) {
+        const errorMessage =
+          e instanceof Error
+            ? e.message
+            : "An  unknown error occired while setting audio mode";
+        Alert.alert("Audio Error", errorMessage);
+      }
+    };
+
+    configureAudioSession();
+  }, []);
 
   // This useEffect listens to the low-level status from expo-audio and updates
   // high-level playbackState accordingly.
