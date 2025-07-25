@@ -2,7 +2,7 @@ import { useLayout } from "@/context/layout-context";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Dimensions, StyleSheet, Text, View } from "react-native";
-import {
+import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
@@ -110,6 +110,21 @@ export const Player = () => {
     return null;
   }, [currentTrack?.id, data?.track_artist_name, colors.secondaryText]);
 
+  const animatedPadding = useAnimatedStyle(() => {
+    const bottomPadding = interpolate(
+      animatedIndex.value,
+      [0, 1],
+      [tabBarHeight + 8, 0],
+    );
+    const sidePadding = interpolate(animatedIndex.value, [0, 1], [8, 0]);
+
+    return {
+      bottom: bottomPadding,
+      left: sidePadding,
+      right: sidePadding,
+    };
+  });
+
   useEffect(() => {
     if (tabBarHeight > 0) {
       bottomSheetRef.current?.snapToIndex(1);
@@ -122,10 +137,14 @@ export const Player = () => {
 
   return (
     // 1. The Wrapper View creates a container that is ONLY the size of the mini-player.
-    <View
+    <Animated.View
       style={[
-        styles.wrapper,
-        { height: screenHeight - area.top - 8, bottom: tabBarHeight + 4 },
+        {
+          position: "absolute",
+          padding: 8,
+          height: screenHeight,
+        },
+        animatedPadding,
       ]}
       // This allows touches to pass through the empty space of this wrapper
       // to the tab bar underneath.
@@ -147,9 +166,9 @@ export const Player = () => {
         backgroundStyle={{
           backgroundColor: colors.card,
         }}
-        style={styles.bottomSheet}
+        style={{ padding: 8 }}
       >
-        <BottomSheetView style={styles.contentContainer} pointerEvents="auto">
+        <BottomSheetView style={{ flex: 1 }} pointerEvents="auto">
           <PlayerUI
             colors={colors}
             currentTrack={currentTrack}
@@ -165,23 +184,6 @@ export const Player = () => {
           />
         </BottomSheetView>
       </BottomSheet>
-    </View>
+    </Animated.View>
   );
 };
-
-const styles = StyleSheet.create({
-  wrapper: {
-    position: "absolute",
-    left: 4,
-    right: 4,
-    padding: 8,
-  },
-  bottomSheet: {
-    // The sheet itself should not have horizontal margin,
-    // the wrapper handles it.
-    padding: 8,
-  },
-  contentContainer: {
-    flex: 1,
-  },
-});
