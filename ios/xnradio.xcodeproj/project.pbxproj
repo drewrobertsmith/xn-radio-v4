@@ -7,29 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		130A996A6A012342FF727DCD /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2C8D3F047990E279BF65B4 /* ExpoModulesProvider.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		36B6FB948052788A4299935C /* libPods-xnradio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E1581062D65B8C8B6631B100 /* libPods-xnradio.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		A7A11ADDE9680559FFA8A50A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 35394F6DD9B0F63288F10573 /* PrivacyInfo.xcprivacy */; };
+		58F8D0E87C787AFF70478212 /* libPods-xnradio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 430C6ACAC99042197155AF81 /* libPods-xnradio.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C5AC3C5D801E582A4B4A94A1 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC506AED864A61B23917D06A /* ExpoModulesProvider.swift */; };
+		CBAF84A172DC5F9B4FE63ADA /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 6C2790AA526618C9491BA06B /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		01766BC27BD164937340E959 /* Pods-xnradio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-xnradio.debug.xcconfig"; path = "Target Support Files/Pods-xnradio/Pods-xnradio.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* xnradio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = xnradio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = xnradio/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = xnradio/Info.plist; sourceTree = "<group>"; };
-		35394F6DD9B0F63288F10573 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = xnradio/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		3E0A23292B8FFFEBF07077AB /* Pods-xnradio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-xnradio.release.xcconfig"; path = "Target Support Files/Pods-xnradio/Pods-xnradio.release.xcconfig"; sourceTree = "<group>"; };
+		430C6ACAC99042197155AF81 /* libPods-xnradio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-xnradio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		48A6E8818B5DB66B8C6F75AA /* Pods-xnradio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-xnradio.debug.xcconfig"; path = "Target Support Files/Pods-xnradio/Pods-xnradio.debug.xcconfig"; sourceTree = "<group>"; };
+		6C2790AA526618C9491BA06B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = xnradio/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = xnradio/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		D3964FFCB2C9D19C4931B711 /* Pods-xnradio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-xnradio.release.xcconfig"; path = "Target Support Files/Pods-xnradio/Pods-xnradio.release.xcconfig"; sourceTree = "<group>"; };
-		E1581062D65B8C8B6631B100 /* libPods-xnradio.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-xnradio.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA2C8D3F047990E279BF65B4 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-xnradio/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = xnradio/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* xnradio-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "xnradio-Bridging-Header.h"; path = "xnradio/xnradio-Bridging-Header.h"; sourceTree = "<group>"; };
-		FC506AED864A61B23917D06A /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-xnradio/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,13 +37,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				36B6FB948052788A4299935C /* libPods-xnradio.a in Frameworks */,
+				58F8D0E87C787AFF70478212 /* libPods-xnradio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0E9D19D31A33345A1FFEE3D8 /* xnradio */ = {
+			isa = PBXGroup;
+			children = (
+				EA2C8D3F047990E279BF65B4 /* ExpoModulesProvider.swift */,
+			);
+			name = xnradio;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* xnradio */ = {
 			isa = PBXGroup;
 			children = (
@@ -53,7 +61,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				35394F6DD9B0F63288F10573 /* PrivacyInfo.xcprivacy */,
+				6C2790AA526618C9491BA06B /* PrivacyInfo.xcprivacy */,
 			);
 			name = xnradio;
 			sourceTree = "<group>";
@@ -62,23 +70,15 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				E1581062D65B8C8B6631B100 /* libPods-xnradio.a */,
+				430C6ACAC99042197155AF81 /* libPods-xnradio.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		5E955F2C869479213526251C /* xnradio */ = {
+		82BEA28E2AF63D00B823ADA1 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				FC506AED864A61B23917D06A /* ExpoModulesProvider.swift */,
-			);
-			name = xnradio;
-			sourceTree = "<group>";
-		};
-		63BD9B674258A7B6A7047527 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				5E955F2C869479213526251C /* xnradio */,
+				0E9D19D31A33345A1FFEE3D8 /* xnradio */,
 			);
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
@@ -97,8 +97,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				D76C8CB9C4D5C886E54CC66A /* Pods */,
-				63BD9B674258A7B6A7047527 /* ExpoModulesProviders */,
+				B501FC54BCA767137D02F645 /* Pods */,
+				82BEA28E2AF63D00B823ADA1 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -113,6 +113,16 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B501FC54BCA767137D02F645 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				48A6E8818B5DB66B8C6F75AA /* Pods-xnradio.debug.xcconfig */,
+				3E0A23292B8FFFEBF07077AB /* Pods-xnradio.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,16 +130,6 @@
 			);
 			name = Supporting;
 			path = xnradio/Supporting;
-			sourceTree = "<group>";
-		};
-		D76C8CB9C4D5C886E54CC66A /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				01766BC27BD164937340E959 /* Pods-xnradio.debug.xcconfig */,
-				D3964FFCB2C9D19C4931B711 /* Pods-xnradio.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "xnradio" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				92CDB59E2943D839CE5AA9D1 /* [Expo] Configure project */,
+				BCCC8B18C4F87D03DBDA3F6B /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				D94A482594880DC4B01A5103 /* [CP] Embed Pods Frameworks */,
+				F555A648530B06FF8F12B239 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				A7A11ADDE9680559FFA8A50A /* PrivacyInfo.xcprivacy in Resources */,
+				CBAF84A172DC5F9B4FE63ADA /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,7 +278,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-xnradio/Pods-xnradio-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		92CDB59E2943D839CE5AA9D1 /* [Expo] Configure project */ = {
+		BCCC8B18C4F87D03DBDA3F6B /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -297,7 +297,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-xnradio/expo-configure-project.sh\"\n";
 		};
-		D94A482594880DC4B01A5103 /* [CP] Embed Pods Frameworks */ = {
+		F555A648530B06FF8F12B239 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -323,7 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				C5AC3C5D801E582A4B4A94A1 /* ExpoModulesProvider.swift in Sources */,
+				130A996A6A012342FF727DCD /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,7 +332,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 01766BC27BD164937340E959 /* Pods-xnradio.debug.xcconfig */;
+			baseConfigurationReference = 48A6E8818B5DB66B8C6F75AA /* Pods-xnradio.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -368,7 +368,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D3964FFCB2C9D19C4931B711 /* Pods-xnradio.release.xcconfig */;
+			baseConfigurationReference = 3E0A23292B8FFFEBF07077AB /* Pods-xnradio.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
