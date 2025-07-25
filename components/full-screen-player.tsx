@@ -17,6 +17,7 @@ import { Track, useAudio } from "@/context/audio-context";
 import { Metadata } from "@/types/types";
 import { AudioPlayer, AudioStatus } from "expo-audio";
 import ProgressBar from "./progress-bar";
+import PlayerControls from "./player-controls";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -52,15 +53,16 @@ export default function FullScreenPlayer({
       />
       <View style={styles.fullTrackInfo}>
         <Text
-          style={[styles.fullTitle, { color: colors.text }]}
-          numberOfLines={2}
+          className="text-center font-semibold text-lg px-1"
+          style={{ color: colors.text }}
+          numberOfLines={4}
         >
           {currentTrack?.id === "XNRD" ? data?.cue_title : currentTrack?.title}
         </Text>
         {handleSecondaryText()}
       </View>
-      <ProgressBar />
-      <PlayButton track={currentTrack} size={88} color={colors.secondary} />
+      {currentTrack?.isLiveStream ? null : <ProgressBar />}
+      <PlayerControls />
     </Animated.View>
   );
 }
@@ -70,6 +72,7 @@ const styles = StyleSheet.create({
     // Add your full screen player styles here
     alignItems: "center",
     justifyContent: "center",
+    gap: 8,
   },
   collapseButton: {
     padding: 8, // Increases touchable area
@@ -78,10 +81,5 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginTop: 32,
-  },
-  fullTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
   },
 });

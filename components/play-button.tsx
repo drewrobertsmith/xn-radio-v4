@@ -1,7 +1,7 @@
 import { Track, useAudio } from "@/context/audio-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ActivityIndicator } from "react-native";
-import { XNTheme } from "./ui/theme-provider";
+import { useAppTheme, XNTheme } from "./ui/theme-provider";
 
 type PlayButtonProps = {
   size: number;
@@ -46,6 +46,7 @@ export default function PlayButton({ size, track, color }: PlayButtonProps) {
           size={size}
           color={color}
           onPress={() => handleButtonPress(track)}
+          suppressHighlighting={true}
         />
       );
     }
@@ -57,6 +58,7 @@ export default function PlayButton({ size, track, color }: PlayButtonProps) {
         size={size}
         color={color}
         onPress={() => handleButtonPress(track)}
+        suppressHighlighting={true}
       />
     );
   };

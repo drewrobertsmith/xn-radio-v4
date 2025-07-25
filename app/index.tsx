@@ -16,6 +16,7 @@ const XN: Track = {
   title: "XN Radio LIVE",
   artist: "XN Radio",
   artwork: xnLogo,
+  isLiveStream: true,
 };
 
 export default function Index() {
