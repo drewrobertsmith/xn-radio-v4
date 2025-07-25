@@ -1,22 +1,12 @@
 import { Track } from "@/context/audio-context";
 import { XNTheme } from "./theme-provider";
 import { Metadata } from "@/types/types";
-import {
-  ImageStyle,
-  Pressable,
-  StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from "react-native";
-import Animated, { AnimatedStyle } from "react-native-reanimated";
-import { Image } from "expo-image";
+import { ImageStyle, StyleProp, ViewStyle } from "react-native";
+import { AnimatedStyle } from "react-native-reanimated";
 import { memo } from "react";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import PlayButton from "../play-button";
 import FullScreenPlayer from "../full-screen-player";
 import MiniPlayer from "../mini-player";
+import { AudioPlayer, AudioStatus } from "expo-audio";
 
 interface PlayerUIProps {
   colors: XNTheme["colors"];
@@ -28,9 +18,9 @@ interface PlayerUIProps {
   onExpand: () => void;
   onCollapse: () => void;
   handleSecondaryText: () => React.ReactNode;
+  status: AudioStatus | null;
+  player: AudioPlayer;
 }
-
-const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
 function PlayerUIComponent({
   colors,
@@ -42,6 +32,8 @@ function PlayerUIComponent({
   onExpand,
   onCollapse,
   handleSecondaryText,
+  status,
+  player,
 }: PlayerUIProps) {
   return (
     <>
@@ -53,6 +45,8 @@ function PlayerUIComponent({
         colors={colors}
         currentTrack={currentTrack}
         data={data}
+        status={status}
+        player={player}
       />
       <MiniPlayer
         animatedMiniPlayerStyle={animatedMiniPlayerStyle}
@@ -62,6 +56,8 @@ function PlayerUIComponent({
         colors={colors}
         currentTrack={currentTrack}
         data={data}
+        status={status}
+        player={player}
       />
     </>
   );

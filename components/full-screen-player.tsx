@@ -2,6 +2,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import {
   ImageStyle,
+  Platform,
   Pressable,
   StyleProp,
   StyleSheet,
@@ -11,17 +12,17 @@ import {
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import PlayButton from "./play-button";
-import { XNTheme } from "./ui/theme-provider";
-import { Track } from "@/context/audio-context";
+import { useAppTheme, XNTheme } from "./ui/theme-provider";
+import { Track, useAudio } from "@/context/audio-context";
 import { Metadata } from "@/types/types";
+import { AudioPlayer, AudioStatus } from "expo-audio";
+import ProgressBar from "./progress-bar";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   onCollapse: () => void;
   handleSecondaryText: () => React.ReactNode;
-  colors: XNTheme["colors"];
-  currentTrack: Track | null;
   data: Metadata | null | undefined;
 }
 
@@ -32,10 +33,11 @@ export default function FullScreenPlayer({
   onCollapse,
   animatedImageStyle,
   handleSecondaryText,
-  colors,
-  currentTrack,
   data,
 }: FullScreenPlayerProps) {
+  const { colors } = useAppTheme();
+  const { currentTrack } = useAudio();
+
   return (
     <Animated.View
       style={[styles.fullPlayerContainer, animatedFullPlayerStyle]}
@@ -57,9 +59,8 @@ export default function FullScreenPlayer({
         </Text>
         {handleSecondaryText()}
       </View>
-      <View style={styles.fullControls}>
-        <PlayButton track={currentTrack} size={88} color={colors.secondary} />
-      </View>
+      <ProgressBar />
+      <PlayButton track={currentTrack} size={88} color={colors.secondary} />
     </Animated.View>
   );
 }
@@ -82,8 +83,5 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
-  },
-  fullControls: {
-    marginTop: 40,
   },
 });

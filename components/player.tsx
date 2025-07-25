@@ -22,7 +22,7 @@ export const Player = () => {
   const { tabBarHeight } = useLayout();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
-  const { currentTrack, playbackState } = useAudio();
+  const { currentTrack, playbackState, status, player } = useAudio();
   const { data } = useMetadata(currentTrack?.id, 1);
 
   const animatedIndex = useSharedValue(0);
@@ -160,6 +160,8 @@ export const Player = () => {
             onExpand={expand}
             onCollapse={collapse}
             handleSecondaryText={handleSecondaryText}
+            status={status}
+            player={player}
           />
         </BottomSheetView>
       </BottomSheet>
