@@ -42,7 +42,6 @@ export const Player = () => {
 
   const onAnimate = useCallback(
     (fromIndex: number, toIndex: number) => {
-      console.log(`Animating from ${fromIndex} to ${toIndex}`);
       const isExpanding = fromIndex === 0 && toIndex === 1;
       const isCollapsing = fromIndex === 1 && toIndex === 0;
 

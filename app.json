@@ -27,6 +27,10 @@
             "np.tritondigital.com": {
               "NSIncludesSubdomains": true,
               "NSExceptionAllowsInsecureHTTPLoads": true
+            },
+            "playerservices.streamtheworld.com": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": true
             }
           }
         }
