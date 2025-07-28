@@ -157,6 +157,7 @@ export const Player = () => {
         enableDynamicSizing={false}
         onAnimate={onAnimate}
         enablePanDownToClose={false}
+        enableOverDrag={false}
         topInset={area.top}
         handleComponent={null}
         containerStyle={{
