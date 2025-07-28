@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 import { Track } from "@/context/audio-context";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
-import { Stack, Tabs } from "expo-router";
+import * as MediaControls from "../modules/media-controls";
 
 const XN_URL =
   "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3";
@@ -26,6 +26,7 @@ export default function Index() {
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
+        <Text>{MediaControls.hello()}</Text>
         <Image
           source={xnLogo}
           contentFit="contain"

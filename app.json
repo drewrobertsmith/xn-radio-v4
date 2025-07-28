@@ -12,9 +12,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.mediated-reality.xnradio",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "audio"
-        ],
+        "UIBackgroundModes": ["audio"],
         "ITSAppUsesNonExemptEncryption": false,
         "NSAppTransportSecurity": {
           "NSExceptionDomains": {

@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["MediaControlsModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.mediacontrols.MediaControlsModule"]
+  }
+}

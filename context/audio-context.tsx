@@ -13,6 +13,7 @@ import React, {
   useState,
 } from "react";
 import { Alert } from "react-native";
+import * as MediaControls from "../modules/media-controls";
 
 export interface Track {
   id: string;
@@ -100,6 +101,23 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     // Note: We intentionally don't set 'paused' here automatically.
     // The pause() and play() actions will manage the paused state explicitly.
   }, [playerStatus, playbackState]);
+
+  useEffect(() => {
+    if (
+      (playbackState === "playing" || playbackState === "paused") &&
+      currentTrack
+    ) {
+      MediaControls.updateNowPlaying({
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        duration: currentTrack.duration,
+        isPlaying: playbackState === "playing",
+      });
+    } else {
+      // In any other state (idle, stopped, error), hide the controls.
+      MediaControls.hideNowPlaying();
+    }
+  }, [playbackState, currentTrack]);
 
   const play = useCallback(
     (item: Track) => {
