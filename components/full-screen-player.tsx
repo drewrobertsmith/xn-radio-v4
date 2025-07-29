@@ -16,6 +16,7 @@ import {
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import NowPlayingScreen from "./player-screens/now-playing-screen";
 import ThemeProvider from "./ui/theme-provider";
+import DetailsScreen from "./player-screens/details-screen";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -26,14 +27,6 @@ interface FullScreenPlayerProps {
 }
 
 const Tab = createMaterialTopTabNavigator();
-
-const DetailsScreen = () => {
-  return (
-    <View>
-      <Text>Details Screen</Text>
-    </View>
-  );
-};
 
 const QueueScreen = () => {
   return (
@@ -62,7 +55,7 @@ export default function FullScreenPlayer({
             />
           )}
         </Tab.Screen>
-        <Tab.Screen name="Details" component={DetailsScreen} />
+        <Tab.Screen name="Details">{() => <DetailsScreen />}</Tab.Screen>
         <Tab.Screen name="Queue" component={QueueScreen} />
       </Tab.Navigator>
     );
