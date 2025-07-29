@@ -43,7 +43,13 @@ export default function PlayerControls() {
               name="replay"
               size={72}
               color={colors.secondary}
-              className="transform scale-x-[-1]"
+              style={{
+                transform: [
+                  {
+                    scaleX: -1,
+                  },
+                ],
+              }}
             />
             <Text
               className="absolute text-sm font-bold bottom-1/3"

@@ -84,7 +84,6 @@ export const Player = () => {
   const animatedFullPlayerStyle = useAnimatedStyle(() => {
     return {
       opacity: largePlayerOpacity.value,
-      // This logic now runs on the UI thread, which is correct!
       pointerEvents: largePlayerOpacity.value > 0.5 ? "auto" : "none",
     };
   });
@@ -93,7 +92,6 @@ export const Player = () => {
   const animatedMiniPlayerStyle = useAnimatedStyle(() => {
     return {
       opacity: smallPlayerOpacity.value,
-      // This logic also runs on the UI thread.
       pointerEvents: smallPlayerOpacity.value > 0.5 ? "auto" : "none",
     };
   });
@@ -168,7 +166,13 @@ export const Player = () => {
         }}
         style={{ padding: 8 }}
       >
-        <BottomSheetView style={{ flex: 1 }} pointerEvents="auto">
+        <BottomSheetView
+          style={{
+            flex: 1,
+            bottom: area.bottom,
+          }}
+          pointerEvents="auto"
+        >
           <PlayerUI
             colors={colors}
             currentTrack={currentTrack}

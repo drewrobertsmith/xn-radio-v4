@@ -18,8 +18,6 @@ interface PlayerUIProps {
   onExpand: () => void;
   onCollapse: () => void;
   handleSecondaryText: () => React.ReactNode;
-  status: AudioStatus | null;
-  player: AudioPlayer;
 }
 
 function PlayerUIComponent({
@@ -32,22 +30,9 @@ function PlayerUIComponent({
   onExpand,
   onCollapse,
   handleSecondaryText,
-  status,
-  player,
 }: PlayerUIProps) {
   return (
     <>
-      <FullScreenPlayer
-        animatedFullPlayerStyle={animatedFullPlayerStyle}
-        onCollapse={onCollapse}
-        animatedImageStyle={animatedImageStyle}
-        handleSecondaryText={handleSecondaryText}
-        colors={colors}
-        currentTrack={currentTrack}
-        data={data}
-        status={status}
-        player={player}
-      />
       <MiniPlayer
         animatedMiniPlayerStyle={animatedMiniPlayerStyle}
         onExpand={onExpand}
@@ -56,8 +41,13 @@ function PlayerUIComponent({
         colors={colors}
         currentTrack={currentTrack}
         data={data}
-        status={status}
-        player={player}
+      />
+      <FullScreenPlayer
+        animatedFullPlayerStyle={animatedFullPlayerStyle}
+        onCollapse={onCollapse}
+        animatedImageStyle={animatedImageStyle}
+        handleSecondaryText={handleSecondaryText}
+        data={data}
       />
     </>
   );

@@ -39,7 +39,8 @@ export default function MiniPlayer({
   return (
     <Pressable
       onPress={onExpand}
-      // The mini player is only interactive when it's visible
+      //
+      //The mini player is only interactive when it's visible
     >
       <Animated.View
         style={[styles.miniPlayerContainer, animatedMiniPlayerStyle]}
@@ -75,7 +76,6 @@ export default function MiniPlayer({
 
 const styles = StyleSheet.create({
   miniPlayerContainer: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

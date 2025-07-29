@@ -1,9 +1,5 @@
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Image } from "expo-image";
 import {
   ImageStyle,
-  Platform,
-  Pressable,
   StyleProp,
   StyleSheet,
   Text,
@@ -11,13 +7,15 @@ import {
   ViewStyle,
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
-import PlayButton from "./play-button";
-import { useAppTheme, XNTheme } from "./ui/theme-provider";
-import { Track, useAudio } from "@/context/audio-context";
 import { Metadata } from "@/types/types";
-import { AudioPlayer, AudioStatus } from "expo-audio";
-import ProgressBar from "./progress-bar";
-import PlayerControls from "./player-controls";
+import { useCallback } from "react";
+import {
+  NavigationContainer,
+  NavigationIndependentTree,
+} from "@react-navigation/native";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import NowPlayingScreen from "./player-screens/now-playing-screen";
+import ThemeProvider from "./ui/theme-provider";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -27,59 +25,77 @@ interface FullScreenPlayerProps {
   data: Metadata | null | undefined;
 }
 
-const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
+const Tab = createMaterialTopTabNavigator();
+
+const DetailsScreen = () => {
+  return (
+    <View>
+      <Text>Details Screen</Text>
+    </View>
+  );
+};
+
+const QueueScreen = () => {
+  return (
+    <View className="flex-1">
+      <Text>Queue Screen</Text>
+    </View>
+  );
+};
 
 export default function FullScreenPlayer({
   animatedFullPlayerStyle,
-  onCollapse,
   animatedImageStyle,
   handleSecondaryText,
   data,
 }: FullScreenPlayerProps) {
-  const { colors } = useAppTheme();
-  const { currentTrack } = useAudio();
+  //Nav container in full screen player
+  const PlayerTabs = useCallback(() => {
+    return (
+      <Tab.Navigator>
+        <Tab.Screen name="Now Playing">
+          {() => (
+            <NowPlayingScreen
+              animatedImageStyle={animatedImageStyle}
+              data={data}
+              handleSecondaryText={handleSecondaryText}
+            />
+          )}
+        </Tab.Screen>
+        <Tab.Screen name="Details" component={DetailsScreen} />
+        <Tab.Screen name="Queue" component={QueueScreen} />
+      </Tab.Navigator>
+    );
+  }, [animatedImageStyle, data, handleSecondaryText]);
 
   return (
     <Animated.View
       style={[styles.fullPlayerContainer, animatedFullPlayerStyle]}
       // The full player is only interactive when it's visible
     >
-      <Pressable onPress={onCollapse} style={styles.collapseButton}>
-        <MaterialIcons name="arrow-drop-down" size={32} color={colors.text} />
-      </Pressable>
-      <AnimatedExpoImage
-        source={currentTrack?.artwork}
-        style={[animatedImageStyle]}
-      />
-      <View style={styles.fullTrackInfo}>
-        <Text
-          className="text-center font-semibold text-lg px-1"
-          style={{ color: colors.text }}
-          numberOfLines={4}
-        >
-          {currentTrack?.id === "XNRD" ? data?.cue_title : currentTrack?.title}
-        </Text>
-        {handleSecondaryText()}
+      <View style={{ flex: 1 }}>
+        <NavigationIndependentTree>
+          <NavigationContainer>
+            <ThemeProvider
+            //a second theme provider is needed since this is an independent nav tree for themeing
+            >
+              <PlayerTabs />
+            </ThemeProvider>
+          </NavigationContainer>
+        </NavigationIndependentTree>
       </View>
-      {currentTrack?.isLiveStream ? null : <ProgressBar />}
-      <PlayerControls />
     </Animated.View>
   );
 }
 const styles = StyleSheet.create({
   fullPlayerContainer: {
     position: "absolute",
-    // Add your full screen player styles here
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 8,
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
   },
   collapseButton: {
     padding: 8, // Increases touchable area
-  },
-  fullTrackInfo: {
-    width: "100%",
-    alignItems: "center",
-    marginTop: 32,
   },
 });
