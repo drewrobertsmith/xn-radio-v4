@@ -6,6 +6,7 @@ import { useAppTheme } from "../ui/theme-provider";
 import { useAudio } from "@/context/audio-context";
 import ProgressBar from "../progress-bar";
 import { Metadata } from "@/types/types";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
@@ -24,9 +25,14 @@ export default function NowPlayingScreen({
   const { currentTrack } = useAudio();
 
   return (
-    <View
-      className="flex-1 items-center gap-4 pt-4"
+    <BottomSheetScrollView
       style={{ backgroundColor: colors.card }}
+      contentContainerStyle={{
+        flex: 1,
+        alignItems: "center",
+        gap: 16,
+        paddingTop: 16,
+      }}
     >
       <AnimatedExpoImage
         source={currentTrack?.artwork}
@@ -44,7 +50,7 @@ export default function NowPlayingScreen({
       </View>
       {currentTrack?.isLiveStream ? null : <ProgressBar />}
       <PlayerControls />
-    </View>
+    </BottomSheetScrollView>
   );
 }
 const styles = StyleSheet.create({

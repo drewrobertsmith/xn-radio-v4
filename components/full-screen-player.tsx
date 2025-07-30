@@ -6,14 +6,16 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Animated, { AnimatedStyle } from "react-native-reanimated";
+import Animated, { AnimatedStyle, runOnJS } from "react-native-reanimated";
 import { Metadata } from "@/types/types";
-import { useCallback } from "react";
 import {
   NavigationContainer,
   NavigationIndependentTree,
 } from "@react-navigation/native";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import {
+  createMaterialTopTabNavigator,
+  MaterialTopTabScreenProps,
+} from "@react-navigation/material-top-tabs";
 import NowPlayingScreen from "./player-screens/now-playing-screen";
 import ThemeProvider from "./ui/theme-provider";
 import DetailsScreen from "./player-screens/details-screen";
@@ -27,6 +29,31 @@ interface FullScreenPlayerProps {
 }
 
 const Tab = createMaterialTopTabNavigator();
+
+type PlayerTabParamList = {
+  "Now Playing": {
+    animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
+    data: Metadata | null | undefined;
+    handleSecondaryText: () => React.ReactNode;
+  };
+  Details: undefined; // This screen takes no parameters
+  Queue: undefined; // This screen also takes no parameters
+};
+
+type NowPlayingScreenProps = MaterialTopTabScreenProps<
+  PlayerTabParamList,
+  "Now Playing"
+>;
+
+const NowPlayingScreenComponent = (props: NowPlayingScreenProps) => (
+  <NowPlayingScreen
+    animatedImageStyle={props.route.params.animatedImageStyle}
+    data={props.route.params.data}
+    handleSecondaryText={props.route.params.handleSecondaryText}
+  />
+);
+
+const DetailsScreenComponent = () => <DetailsScreen />;
 
 const QueueScreen = () => {
   return (
@@ -42,29 +69,10 @@ export default function FullScreenPlayer({
   handleSecondaryText,
   data,
 }: FullScreenPlayerProps) {
-  //Nav container in full screen player
-  const PlayerTabs = useCallback(() => {
-    return (
-      <Tab.Navigator>
-        <Tab.Screen name="Now Playing">
-          {() => (
-            <NowPlayingScreen
-              animatedImageStyle={animatedImageStyle}
-              data={data}
-              handleSecondaryText={handleSecondaryText}
-            />
-          )}
-        </Tab.Screen>
-        <Tab.Screen name="Details">{() => <DetailsScreen />}</Tab.Screen>
-        <Tab.Screen name="Queue" component={QueueScreen} />
-      </Tab.Navigator>
-    );
-  }, [animatedImageStyle, data, handleSecondaryText]);
-
   return (
     <Animated.View
       style={[styles.fullPlayerContainer, animatedFullPlayerStyle]}
-      // The full player is only interactive when it's visible
+    // The full player is only interactive when it's visible
     >
       <View style={{ flex: 1 }}>
         <NavigationIndependentTree>
@@ -72,7 +80,19 @@ export default function FullScreenPlayer({
             <ThemeProvider
             //a second theme provider is needed since this is an independent nav tree for themeing
             >
-              <PlayerTabs />
+              <Tab.Navigator>
+                <Tab.Screen
+                  name="Now Playing"
+                  component={NowPlayingScreenComponent}
+                  initialParams={{
+                    animatedImageStyle,
+                    data,
+                    handleSecondaryText,
+                  }}
+                />
+                <Tab.Screen name="Details" component={DetailsScreenComponent} />
+                <Tab.Screen name="Queue" component={QueueScreen} />
+              </Tab.Navigator>
             </ThemeProvider>
           </NavigationContainer>
         </NavigationIndependentTree>
