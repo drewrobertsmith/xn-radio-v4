@@ -2,11 +2,10 @@ import {
   ImageStyle,
   StyleProp,
   StyleSheet,
-  Text,
   View,
   ViewStyle,
 } from "react-native";
-import Animated, { AnimatedStyle, runOnJS } from "react-native-reanimated";
+import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { Metadata } from "@/types/types";
 import {
   NavigationContainer,
@@ -19,6 +18,7 @@ import {
 import NowPlayingScreen from "./player-screens/now-playing-screen";
 import ThemeProvider from "./ui/theme-provider";
 import DetailsScreen from "./player-screens/details-screen";
+import QueueScreen from "./player-screens/queue-screen";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -55,13 +55,7 @@ const NowPlayingScreenComponent = (props: NowPlayingScreenProps) => (
 
 const DetailsScreenComponent = () => <DetailsScreen />;
 
-const QueueScreen = () => {
-  return (
-    <View className="flex-1">
-      <Text>Queue Screen</Text>
-    </View>
-  );
-};
+const QueueScreenComponent = () => <QueueScreen />;
 
 export default function FullScreenPlayer({
   animatedFullPlayerStyle,
@@ -91,7 +85,7 @@ export default function FullScreenPlayer({
                   }}
                 />
                 <Tab.Screen name="Details" component={DetailsScreenComponent} />
-                <Tab.Screen name="Queue" component={QueueScreen} />
+                <Tab.Screen name="Queue" component={QueueScreenComponent} />
               </Tab.Navigator>
             </ThemeProvider>
           </NavigationContainer>
