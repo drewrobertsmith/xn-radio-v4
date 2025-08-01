@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import PlayButton from "./play-button";
 import { useSelector } from "@legendapp/state/react";
 import { audio$, Track } from "@/state/audio";
+import QueueButton from "./queue-button";
 
 export default function ClipItem({ item }: { item: Clip }) {
   const { colors } = useAppTheme();
@@ -50,14 +51,14 @@ export default function ClipItem({ item }: { item: Clip }) {
   };
 
   return (
-    <View className="flex-row flex-1 justify-between items-center">
+    <View className="flex-row justify-between items-center">
       <TouchableOpacity
-        className="w-[85%]"
+        className="flex-1 pr-4"
         onPress={() => {
           router.navigate(`/(episode)/${item.Id}`);
         }}
       >
-        <View className="w-[85%]">
+        <View className="flex-1">
           <Text
             className="text-sm font-[500]"
             style={{ color: colors.secondaryText }}
@@ -76,7 +77,8 @@ export default function ClipItem({ item }: { item: Clip }) {
         </View>
       </TouchableOpacity>
 
-      <View>
+      <View className="flex-row items-center gap-2">
+        <QueueButton size={32} color={colors.secondary} item={clipToTrack} />
         <PlayButton size={44} color={colors.secondary} track={clipToTrack} />
       </View>
     </View>

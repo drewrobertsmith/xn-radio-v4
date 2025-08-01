@@ -1,4 +1,3 @@
-import { useAudio } from "@/context/audio-context";
 import { audio$ } from "@/state/audio";
 import { Metadata, Station } from "@/types/types";
 import { useSelector } from "@legendapp/state/react";

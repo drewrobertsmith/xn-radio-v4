@@ -1,7 +1,8 @@
-import { Track } from "@/context/audio-context";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { formatDate, formatDuration } from "@/utils/formatters";
+import { Image } from "expo-image";
+import { Track } from "@/state/audio";
 
 export default function QueueItem({ item }: { item: Track }) {
   const { colors } = useAppTheme();

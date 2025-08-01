@@ -36,7 +36,14 @@ export const audio$ = observable({
   },
 });
 
-export const addToQueue = (item: Track) => {
+export const addToTopOfQueue = (item: Track) => {
+  //ensure no duplicates
+  if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
+    audio$.queue.tracks.unshift(item);
+  }
+};
+
+export const addToBackOfQueue = (item: Track) => {
   //ensure no duplicates
   if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
     audio$.queue.tracks.push(item);

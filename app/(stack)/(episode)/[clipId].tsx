@@ -7,16 +7,22 @@ import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { useLayout } from "@/context/layout-context";
 import PlayButton from "@/components/play-button";
-import { Track, useAudio } from "@/context/audio-context";
 import QueueButton from "@/components/queue-button";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useSelector } from "@legendapp/state/react";
+import { audio$, Track } from "@/state/audio";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();
   const { clipId } = useLocalSearchParams<{ clipId: Clip["Id"] }>();
   const { data: item } = useIndividualClip(clipId);
   const { tabBarHeight } = useLayout();
-  const { currentTrack, status } = useAudio();
+  const { id, status } = useSelector(() => {
+    return {
+      id: audio$.currentTrack.id.get(),
+      status: audio$.status.currentTime.get(),
+    };
+  });
 
   const clipToTrack: Track = {
     id: item?.Id,
@@ -29,7 +35,7 @@ export default function ClipPage() {
   };
 
   const handleDuration = () => {
-    if (currentTrack?.id === item?.Id) {
+    if (id === item?.Id) {
       return (
         <Text
           className="text-sm font-[500]"

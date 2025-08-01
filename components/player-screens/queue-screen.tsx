@@ -28,7 +28,7 @@ export default function QueueScreen() {
         paddingTop: 16,
         gap: 8,
       }}
-      data={queue}
+      data={queue.tracks.slice(1)}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <QueueItem item={item} />}
       ListHeaderComponent={QueueHeaderItem}

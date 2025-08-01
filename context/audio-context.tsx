@@ -149,7 +149,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const seekTo = useCallback(
     (seconds: number) => {
       if (player) {
-        player.seekTo(seconds * 1000); // expo-audio uses milliseconds
+        player.seekTo(seconds); // expo-audio uses milliseconds
       }
     },
     [player],

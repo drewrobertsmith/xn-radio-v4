@@ -3,36 +3,60 @@ import { useAppTheme } from "./ui/theme-provider";
 import { Text, View } from "react-native";
 import { Image } from "expo-image";
 import { formatDate, formatDuration } from "@/utils/formatters";
+import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 export default function QueueHeaderItem() {
   const { colors } = useAppTheme();
-  const { currentTrack, player } = useAudio();
+  const { player } = useAudio();
+  const { queue } = useSelector(() => {
+    return {
+      queue: audio$.queue.tracks.get(),
+    };
+  });
+
+  const topInQueue = queue[0];
+  console.log("queue", queue[0]);
 
   const handleProgressWidth =
-    currentTrack?.duration > 0
-      ? (player.currentTime / currentTrack?.duration) * 100
+    topInQueue.duration > 0
+      ? (player.currentTime / topInQueue.duration) * 100
       : 0;
+
+  const handleDuration = () => {
+    return (
+      <Text
+        className="text-xs"
+        style={{
+          color: colors.secondaryText,
+        }}
+      >
+        {formatDuration(topInQueue.duration - player.currentTime, "summary")}{" "}
+        left
+      </Text>
+    );
+  };
 
   return (
     <View
       className="flex-row justify-between items-center p-2 gap-2 border rounded-2xl overflow-hidden"
       style={{
         borderColor: colors.border,
-        backgroundColor: colors.background,
+        backgroundColor: colors.border,
       }}
     >
       <View
-        className="absolute h-[150%] left-0 rounded-2xl"
+        className="absolute h-[150%] left-0  rounded-2xl"
         style={[
           {
-            backgroundColor: colors.border,
+            backgroundColor: colors.background,
             width: `${handleProgressWidth}%`,
           },
         ]}
       />
       <View>
         <Image
-          source={currentTrack?.artwork}
+          source={topInQueue.artwork}
           contentFit="contain"
           style={{
             aspectRatio: 1,
@@ -44,7 +68,7 @@ export default function QueueHeaderItem() {
       </View>
       <View className="w-[85%] gap-1">
         <Text className="text-xs" style={{ color: colors.secondaryText }}>
-          {formatDate(currentTrack?.date)}
+          {formatDate(topInQueue.date)}
         </Text>
         <Text
           className="text-sm font-semibold"
@@ -52,16 +76,9 @@ export default function QueueHeaderItem() {
           numberOfLines={2}
           ellipsizeMode="tail"
         >
-          {currentTrack?.title}
+          {topInQueue.title}
         </Text>
-        <Text
-          className="text-xs"
-          style={{
-            color: colors.secondaryText,
-          }}
-        >
-          {formatDuration(currentTrack?.duration, "summary")}
-        </Text>
+        {handleDuration()}
       </View>
     </View>
   );
