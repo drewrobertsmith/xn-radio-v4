@@ -14,6 +14,7 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 import * as MediaControls from "../modules/media-controls";
+import { observable } from "@legendapp/state";
 
 export interface Track {
   id: string;
@@ -50,6 +51,12 @@ interface AudioContextType {
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
+interface Queue {
+  tracks: Track[];
+  total: number;
+  addToQueue: (item: Track) => void;
+}
+
 export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const player = useAudioPlayer();
   const playerStatus = useAudioPlayerStatus(player);
@@ -79,6 +86,25 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
 
     configureAudioSession();
   }, []);
+
+  //Create global observable for queue
+  const queue$ = observable<Queue>({
+    tracks: [],
+    total: (): number => {
+      return queue$.tracks.length;
+    },
+    addToQueue: (item: Track) => {
+      const track: Track = {
+        id: item.id,
+        title: item.title,
+        url: item.url,
+        duration: item.duration,
+        date: item.date,
+        artwork: item.artwork,
+      };
+      queue$.tracks.push(track);
+    },
+  });
 
   // This useEffect listens to the low-level status from expo-audio and updates
   // high-level playbackState accordingly.
@@ -185,6 +211,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         currentTrack,
         playbackState,
         error,
+        queue$,
       }}
     >
       {children}

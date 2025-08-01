@@ -8,20 +8,21 @@ import { Track, useAudio } from "@/context/audio-context";
 import { Text, View } from "react-native";
 import QueueHeaderItem from "../queue-header-item";
 import QueueItem from "../queue-item";
+import { use$ } from "@legendapp/state/react";
 
 const ListEmptyComponent = () => {
+  const { colors } = useAppTheme();
   return (
     <View className="justify-center items-center flex-1">
-      <Text>Add some episodes!</Text>
+      <Text style={{ color: colors.secondaryText }}>Add some episodes!</Text>
     </View>
   );
 };
 
 export default function QueueScreen() {
   const { colors } = useAppTheme();
-  const { currentTrack, player } = useAudio();
-
-  const data: Track[] = [];
+  const { queue$ } = useAudio();
+  const data: Track[] = use$(queue$.tracks);
 
   return (
     <BottomSheetFlatList

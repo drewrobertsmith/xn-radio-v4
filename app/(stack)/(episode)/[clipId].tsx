@@ -8,6 +8,8 @@ import { ScrollView, Text, View } from "react-native";
 import { useLayout } from "@/context/layout-context";
 import PlayButton from "@/components/play-button";
 import { Track, useAudio } from "@/context/audio-context";
+import QueueButton from "@/components/queue-button";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();
@@ -81,7 +83,15 @@ export default function ClipPage() {
       <Text className="text-2xl font-bold" style={{ color: colors.text }}>
         {item?.Title}
       </Text>
-      <PlayButton track={clipToTrack} size={72} color={colors.secondary} />
+      <View className="flex-row items-center flex-1 gap-4">
+        <MaterialIcons
+          name="check-circle-outline"
+          size={40}
+          color={colors.secondary}
+        />
+        <PlayButton track={clipToTrack} size={72} color={colors.secondary} />
+        <QueueButton item={clipToTrack} size={40} color={colors.secondary} />
+      </View>
       <View className="w-[100%] flex-row justify-between">
         <Text
           className="text-sm font-[500]"
