@@ -3,10 +3,13 @@ import { Pressable, Text, View } from "react-native";
 import PlayButton from "./play-button";
 import { useAppTheme } from "./ui/theme-provider";
 import { useAudio } from "@/context/audio-context";
+import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 export default function PlayerControls() {
   const { colors } = useAppTheme();
-  const { currentTrack, player, seekTo } = useAudio();
+  const { player, seekTo } = useAudio();
+  const currentTrack = useSelector(audio$.currentTrack);
 
   if (currentTrack?.isLiveStream) {
     return (

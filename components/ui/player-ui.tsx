@@ -1,4 +1,3 @@
-import { Track } from "@/context/audio-context";
 import { XNTheme } from "./theme-provider";
 import { Metadata } from "@/types/types";
 import { ImageStyle, StyleProp, ViewStyle } from "react-native";
@@ -6,11 +5,9 @@ import { AnimatedStyle } from "react-native-reanimated";
 import { memo } from "react";
 import FullScreenPlayer from "../full-screen-player";
 import MiniPlayer from "../mini-player";
-import { AudioPlayer, AudioStatus } from "expo-audio";
 
 interface PlayerUIProps {
   colors: XNTheme["colors"];
-  currentTrack: Track | null;
   data: Metadata | null | undefined;
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -22,7 +19,6 @@ interface PlayerUIProps {
 
 function PlayerUIComponent({
   colors,
-  currentTrack,
   data,
   animatedImageStyle,
   animatedFullPlayerStyle,
@@ -39,7 +35,6 @@ function PlayerUIComponent({
         animatedImageStyle={animatedImageStyle}
         handleSecondaryText={handleSecondaryText}
         colors={colors}
-        currentTrack={currentTrack}
         data={data}
       />
       <FullScreenPlayer

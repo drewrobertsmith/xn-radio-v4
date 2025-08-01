@@ -1,12 +1,21 @@
 import { Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
-import { useAudio } from "@/context/audio-context";
 import { formatDuration } from "@/utils/formatters";
 import Separator from "../ui/separator";
+import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 export default function DetailsScreen() {
   const { colors } = useAppTheme();
-  const { currentTrack } = useAudio();
+
+  const { title, duration, description, isLiveStream } = useSelector(() => {
+    return {
+      title: audio$.currentTrack.title.get(),
+      isLiveStream: audio$.currentTrack.isLiveStream.get(),
+      duration: audio$.currentTrack.duration.get(),
+      description: audio$.currentTrack.description.get(),
+    };
+  });
 
   return (
     <View
@@ -14,18 +23,18 @@ export default function DetailsScreen() {
       style={{ backgroundColor: colors.card }}
     >
       <Text className="text-lg font-bold" style={{ color: colors.text }}>
-        {currentTrack?.title}
+        {title}
       </Text>
-      {currentTrack?.isLiveStream ? (
+      {isLiveStream ? (
         <Text className="font-semibold color-red-500">On-Air Now</Text>
       ) : (
         <Text style={{ color: colors.text }}>
-          {formatDuration(currentTrack?.duration, "summary")}
+          {formatDuration(duration, "summary")}
         </Text>
       )}
       <Separator />
       <Text className="text-base" style={{ color: colors.text }}>
-        {currentTrack?.description}
+        {description}
       </Text>
     </View>
   );

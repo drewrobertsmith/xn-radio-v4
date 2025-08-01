@@ -2,19 +2,20 @@ import { Platform, Text, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { useSynchronizedDurations } from "@/hooks/useSynchronizedDurations";
 import { useAudio } from "@/context/audio-context";
+import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 export default function ProgressBar() {
   const { colors } = useAppTheme();
-  const { player, currentTrack } = useAudio();
+  const { player } = useAudio();
+  const duration = useSelector(() => audio$.currentTrack.duration.get());
   const {
     formattedCurrentTime: currentTime,
-    formattedRemainingTime: duration,
-  } = useSynchronizedDurations(player.currentTime, currentTrack?.duration);
+    formattedRemainingTime: remainingDuration,
+  } = useSynchronizedDurations(player.currentTime, duration);
 
   const progressWidth =
-    currentTrack?.duration > 0
-      ? (player.currentTime / currentTrack?.duration) * 100
-      : 0;
+    duration > 0 ? (player.currentTime / duration) * 100 : 0;
 
   return (
     <View className="mt-8 gap-2">
@@ -51,7 +52,7 @@ export default function ProgressBar() {
             fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
           }}
         >
-          -{duration}
+          -{remainingDuration}
         </Text>
       </View>
     </View>

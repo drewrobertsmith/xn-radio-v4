@@ -3,10 +3,11 @@ import Animated, { AnimatedStyle } from "react-native-reanimated";
 import PlayerControls from "../player-controls";
 import { ImageStyle, StyleProp, StyleSheet, Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
-import { useAudio } from "@/context/audio-context";
 import ProgressBar from "../progress-bar";
 import { Metadata } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
@@ -22,7 +23,14 @@ export default function NowPlayingScreen({
   handleSecondaryText,
 }: NowPlayingScreenProps) {
   const { colors } = useAppTheme();
-  const { currentTrack } = useAudio();
+  const { title, artwork, id, isLiveStream } = useSelector(() => {
+    return {
+      id: audio$.currentTrack.id.get(),
+      title: audio$.currentTrack.title.get(),
+      artwork: audio$.currentTrack.artwork.get(),
+      isLiveStream: audio$.currentTrack.isLiveStream.get(),
+    };
+  });
 
   return (
     <BottomSheetScrollView
@@ -34,21 +42,18 @@ export default function NowPlayingScreen({
         paddingTop: 16,
       }}
     >
-      <AnimatedExpoImage
-        source={currentTrack?.artwork}
-        style={[animatedImageStyle]}
-      />
+      <AnimatedExpoImage source={artwork} style={[animatedImageStyle]} />
       <View style={styles.fullTrackInfo}>
         <Text
           className="text-center font-semibold text-lg px-1"
           style={{ color: colors.text }}
           numberOfLines={4}
         >
-          {currentTrack?.id === "XNRD" ? data?.cue_title : currentTrack?.title}
+          {id === "XNRD" ? data?.cue_title : title}
         </Text>
         {handleSecondaryText()}
       </View>
-      {currentTrack?.isLiveStream ? null : <ProgressBar />}
+      {isLiveStream ? null : <ProgressBar />}
       <PlayerControls />
     </BottomSheetScrollView>
   );

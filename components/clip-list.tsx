@@ -1,5 +1,4 @@
 import { LegendList } from "@legendapp/list";
-import { View } from "react-native";
 import ClipItem from "./clip-item";
 import Separator from "./ui/separator";
 import { Clip } from "@/types/types";

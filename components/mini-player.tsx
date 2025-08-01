@@ -10,10 +10,11 @@ import {
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { XNTheme } from "./ui/theme-provider";
-import { Track } from "@/context/audio-context";
 import { Metadata } from "@/types/types";
 import { Image } from "expo-image";
 import PlayButton from "./play-button";
+import { audio$, Track } from "@/state/audio";
+import { useSelector } from "@legendapp/state/react";
 
 interface MiniPlayerProps {
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -21,7 +22,6 @@ interface MiniPlayerProps {
   onExpand: () => void;
   handleSecondaryText: () => React.ReactNode;
   colors: XNTheme["colors"];
-  currentTrack: Track | null;
   data: Metadata | null | undefined;
 }
 
@@ -33,20 +33,34 @@ export default function MiniPlayer({
   animatedImageStyle,
   handleSecondaryText,
   colors,
-  currentTrack,
   data,
 }: MiniPlayerProps) {
+  // ✅ ONE subscription gets the whole object.
+  const currentTrack = useSelector(audio$.currentTrack);
+
+  // ✅ Then, derive the other values from the result. No more selectors needed.
+  // This is just plain JavaScript, running after the component re-renders.
+  const title = currentTrack?.title;
+  const id = currentTrack?.id;
+  const artwork = currentTrack?.artwork;
+
+  // If there's no track, we can't render, so return null.
+  if (!currentTrack) {
+    // Or return a placeholder view. This prevents errors on the line below.
+    return null;
+  }
+
   return (
     <Pressable
       onPress={onExpand}
-      //
-      //The mini player is only interactive when it's visible
+    //
+    //The mini player is only interactive when it's visible
     >
       <Animated.View
         style={[styles.miniPlayerContainer, animatedMiniPlayerStyle]}
       >
         <AnimatedExpoImage
-          source={currentTrack?.artwork}
+          source={artwork}
           contentFit="contain"
           style={[
             styles.albumArt,
@@ -62,9 +76,7 @@ export default function MiniPlayer({
             ellipsizeMode="tail"
             className="text-sm font-semibold"
           >
-            {currentTrack?.id === "XNRD"
-              ? data?.cue_title
-              : currentTrack?.title}
+            {id === "XNRD" ? data?.cue_title : title}
           </Text>
           {handleSecondaryText()}
         </View>

@@ -1,14 +1,11 @@
-import {
-  BottomSheetFlatList,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useAppTheme } from "../ui/theme-provider";
 import Separator from "../ui/separator";
-import { Track, useAudio } from "@/context/audio-context";
 import { Text, View } from "react-native";
 import QueueHeaderItem from "../queue-header-item";
 import QueueItem from "../queue-item";
-import { use$ } from "@legendapp/state/react";
+import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 const ListEmptyComponent = () => {
   const { colors } = useAppTheme();
@@ -21,8 +18,7 @@ const ListEmptyComponent = () => {
 
 export default function QueueScreen() {
   const { colors } = useAppTheme();
-  const { queue$ } = useAudio();
-  const data: Track[] = use$(queue$.tracks);
+  const queue = useSelector(audio$.queue);
 
   return (
     <BottomSheetFlatList
@@ -32,7 +28,7 @@ export default function QueueScreen() {
         paddingTop: 16,
         gap: 8,
       }}
-      data={data}
+      data={queue}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <QueueItem item={item} />}
       ListHeaderComponent={QueueHeaderItem}

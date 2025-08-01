@@ -1,7 +1,7 @@
 import { useLayout } from "@/context/layout-context";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Text } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -13,6 +13,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAudio } from "@/context/audio-context";
 import { useMetadata } from "@/hooks/useMetadata";
 import { PlayerUI } from "./ui/player-ui";
+import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 const { height: screenHeight, width } = Dimensions.get("window");
 const MINI_PLAYER_HEIGHT = 64;
@@ -22,8 +24,20 @@ export const Player = () => {
   const { tabBarHeight } = useLayout();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
-  const { currentTrack, playbackState, status, player } = useAudio();
-  const { data } = useMetadata(currentTrack?.id, 1);
+  const { player } = useAudio();
+
+  // const currentTrack = useSelector(audio$.currentTrack);
+  // const playbackState = useSelector(audio$.playbackState);
+  // const status = useSelector(audio$.status);
+  //
+  const { id, playbackState } = useSelector(() => {
+    return {
+      id: audio$.currentTrack.id.get(),
+      playbackState: audio$.playbackState.get(),
+    };
+  });
+
+  const { data } = useMetadata(id, 1);
 
   const animatedIndex = useSharedValue(0);
   const largePlayerOpacity = useSharedValue(0);
@@ -97,7 +111,7 @@ export const Player = () => {
   });
 
   const handleSecondaryText = useCallback(() => {
-    if (currentTrack?.id === "XNRD") {
+    if (id === "XNRD") {
       return (
         <Text className="text-sm" style={{ color: colors.secondaryText }}>
           {data?.track_artist_name}
@@ -105,7 +119,7 @@ export const Player = () => {
       );
     }
     return null;
-  }, [currentTrack?.id, data?.track_artist_name, colors.secondaryText]);
+  }, [id, data?.track_artist_name, colors.secondaryText]);
 
   const animatedPadding = useAnimatedStyle(() => {
     const bottomPadding = interpolate(
@@ -175,7 +189,6 @@ export const Player = () => {
         >
           <PlayerUI
             colors={colors}
-            currentTrack={currentTrack}
             data={data}
             animatedImageStyle={animatedImageStyle}
             animatedFullPlayerStyle={animatedFullPlayerStyle}
@@ -183,8 +196,6 @@ export const Player = () => {
             onExpand={expand}
             onCollapse={collapse}
             handleSecondaryText={handleSecondaryText}
-            status={status}
-            player={player}
           />
         </BottomSheetView>
       </BottomSheet>

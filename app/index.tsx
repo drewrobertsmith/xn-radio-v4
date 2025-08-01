@@ -1,10 +1,10 @@
 import { useAppTheme } from "@/components/ui/theme-provider";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
-import { Track } from "@/context/audio-context";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
 import * as MediaControls from "../modules/media-controls";
+import { Track } from "@/state/audio";
 
 const XN_URL =
   "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3";

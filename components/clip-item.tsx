@@ -1,16 +1,21 @@
 import { Clip } from "@/types/types";
 import { formatDate, formatDuration } from "@/utils/formatters";
 import { Text, TouchableOpacity, View } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppTheme } from "./ui/theme-provider";
 import { useRouter } from "expo-router";
 import PlayButton from "./play-button";
-import { Track, useAudio } from "@/context/audio-context";
+import { useSelector } from "@legendapp/state/react";
+import { audio$, Track } from "@/state/audio";
 
 export default function ClipItem({ item }: { item: Clip }) {
   const { colors } = useAppTheme();
   const router = useRouter();
-  const { currentTrack, status } = useAudio();
+  const { id, currentTime } = useSelector(() => {
+    return {
+      id: audio$.currentTrack.id.get(),
+      currentTime: audio$.status.currentTime.get(),
+    };
+  });
 
   const clipToTrack: Track = {
     id: item.Id,
@@ -23,17 +28,13 @@ export default function ClipItem({ item }: { item: Clip }) {
   };
 
   const handleDuration = () => {
-    if (currentTrack?.id === item.Id) {
+    if (id === item.Id) {
       return (
         <Text
           className="text-sm font-[500]"
           style={{ color: colors.secondaryText }}
         >
-          {formatDuration(
-            item.DurationSeconds - status?.currentTime,
-            "summary",
-          )}{" "}
-          left
+          {formatDuration(item.DurationSeconds - currentTime, "summary")} left
         </Text>
       );
     } else {

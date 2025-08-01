@@ -1,6 +1,5 @@
 import {
   AudioPlayer,
-  AudioStatus,
   setAudioModeAsync,
   useAudioPlayer,
   useAudioPlayerStatus,
@@ -10,59 +9,26 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useState,
 } from "react";
 import { Alert } from "react-native";
 import * as MediaControls from "../modules/media-controls";
-import { observable } from "@legendapp/state";
+import { audio$, Track } from "../state/audio";
+import { useObserve } from "@legendapp/state/react";
 
-export interface Track {
-  id: string;
-  url: string;
-  title: string;
-  artist?: string;
-  album?: string;
-  duration?: number;
-  date?: string;
-  artwork?: string;
-  isLiveStream?: boolean;
-  description?: string;
-}
-
-type PlaybackState =
-  | "idle" // Not loaded, no track selected
-  | "loading" // Loading a new track
-  | "playing" // Actively playing
-  | "paused" // Paused
-  | "stopped" // Finished playing
-  | "error"; // An error occurred
-
+// The context now just provides the player instance and actions
 interface AudioContextType {
   player: AudioPlayer;
   play: (item: Track) => void;
   pause: () => void;
   resume: () => void;
   seekTo: (seconds: number) => void;
-  status: AudioStatus | null;
-  currentTrack: Track | null;
-  playbackState: PlaybackState;
-  error: string | null;
 }
 
 const AudioContext = createContext<AudioContextType | null>(null);
 
-interface Queue {
-  tracks: Track[];
-  total: number;
-  addToQueue: (item: Track) => void;
-}
-
 export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const player = useAudioPlayer();
   const playerStatus = useAudioPlayerStatus(player);
-  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
-  const [playbackState, setPlaybackState] = useState<PlaybackState>("idle");
-  const [error, setError] = useState<string | null>(null);
 
   // configure the audio session on mount
   useEffect(() => {
@@ -87,73 +53,62 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     configureAudioSession();
   }, []);
 
-  //Create global observable for queue
-  const queue$ = observable<Queue>({
-    tracks: [],
-    total: (): number => {
-      return queue$.tracks.length;
-    },
-    addToQueue: (item: Track) => {
-      const track: Track = {
-        id: item.id,
-        title: item.title,
-        url: item.url,
-        duration: item.duration,
-        date: item.date,
-        artwork: item.artwork,
-      };
-      queue$.tracks.push(track);
-    },
+  //sync expo-audio status with global state
+  useEffect(() => {
+    audio$.status.set(playerStatus);
+  }, [playerStatus]);
+
+  // React to changes in global state using useObserve
+  useObserve(() => {
+    const status = audio$.status.get();
+    // Guard 1: If there's no status object yet, do nothing.
+    if (!status) return;
+
+    // Guard 2: If no track is loaded in the player,
+    // our high-level state should be 'idle'.
+    if (!status.isLoaded) {
+      // Only set the state if it's not already idle to avoid unnecessary updates.
+      if (audio$.playbackState.get() !== "idle") {
+        audio$.playbackState.set("idle");
+      }
+      return; // Stop further processing.
+    }
+
+    if (status.didJustFinish) {
+      audio$.playbackState.set("stopped");
+    } else if (status.playing) {
+      audio$.playbackState.set("playing");
+    } else if (status.isBuffering) {
+      if (audio$.playbackState.get() !== "playing") {
+        audio$.playbackState.set("loading");
+      }
+    }
   });
 
-  // This useEffect listens to the low-level status from expo-audio and updates
-  // high-level playbackState accordingly.
+  // React to playback state changes to update media controls
+  useObserve(() => {
+    const state = audio$.playbackState.get();
+    const track = audio$.currentTrack.get();
 
-  useEffect(() => {
-    if (!playerStatus) return;
-
-    //order is key here
-    if (playerStatus.didJustFinish) {
-      setPlaybackState("stopped");
-    } else if (
-      playerStatus.isBuffering &&
-      playbackState !== "idle" &&
-      playbackState !== "error"
-    ) {
-      setPlaybackState("loading");
-    } else if (playerStatus.playing && playbackState !== "paused") {
-      setPlaybackState("playing");
-    }
-    // Note: We intentionally don't set 'paused' here automatically.
-    // The pause() and play() actions will manage the paused state explicitly.
-  }, [playerStatus, playbackState]);
-
-  useEffect(() => {
-    if (
-      (playbackState === "playing" || playbackState === "paused") &&
-      currentTrack
-    ) {
+    if ((state === "playing" || state === "paused") && track) {
       MediaControls.updateNowPlaying({
-        title: currentTrack.title,
-        artist: currentTrack.artist,
-        duration: currentTrack.duration,
-        isPlaying: playbackState === "playing",
+        title: track.title,
+        artist: track.artist,
+        duration: track.duration,
+        isPlaying: state === "playing",
       });
     } else {
-      // In any other state (idle, stopped, error), hide the controls.
       MediaControls.hideNowPlaying();
     }
-  }, [playbackState, currentTrack]);
+  });
 
   const play = useCallback(
     (item: Track) => {
       if (!player) return;
-
-      //Reset any previous errors
-      setError(null);
-      // Set our high-level state to loading immediately for responsive UI
-      setPlaybackState("loading");
-      setCurrentTrack(item);
+      audio$.error.set(null);
+      //optimistically set state for better UI responsiveness
+      audio$.playbackState.set("playing");
+      audio$.currentTrack.set(item);
 
       try {
         console.log("Replacing and playing:", item.title);
@@ -165,35 +120,36 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         const errorMessage =
           e instanceof Error ? e.message : "An unknown playback error occured";
         console.error("Playback error: ", errorMessage);
-        setError(errorMessage);
-        setPlaybackState("error");
+        audio$.error.set(errorMessage);
+        audio$.playbackState.set("error");
       }
     },
     [player],
   );
 
   const pause = useCallback(() => {
-    if (player && playbackState === "playing") {
+    if (player && audio$.playbackState.get() === "playing") {
       player.pause();
-      setPlaybackState("paused");
+      audio$.playbackState.set("paused");
     }
-  }, [player, playbackState]);
+  }, [player]);
 
   const resume = useCallback(() => {
-    if (player && (playbackState === "paused" || playbackState === "stopped")) {
-      // If stopped, we need to seek to the beginning before playing again.
-      if (playbackState === "stopped") {
+    const state = audio$.playbackState.get();
+    if (player && (state === "paused" || state === "stopped")) {
+      if (state === "stopped") {
         player.seekTo(0);
       }
       player.play();
-      setPlaybackState("playing");
+      // ✅ Optimistically set the state for instant UI feedback
+      audio$.playbackState.set("playing");
     }
-  }, [player, playbackState]);
+  }, [player]);
 
   const seekTo = useCallback(
     (seconds: number) => {
       if (player) {
-        player.seekTo(seconds);
+        player.seekTo(seconds * 1000); // expo-audio uses milliseconds
       }
     },
     [player],
@@ -207,11 +163,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         pause,
         resume,
         seekTo,
-        status: playerStatus,
-        currentTrack,
-        playbackState,
-        error,
-        queue$,
       }}
     >
       {children}
