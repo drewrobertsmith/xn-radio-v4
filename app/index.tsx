@@ -26,7 +26,7 @@ export default function Index() {
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
-        <Text>{MediaControls.hello()}</Text>
+        <Text style={{ color: colors.text }}>{MediaControls.hello()}</Text>
         <Image
           source={xnLogo}
           contentFit="contain"

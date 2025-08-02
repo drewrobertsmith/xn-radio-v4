@@ -16,7 +16,6 @@ export default function QueueHeaderItem() {
   });
 
   const topInQueue = queue[0];
-  console.log("queue", queue[0]);
 
   const handleProgressWidth =
     topInQueue.duration > 0
@@ -49,7 +48,7 @@ export default function QueueHeaderItem() {
         className="absolute h-[150%] left-0  rounded-2xl"
         style={[
           {
-            backgroundColor: colors.background,
+            backgroundColor: colors.card,
             width: `${handleProgressWidth}%`,
           },
         ]}

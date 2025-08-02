@@ -12,7 +12,7 @@ import React, {
 } from "react";
 import { Alert } from "react-native";
 import * as MediaControls from "../modules/media-controls";
-import { audio$, Track } from "../state/audio";
+import { addToTopOfQueue, audio$, Track } from "../state/audio";
 import { useObserve } from "@legendapp/state/react";
 
 // The context now just provides the player instance and actions
@@ -112,6 +112,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
 
       try {
         console.log("Replacing and playing:", item.title);
+        addToTopOfQueue(item);
         // *** FIX for Race Condition ***
         // Use the `item` passed directly into the function, NOT the `currentSource` state.
         player.replace({ uri: item.url });

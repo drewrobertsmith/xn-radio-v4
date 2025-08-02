@@ -2,6 +2,7 @@ import {
   ImageStyle,
   StyleProp,
   StyleSheet,
+  Text,
   View,
   ViewStyle,
 } from "react-native";
@@ -16,9 +17,11 @@ import {
   MaterialTopTabScreenProps,
 } from "@react-navigation/material-top-tabs";
 import NowPlayingScreen from "./player-screens/now-playing-screen";
-import ThemeProvider from "./ui/theme-provider";
+import ThemeProvider, { useAppTheme } from "./ui/theme-provider";
 import DetailsScreen from "./player-screens/details-screen";
 import QueueScreen from "./player-screens/queue-screen";
+import { use$, useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -63,6 +66,22 @@ export default function FullScreenPlayer({
   handleSecondaryText,
   data,
 }: FullScreenPlayerProps) {
+  const { colors } = useAppTheme();
+  const queueLength = useSelector(() => audio$.queue.total.get());
+
+  const TabBarBadge = () => {
+    return (
+      <View
+        className="rounded-full p-1 aspect-square justify-center items-center"
+        style={{ backgroundColor: colors.secondary }}
+      >
+        <Text className="text-xs font-semibold" style={{ color: colors.card }}>
+          {queueLength}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <Animated.View
       style={[styles.fullPlayerContainer, animatedFullPlayerStyle]}
@@ -85,7 +104,13 @@ export default function FullScreenPlayer({
                   }}
                 />
                 <Tab.Screen name="Details" component={DetailsScreenComponent} />
-                <Tab.Screen name="Queue" component={QueueScreenComponent} />
+                <Tab.Screen
+                  name="Queue"
+                  component={QueueScreenComponent}
+                  options={{
+                    tabBarBadge: () => <TabBarBadge />,
+                  }}
+                />
               </Tab.Navigator>
             </ThemeProvider>
           </NavigationContainer>

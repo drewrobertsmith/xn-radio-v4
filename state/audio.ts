@@ -1,5 +1,6 @@
-import { observable } from "@legendapp/state";
+import { computed, observable } from "@legendapp/state";
 import { AudioStatus } from "expo-audio";
+import { Alert } from "react-native";
 
 export interface Track {
   id: string;
@@ -30,8 +31,8 @@ export const audio$ = observable({
   error: null as string | null,
   queue: {
     tracks: [] as Track[],
-    get total() {
-      return this.tracks.length;
+    total: () => {
+      return audio$.queue.tracks.get().length;
     },
   },
 });
@@ -47,5 +48,7 @@ export const addToBackOfQueue = (item: Track) => {
   //ensure no duplicates
   if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
     audio$.queue.tracks.push(item);
+  } else {
+    Alert.alert("Episode already in queue");
   }
 };

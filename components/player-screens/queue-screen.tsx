@@ -4,7 +4,7 @@ import Separator from "../ui/separator";
 import { Text, View } from "react-native";
 import QueueHeaderItem from "../queue-header-item";
 import QueueItem from "../queue-item";
-import { useSelector } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 
 const ListEmptyComponent = () => {
@@ -18,7 +18,7 @@ const ListEmptyComponent = () => {
 
 export default function QueueScreen() {
   const { colors } = useAppTheme();
-  const queue = useSelector(audio$.queue);
+  const queue = use$(() => audio$.queue.get());
 
   return (
     <BottomSheetFlatList

@@ -14,7 +14,7 @@ export default function PlayerControls() {
   if (currentTrack?.isLiveStream) {
     return (
       <View className="flex-row items-center gap-5">
-        <PlayButton track={currentTrack} size={88} color={colors.secondary} />
+        <PlayButton track={currentTrack} size={88} color={colors.text} />
       </View>
     );
   } else {
@@ -26,16 +26,16 @@ export default function PlayerControls() {
           }}
         >
           <View className="relative h-24 w-24 items-center justify-center">
-            <MaterialIcons name="replay" size={72} color={colors.secondary} />
+            <MaterialIcons name="replay" size={64} color={colors.text} />
             <Text
               className="absolute text-sm font-bold bottom-1/3"
-              style={{ color: colors.secondary }}
+              style={{ color: colors.secondaryText }}
             >
               15
             </Text>
           </View>
         </Pressable>
-        <PlayButton track={currentTrack} size={88} color={colors.secondary} />
+        <PlayButton track={currentTrack} size={112} color={colors.text} />
         <Pressable
           onPress={() => {
             seekTo(player.currentTime + 30);
@@ -44,8 +44,8 @@ export default function PlayerControls() {
           <View className="relative h-24 w-24 items-center justify-center">
             <MaterialIcons
               name="replay"
-              size={72}
-              color={colors.secondary}
+              size={64}
+              color={colors.text}
               style={{
                 transform: [
                   {
@@ -56,7 +56,7 @@ export default function PlayerControls() {
             />
             <Text
               className="absolute text-sm font-bold bottom-1/3"
-              style={{ color: colors.secondary }}
+              style={{ color: colors.secondaryText }}
             >
               30
             </Text>

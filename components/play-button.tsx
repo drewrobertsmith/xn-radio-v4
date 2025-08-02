@@ -1,7 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ActivityIndicator } from "react-native";
 import { useSelector } from "@legendapp/state/react";
-import { addToQueue, addToTopOfQueue, audio$, Track } from "@/state/audio";
+import { addToTopOfQueue, audio$, Track } from "@/state/audio";
 import { XNTheme } from "./ui/theme-provider";
 import { useAudio } from "@/context/audio-context";
 
@@ -49,7 +49,6 @@ export default function PlayButton({ size, track, color }: PlayButtonProps) {
       pause(); //add a pause before the replacement
       play(track);
     } else {
-      addToTopOfQueue(track);
       play(track);
     }
   };
