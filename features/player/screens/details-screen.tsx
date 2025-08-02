@@ -1,9 +1,10 @@
 import { Text, View } from "react-native";
-import { useAppTheme } from "../ui/theme-provider";
+import { useAppTheme } from "@/components/ui/theme-provider";
 import { formatDuration } from "@/utils/formatters";
-import Separator from "../ui/separator";
+import Separator from "@/components/ui/separator";
 import { useSelector } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 
 export default function DetailsScreen() {
   const { colors } = useAppTheme();
@@ -18,7 +19,7 @@ export default function DetailsScreen() {
   });
 
   return (
-    <View
+    <BottomSheetScrollView
       className="flex-1 p-4 text gap-2"
       style={{ backgroundColor: colors.card }}
     >
@@ -36,6 +37,6 @@ export default function DetailsScreen() {
       <Text className="text-base" style={{ color: colors.text }}>
         {description}
       </Text>
-    </View>
+    </BottomSheetScrollView>
   );
 }

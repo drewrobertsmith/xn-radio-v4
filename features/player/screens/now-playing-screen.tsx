@@ -1,29 +1,21 @@
 import { Image } from "expo-image";
-import Animated, { AnimatedStyle } from "react-native-reanimated";
-import PlayerControls from "../player-controls";
-import { ImageStyle, StyleProp, StyleSheet, Text, View } from "react-native";
-import { useAppTheme } from "../ui/theme-provider";
-import ProgressBar from "../progress-bar";
-import { Metadata } from "@/types/types";
+import Animated from "react-native-reanimated";
+import PlayerControls from "@/components/player-controls";
+import { StyleSheet, Text, View } from "react-native";
+import { useAppTheme } from "@/components/ui/theme-provider";
+import ProgressBar from "@/components/progress-bar";
+import { useMetadata } from "@/hooks/useMetadata";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useSelector } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import { usePlayerContext } from "@/context/player-context";
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
-interface NowPlayingScreenProps {
-  animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
-  handleSecondaryText: () => React.ReactNode;
-  data: Metadata | null | undefined;
-}
-
-export default function NowPlayingScreen({
-  animatedImageStyle,
-  data,
-  handleSecondaryText,
-}: NowPlayingScreenProps) {
+export default function NowPlayingScreen() {
   const { colors } = useAppTheme();
-  const { title, artwork, id, isLiveStream } = useSelector(() => {
+  const { animatedImageStyle } = usePlayerContext();
+  const { id, title, artwork, isLiveStream } = useSelector(() => {
     return {
       id: audio$.currentTrack.id.get(),
       title: audio$.currentTrack.title.get(),
@@ -31,6 +23,18 @@ export default function NowPlayingScreen({
       isLiveStream: audio$.currentTrack.isLiveStream.get(),
     };
   });
+  const { data } = useMetadata(id, 1);
+
+  const handleSecondaryText = () => {
+    if (id === "XNRD") {
+      return (
+        <Text className="text-sm" style={{ color: colors.secondaryText }}>
+          {data?.track_artist_name}
+        </Text>
+      );
+    }
+    return null;
+  };
 
   return (
     <BottomSheetScrollView

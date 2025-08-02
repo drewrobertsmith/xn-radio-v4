@@ -9,53 +9,38 @@ import {
   ViewStyle,
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
-import { XNTheme } from "./ui/theme-provider";
-import { Metadata } from "@/types/types";
+import { useAppTheme } from "@/components/ui/theme-provider";
 import { Image } from "expo-image";
-import PlayButton from "./play-button";
-import { audio$, Track } from "@/state/audio";
+import PlayButton from "@/components/play-button";
+import { audio$ } from "@/state/audio";
 import { useSelector } from "@legendapp/state/react";
+import { usePlayerContext } from "@/context/player-context";
 
 interface MiniPlayerProps {
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
-  onExpand: () => void;
-  handleSecondaryText: () => React.ReactNode;
-  colors: XNTheme["colors"];
-  data: Metadata | null | undefined;
 }
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
 export default function MiniPlayer({
   animatedMiniPlayerStyle,
-  onExpand,
   animatedImageStyle,
-  handleSecondaryText,
-  colors,
-  data,
 }: MiniPlayerProps) {
-  // ✅ ONE subscription gets the whole object.
+  const { onExpand } = usePlayerContext();
+  const { colors } = useAppTheme();
   const currentTrack = useSelector(audio$.currentTrack);
 
-  // ✅ Then, derive the other values from the result. No more selectors needed.
-  // This is just plain JavaScript, running after the component re-renders.
   const title = currentTrack?.title;
   const id = currentTrack?.id;
   const artwork = currentTrack?.artwork;
 
-  // If there's no track, we can't render, so return null.
   if (!currentTrack) {
-    // Or return a placeholder view. This prevents errors on the line below.
     return null;
   }
 
   return (
-    <Pressable
-      onPress={onExpand}
-    //
-    //The mini player is only interactive when it's visible
-    >
+    <Pressable onPress={onExpand}>
       <Animated.View
         style={[styles.miniPlayerContainer, animatedMiniPlayerStyle]}
       >
@@ -76,9 +61,8 @@ export default function MiniPlayer({
             ellipsizeMode="tail"
             className="text-sm font-semibold"
           >
-            {id === "XNRD" ? data?.cue_title : title}
+            {title}
           </Text>
-          {handleSecondaryText()}
         </View>
         <PlayButton track={currentTrack} size={44} color={colors.secondary} />
       </Animated.View>

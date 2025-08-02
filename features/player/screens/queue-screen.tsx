@@ -1,9 +1,9 @@
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import { useAppTheme } from "../ui/theme-provider";
-import Separator from "../ui/separator";
+import { useAppTheme } from "@/components/ui/theme-provider";
+import Separator from "@/components/ui/separator";
 import { Text, View } from "react-native";
-import QueueHeaderItem from "../queue-header-item";
-import QueueItem from "../queue-item";
+import QueueHeaderItem from "@/components/queue-header-item";
+import QueueItem from "@/components/queue-item";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 

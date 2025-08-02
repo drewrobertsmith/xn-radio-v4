@@ -16,7 +16,7 @@ import { CustomTabBar } from "@/components/ui/custom-tab-bar";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useCallback } from "react";
 import { AudioProvider } from "@/context/audio-context";
-import { Player } from "@/components/player";
+import { Player } from "@/features/player/components/player";
 
 export {
   // Catch any errors thrown by the Layout component.
