@@ -1,5 +1,6 @@
 import { audio$ } from "@/state/audio";
 import { Metadata, Station } from "@/types/types";
+import { queryConstants } from "@/utils/constants";
 import { useSelector } from "@legendapp/state/react";
 import { useQuery } from "@tanstack/react-query";
 import { XMLParser } from "fast-xml-parser";
@@ -80,9 +81,9 @@ export const useMetadata = (
   return useQuery({
     queryKey: ["xn radio, station metadata", tritonId],
     queryFn: () => fetchLiveMetadataFromTriton(tritonId, numberToFetch),
-    refetchInterval: 1000 * 15,
+    refetchInterval: queryConstants.refetchInterval.fifteenSeconds,
     staleTime: 1000 * 60 * 3,
-    gcTime: 1000 * 60 * 5,
+    gcTime: queryConstants.gcTime.fiveMinutes,
     enabled: playbackState === "playing" && id === "XNRD",
   });
 };
