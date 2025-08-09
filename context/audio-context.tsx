@@ -86,21 +86,21 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   // React to playback state changes to update media controls
-  useObserve(() => {
-    const state = audio$.playbackState.get();
-    const track = audio$.currentTrack.get();
-
-    if ((state === "playing" || state === "paused") && track) {
-      MediaControls.updateNowPlaying({
-        title: track.title,
-        artist: track.artist,
-        duration: track.duration,
-        isPlaying: state === "playing",
-      });
-    } else {
-      MediaControls.hideNowPlaying();
-    }
-  });
+  // useObserve(() => {
+  //   const state = audio$.playbackState.get();
+  //   const track = audio$.currentTrack.get();
+  //
+  //   if ((state === "playing" || state === "paused") && track) {
+  //     MediaControls.updateNowPlaying({
+  //       title: track.title,
+  //       artist: track.artist,
+  //       duration: track.duration,
+  //       isPlaying: state === "playing",
+  //     });
+  //   } else {
+  //     MediaControls.hideNowPlaying();
+  //   }
+  // });
 
   const play = useCallback(
     (item: Track) => {

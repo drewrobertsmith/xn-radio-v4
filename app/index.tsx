@@ -3,7 +3,6 @@ import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
-import * as MediaControls from "../modules/media-controls";
 import { Track } from "@/state/audio";
 
 const XN_URL =
@@ -26,7 +25,7 @@ export default function Index() {
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
-        <Text style={{ color: colors.text }}>{MediaControls.hello()}</Text>
+        {/* <Text style={{ color: colors.text }}>{MediaControls.hello()}</Text> */}
         <Image
           source={xnLogo}
           contentFit="contain"
