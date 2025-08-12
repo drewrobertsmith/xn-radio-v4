@@ -10,19 +10,17 @@ type PlayButtonProps = {
   // The track prop can sometimes be null when the parent is loading
   track: Track | null;
   color: XNTheme["colors"][
-  | "background"
-  | "border"
-  | "card"
-  | "notification"
-  | "primary"
-  | "secondary"
-  | "secondaryText"
-  | "text"];
+    | "background"
+    | "border"
+    | "card"
+    | "notification"
+    | "primary"
+    | "secondary"
+    | "secondaryText"
+    | "text"];
 };
 
 export default function PlayButton({ size, track, color }: PlayButtonProps) {
-  // Note: I'm using `useAudioControls` as we defined in the refactor.
-  // If you named it `useAudio`, that's fine too.
   const { play, pause, resume } = useAudio();
 
   // ✅ The Corrected, Null-Safe Selector

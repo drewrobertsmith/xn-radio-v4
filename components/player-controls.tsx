@@ -14,7 +14,7 @@ export default function PlayerControls() {
   if (currentTrack?.isLiveStream) {
     return (
       <View className="flex-row items-center gap-5">
-        <PlayButton track={currentTrack} size={88} color={colors.text} />
+        <PlayButton track={currentTrack} size={112} color={colors.text} />
       </View>
     );
   } else {

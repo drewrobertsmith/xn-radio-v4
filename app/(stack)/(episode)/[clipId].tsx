@@ -95,7 +95,7 @@ export default function ClipPage() {
           size={40}
           color={colors.secondary}
         />
-        <PlayButton track={clipToTrack} size={72} color={colors.secondary} />
+        <PlayButton track={clipToTrack} size={88} color={colors.secondary} />
         <QueueButton item={clipToTrack} size={40} color={colors.secondary} />
       </View>
       <View className="w-[100%] flex-row justify-between">
