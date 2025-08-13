@@ -111,7 +111,7 @@ export const Player = () => {
   });
 
   const handleSecondaryText = useCallback(() => {
-    if (id === "XNRD") {
+    if (id === "XNRD" && data) {
       return (
         <Text className="text-sm" style={{ color: colors.secondaryText }}>
           {data?.track_artist_name}
@@ -119,7 +119,7 @@ export const Player = () => {
       );
     }
     return null;
-  }, [id, data?.track_artist_name, colors.secondaryText]);
+  }, [id, data, colors.secondaryText]);
 
   const animatedPadding = useAnimatedStyle(() => {
     const bottomPadding = interpolate(

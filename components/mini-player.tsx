@@ -50,6 +50,16 @@ export default function MiniPlayer({
     return null;
   }
 
+  const handleMetadataDisplay = () => {
+    if (id === "XNRD" && data) {
+      return data?.cue_title;
+    } else if (id === "XNRD" && !data) {
+      return "XN Radio Stream";
+    } else {
+      return title;
+    }
+  };
+
   return (
     <Pressable
       onPress={onExpand}
@@ -76,7 +86,7 @@ export default function MiniPlayer({
             ellipsizeMode="tail"
             className="text-sm font-semibold"
           >
-            {id === "XNRD" ? data?.cue_title : title}
+            {handleMetadataDisplay()}
           </Text>
           {handleSecondaryText()}
         </View>
