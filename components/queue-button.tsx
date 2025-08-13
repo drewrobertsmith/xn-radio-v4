@@ -4,14 +4,15 @@ import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import { audio$, Track } from "@/state/audio";
 import { useSelector } from "@legendapp/state/react";
 import { useAudio } from "@/context/audio-context";
+import { useAppTheme } from "./ui/theme-provider";
 
 type QueueButtonProps = {
   item: Track;
   size: number;
-  color: string;
 };
 
-export default function QueueButton({ item, size, color }: QueueButtonProps) {
+export default function QueueButton({ item, size }: QueueButtonProps) {
+  const { colors } = useAppTheme();
   const { queue } = useSelector(() => {
     return {
       queue: audio$.queue.tracks.get(),
@@ -21,9 +22,17 @@ export default function QueueButton({ item, size, color }: QueueButtonProps) {
 
   const handleQueueIconState = () => {
     if (!queue.some((track) => track.id === item.id)) {
-      return <MaterialIcons name="playlist-add" size={size} color={color} />;
+      return (
+        <MaterialIcons name="playlist-add" size={size} color={colors.text} />
+      );
     } else {
-      return <MaterialIcons name="playlist-remove" size={size} color={color} />;
+      return (
+        <MaterialIcons
+          name="playlist-remove"
+          size={size}
+          color={colors.error}
+        />
+      );
     }
   };
 

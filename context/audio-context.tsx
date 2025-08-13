@@ -103,6 +103,27 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   //     MediaControls.hideNowPlaying();
   //   }
   // });
+  //
+
+  //--- QUEUE CONTROL ---//
+
+  const addToTopOfQueue = useCallback((item: Track) => {
+    //ensure no duplicates
+    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
+      audio$.queue.tracks.unshift(item);
+    }
+  }, []);
+
+  const addToBackOfQueue = useCallback((item: Track) => {
+    //ensure no duplicates
+    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
+      audio$.queue.tracks.push(item);
+    } else {
+      Alert.alert("Episode already in queue");
+    }
+  }, []);
+
+  //--- Player Controls ---//
 
   const play = useCallback(
     (item: Track) => {
@@ -111,7 +132,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       // //optimistically set state for better UI responsiveness
       // audio$.playbackState.set("playing");
       audio$.currentTrack.set(item);
-
       try {
         console.log("Replacing and playing:", item.title);
         addToTopOfQueue(item);
@@ -127,7 +147,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         audio$.playbackState.set("error");
       }
     },
-    [player],
+    [player, addToTopOfQueue],
   );
 
   const pause = useCallback(() => {
@@ -157,24 +177,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [player],
   );
-
-  //--- QUEUE CONTROL ---//
-
-  const addToTopOfQueue = useCallback((item: Track) => {
-    //ensure no duplicates
-    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
-      audio$.queue.tracks.unshift(item);
-    }
-  }, []);
-
-  const addToBackOfQueue = useCallback((item: Track) => {
-    //ensure no duplicates
-    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
-      audio$.queue.tracks.push(item);
-    } else {
-      Alert.alert("Episode already in queue");
-    }
-  }, []);
 
   return (
     <AudioContext.Provider

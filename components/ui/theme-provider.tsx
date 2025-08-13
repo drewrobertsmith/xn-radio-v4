@@ -12,6 +12,7 @@ export interface XNTheme extends Theme {
   colors: Theme["colors"] & {
     secondary: string;
     secondaryText: string;
+    error: string;
   };
 }
 
@@ -33,6 +34,7 @@ const colors = {
     primary: "#B98B85", // Main brand accent for buttons, links
     secondary: "#4A3F55", // Secondary accent for highlights
     border: "#DCDCDC", // Subtle border color
+    error: "#C75D5D",
   },
   dark: {
     background: "#121013", // Rich off-black for main background
@@ -42,6 +44,7 @@ const colors = {
     primary: "#B98B85", // Main brand accent, pops on dark
     secondary: "#E8C57B", // Warm yellow for icons, highlights
     border: "#2D2B30", // Subtle border color
+    error: "#E57373",
   },
 };
 
@@ -56,6 +59,7 @@ export const XNDefaultTheme: XNTheme = {
     secondaryText: colors.light.secondaryText,
     border: colors.light.border,
     notification: colors.light.secondary,
+    error: colors.light.error,
   },
   fonts: DefaultTheme.fonts,
 };
@@ -71,6 +75,7 @@ export const XNDarkTheme: XNTheme = {
     secondaryText: colors.dark.secondaryText,
     border: colors.dark.border,
     notification: colors.dark.secondary,
+    error: colors.dark.error,
   },
   fonts: DarkTheme.fonts,
 };
