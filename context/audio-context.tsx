@@ -1,5 +1,6 @@
 import {
   AudioPlayer,
+  AudioStatus,
   setAudioModeAsync,
   useAudioPlayer,
   useAudioPlayerStatus,
@@ -13,6 +14,8 @@ import React, {
 import { Alert } from "react-native";
 import { audio$, Track } from "../state/audio";
 import { useObserve } from "@legendapp/state/react";
+import { mmkv } from "@/utils/mmkv-storage";
+import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
 
 // The context now just provides the player instance and actions
 interface AudioContextType {
@@ -30,8 +33,8 @@ const AudioContext = createContext<AudioContextType | null>(null);
 export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const player = useAudioPlayer();
   const playerStatus = useAudioPlayerStatus(player);
+  const { saveCurrentTrackProgress } = usePlaybackPersistence();
 
-  console.log("playback: ", audio$.playbackState.get());
   // configure the audio session on mount
   useEffect(() => {
     const configureAudioSession = async () => {
@@ -53,7 +56,12 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     configureAudioSession();
-  }, []);
+
+    //unload the player when the provider is unmounted
+    return () => {
+      player.release();
+    };
+  }, [player]);
 
   //sync expo-audio status with global state
   useEffect(() => {
@@ -78,6 +86,11 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (status.didJustFinish) {
       audio$.playbackState.set("stopped");
+      // Clear progress for the finished track
+      const trackId = audio$.currentTrack.id.get();
+      if (trackId) {
+        audio$.progress[trackId].set(0);
+      }
     } else if (status.playing) {
       audio$.playbackState.set("playing");
     } else if (status.isBuffering) {
@@ -103,7 +116,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   //     MediaControls.hideNowPlaying();
   //   }
   // });
-  //
 
   //--- QUEUE CONTROL ---//
 
@@ -132,12 +144,20 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       // //optimistically set state for better UI responsiveness
       // audio$.playbackState.set("playing");
       audio$.currentTrack.set(item);
+      addToTopOfQueue(item);
+
       try {
         console.log("Replacing and playing:", item.title);
-        addToTopOfQueue(item);
         // *** FIX for Race Condition ***
         // Use the `item` passed directly into the function, NOT the `currentSource` state.
         player.replace({ uri: item.url });
+
+        // Read from global state, not MMKV
+        const resumePosition = audio$.progress[item.id].get() || 0;
+        // Go back 3 seconds, but don't go below 0
+        const seekPosition = Math.max(0, resumePosition - 3);
+
+        player.seekTo(seekPosition);
         player.play();
       } catch (e) {
         const errorMessage =
@@ -153,9 +173,10 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const pause = useCallback(() => {
     if (player && audio$.playbackState.get() === "playing") {
       audio$.playbackState.set("paused");
+      saveCurrentTrackProgress();
       player.pause();
     }
-  }, [player]);
+  }, [player, saveCurrentTrackProgress]);
 
   const resume = useCallback(() => {
     const state = audio$.playbackState.get();

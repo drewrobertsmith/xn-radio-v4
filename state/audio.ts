@@ -27,6 +27,7 @@ export const audio$ = observable({
   currentTrack: null as Track | null,
   playbackState: "idle" as PlaybackState,
   status: null as AudioStatus | null,
+  progress: {} as Record<Track["id"], number>, // { [trackId]: positionInMs }
   error: null as string | null,
   queue: {
     tracks: [] as Track[],
