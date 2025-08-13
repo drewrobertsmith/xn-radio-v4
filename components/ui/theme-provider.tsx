@@ -15,6 +15,15 @@ export interface XNTheme extends Theme {
   };
 }
 
+const corePalette = {
+  logoWhite: "#FFFFFF",
+  citySilhouette: "#121013",
+  duskSky: "#4A3F55",
+  cloudGray: "#6C707C",
+  sunsetGlow: "#B98B85",
+  windowLight: "#E8C57B",
+};
+
 const colors = {
   light: {
     background: "#F2F2F7", // Soft light gray for main background
@@ -34,15 +43,6 @@ const colors = {
     secondary: "#E8C57B", // Warm yellow for icons, highlights
     border: "#2D2B30", // Subtle border color
   },
-};
-
-const corePalette = {
-  logoWhite: "#FFFFFF",
-  citySilhouette: "#121013",
-  duskSky: "#4A3F55",
-  cloudGray: "#6C707C",
-  sunsetGlow: "#B98B85",
-  windowLight: "#E8C57B",
 };
 
 export const XNDefaultTheme: XNTheme = {
@@ -74,6 +74,8 @@ export const XNDarkTheme: XNTheme = {
   },
   fonts: DarkTheme.fonts,
 };
+
+//useAppTheme hook for less typing of the extended theme to access secondary properties
 export const useAppTheme = () => useRNTheme() as XNTheme;
 
 export default function ThemeProvider(props: { children: React.ReactNode }) {

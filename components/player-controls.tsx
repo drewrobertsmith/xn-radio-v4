@@ -1,5 +1,5 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { Pressable, Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import PlayButton from "./play-button";
 import { useAppTheme } from "./ui/theme-provider";
 import { useAudio } from "@/context/audio-context";
@@ -20,7 +20,7 @@ export default function PlayerControls() {
   } else {
     return (
       <View className="flex-row items-center gap-5">
-        <Pressable
+        <TouchableOpacity
           onPress={() => {
             seekTo(player.currentTime - 15);
           }}
@@ -34,9 +34,9 @@ export default function PlayerControls() {
               15
             </Text>
           </View>
-        </Pressable>
+        </TouchableOpacity>
         <PlayButton track={currentTrack} size={112} color={colors.text} />
-        <Pressable
+        <TouchableOpacity
           onPress={() => {
             seekTo(player.currentTime + 30);
           }}
@@ -61,7 +61,7 @@ export default function PlayerControls() {
               30
             </Text>
           </View>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     );
   }

@@ -1,8 +1,9 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View } from "react-native";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { addToBackOfQueue, audio$, Track } from "@/state/audio";
+import { audio$, Track } from "@/state/audio";
 import { useSelector } from "@legendapp/state/react";
+import { useAudio } from "@/context/audio-context";
 
 type QueueButtonProps = {
   item: Track;
@@ -16,6 +17,7 @@ export default function QueueButton({ item, size, color }: QueueButtonProps) {
       queue: audio$.queue.tracks.get(),
     };
   });
+  const { addToBackOfQueue } = useAudio();
 
   const handleQueueIconState = () => {
     if (!queue.some((track) => track.id === item.id)) {

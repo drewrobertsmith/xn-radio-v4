@@ -11,8 +11,7 @@ import React, {
   useEffect,
 } from "react";
 import { Alert } from "react-native";
-import * as MediaControls from "../modules/media-controls";
-import { addToTopOfQueue, audio$, Track } from "../state/audio";
+import { audio$, Track } from "../state/audio";
 import { useObserve } from "@legendapp/state/react";
 
 // The context now just provides the player instance and actions
@@ -22,6 +21,8 @@ interface AudioContextType {
   pause: () => void;
   resume: () => void;
   seekTo: (seconds: number) => void;
+  addToTopOfQueue: (item: Track) => void;
+  addToBackOfQueue: (item: Track) => void;
 }
 
 const AudioContext = createContext<AudioContextType | null>(null);
@@ -30,6 +31,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const player = useAudioPlayer();
   const playerStatus = useAudioPlayerStatus(player);
 
+  console.log("playback: ", audio$.playbackState.get());
   // configure the audio session on mount
   useEffect(() => {
     const configureAudioSession = async () => {
@@ -106,8 +108,8 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     (item: Track) => {
       if (!player) return;
       audio$.error.set(null);
-      //optimistically set state for better UI responsiveness
-      audio$.playbackState.set("playing");
+      // //optimistically set state for better UI responsiveness
+      // audio$.playbackState.set("playing");
       audio$.currentTrack.set(item);
 
       try {
@@ -130,8 +132,8 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
 
   const pause = useCallback(() => {
     if (player && audio$.playbackState.get() === "playing") {
-      player.pause();
       audio$.playbackState.set("paused");
+      player.pause();
     }
   }, [player]);
 
@@ -141,9 +143,9 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       if (state === "stopped") {
         player.seekTo(0);
       }
-      player.play();
       // ✅ Optimistically set the state for instant UI feedback
       audio$.playbackState.set("playing");
+      player.play();
     }
   }, [player]);
 
@@ -156,6 +158,24 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     [player],
   );
 
+  //--- QUEUE CONTROL ---//
+
+  const addToTopOfQueue = useCallback((item: Track) => {
+    //ensure no duplicates
+    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
+      audio$.queue.tracks.unshift(item);
+    }
+  }, []);
+
+  const addToBackOfQueue = useCallback((item: Track) => {
+    //ensure no duplicates
+    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
+      audio$.queue.tracks.push(item);
+    } else {
+      Alert.alert("Episode already in queue");
+    }
+  }, []);
+
   return (
     <AudioContext.Provider
       value={{
@@ -164,6 +184,8 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         pause,
         resume,
         seekTo,
+        addToTopOfQueue,
+        addToBackOfQueue,
       }}
     >
       {children}
