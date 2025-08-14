@@ -117,46 +117,16 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   //   }
   // });
 
-  //--- QUEUE CONTROL ---//
-
-  const addToTopOfQueue = useCallback((item: Track) => {
-    //ensure no duplicates
-    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
-      audio$.queue.tracks.unshift(item);
-    }
-  }, []);
-
-  const addToBackOfQueue = useCallback((item: Track) => {
-    //ensure no duplicates
-    if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
-      audio$.queue.tracks.push(item);
-    } else {
-      Alert.alert("Episode already in queue");
-    }
-  }, []);
-
-  //--- Player Controls ---//
-
-  const play = useCallback(
-    (item: Track) => {
-      if (!player) return;
+  //Loads a track into the native player but does NOT play it.
+  const loadTrack = useCallback(
+    (track: Track) => {
+      if (!player || !track) return;
       audio$.error.set(null);
-      audio$.currentTrack.set(item);
-      addToTopOfQueue(item);
-
       try {
-        console.log("Replacing and playing:", item.title);
-        // *** FIX for Race Condition ***
-        // Use the `item` passed directly into the function, NOT the `currentSource` state.
-        player.replace({ uri: item.url });
-
-        // Read from global state, not MMKV
-        const resumePosition = audio$.progress[item.id].get() || 0;
-        // Go back 3 seconds, but don't go below 0
-        const seekPosition = Math.max(0, resumePosition - 3);
-
-        player.seekTo(seekPosition);
-        player.play();
+        console.log("Loading track into player:", track.title);
+        player.replace({ uri: track.url });
+        const resumePosition = audio$.progress[track.id].get() || 0;
+        player.seekTo(resumePosition);
       } catch (e) {
         const errorMessage =
           e instanceof Error ? e.message : "An unknown playback error occured";
@@ -164,6 +134,59 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         audio$.error.set(errorMessage);
         audio$.playbackState.set("error");
       }
+    },
+    [player],
+  );
+
+  //--- QUEUE CONTROL ---//
+
+  const addToTopOfQueue = useCallback(
+    (item: Track) => {
+      // Get the current queue and filter out the item if it already exists.
+      const currentQueue = audio$.queue.tracks.get();
+      const newQueue = currentQueue.filter((track) => track.id !== item.id);
+
+      // Add the item to the very beginning of the new queue.
+      newQueue.unshift(item);
+
+      // Set the new queue state.
+      audio$.queue.tracks.set(newQueue);
+
+      // Since this is now the first item, load it into the player.
+      loadTrack(item);
+      // Set state to paused, making it "ready to play".
+      audio$.playbackState.set("paused");
+    },
+    [loadTrack],
+  );
+
+  const addToBackOfQueue = useCallback(
+    (item: Track) => {
+      if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
+        const wasQueueEmpty = audio$.queue.tracks.get().length === 0;
+        audio$.queue.tracks.push(item);
+
+        // If the queue was empty, this new track is now the first one.
+        // Load it into the player so it's ready.
+        if (wasQueueEmpty) {
+          loadTrack(item);
+          audio$.playbackState.set("paused");
+        }
+      } else {
+        Alert.alert("Episode already in queue");
+      }
+    },
+    [loadTrack],
+  );
+  //--- Player Controls ---//
+
+  const play = useCallback(
+    (item: Track) => {
+      if (!player) return;
+      // First, ensure the track is at the top of the queue and loaded.
+      addToTopOfQueue(item);
+      // Then, simply tell the player to play.
+      player.play();
     },
     [player, addToTopOfQueue],
   );

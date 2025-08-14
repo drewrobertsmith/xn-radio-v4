@@ -1,7 +1,7 @@
 import { audio$, Track } from "@/state/audio";
 import { mmkv } from "@/utils/mmkv-storage";
 import { useObserve } from "@legendapp/state/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 // store the entire queue under one single, well-known key.
 const QUEUE_KEY = "audio_queue";
@@ -12,6 +12,9 @@ const QUEUE_KEY = "audio_queue";
  */
 
 export function useQueuePersistence() {
+  // Create a ref to track if this is the initial mount.
+  const isInitialMount = useRef(true);
+
   // 1. Load the saved queue from MMKV into Legend-State on mount
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export function useQueuePersistence() {
           console.log("Audio queue loaded from storage");
         }
       } catch (e) {
-        console.error("Faile dot parse saved audio queue: ", e);
+        console.error("Failed to parse saved audio queue: ", e);
         //Clear corrupted key if parsing fails
         mmkv.delete(QUEUE_KEY);
       }
@@ -52,10 +55,16 @@ export function useQueuePersistence() {
 
     audio$.queue.tracks.get();
 
-    // We call saveCurrentQueue directly in the effect body.
-    // This saves a snapshot of the queue *after* it has been modified.
-    saveCurrentQueue();
-    console.log("Queue changed, saving to MMKV.");
+    //Check if it's the initial mount.
+    if (isInitialMount.current) {
+      // If it is, set the ref to false and do nothing else.
+      // This skips the save operation on the first run.
+      isInitialMount.current = false;
+    } else {
+      // On all subsequent runs (i.e., actual queue changes), save the queue.
+      saveCurrentQueue();
+      console.log("Queue changed, saving to MMKV.");
+    }
   });
   return { saveCurrentQueue };
 }

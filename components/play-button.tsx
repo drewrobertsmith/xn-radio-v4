@@ -10,14 +10,14 @@ type PlayButtonProps = {
   // The track prop can sometimes be null when the parent is loading
   track: Track | null;
   color: XNTheme["colors"][
-  | "background"
-  | "border"
-  | "card"
-  | "notification"
-  | "primary"
-  | "secondary"
-  | "secondaryText"
-  | "text"];
+    | "background"
+    | "border"
+    | "card"
+    | "notification"
+    | "primary"
+    | "secondary"
+    | "secondaryText"
+    | "text"];
 };
 
 export default function PlayButton({ size, track, color }: PlayButtonProps) {
@@ -38,51 +38,43 @@ export default function PlayButton({ size, track, color }: PlayButtonProps) {
   }
 
   const handleButtonPress = () => {
-    if (playbackState === "playing" && currentTrackId === track.id) {
+    const isThisTrackPlaying =
+      playbackState === "playing" && currentTrackId === track.id;
+    const isThisTrackPaused =
+      playbackState === "paused" && currentTrackId === track.id;
+
+    if (isThisTrackPlaying) {
+      // If this exact track is playing, pause it.
       pause();
-    } else if (playbackState === "paused" && currentTrackId === track.id) {
+    } else if (isThisTrackPaused) {
+      // If this exact track is paused, resume it.
       resume();
-    } else if (playbackState === "playing" && currentTrackId !== track.id) {
-      play(track);
     } else {
+      // For all other cases (different track, idle, stopped), play this track.
       play(track);
     }
   };
 
-  const getIcon = () => {
-    // Show loading indicator if loading this specific track
-    if (playbackState === "loading" && currentTrackId === track.id) {
-      return (
-        <MaterialIcons name="pause-circle-filled" size={size} color={color} />
-      );
-    }
+  const getIconName = () => {
+    const isThisTrackPlaying =
+      playbackState === "playing" && currentTrackId === track.id;
 
-    // Show pause icon if playing this specific track
-    if (playbackState === "playing" && currentTrackId === track.id) {
-      return (
-        <TouchableOpacity onPress={handleButtonPress}>
-          <MaterialIcons
-            name="pause-circle-filled"
-            size={size}
-            color={color}
-            suppressHighlighting={true}
-          />
-        </TouchableOpacity>
-      );
+    if (isThisTrackPlaying) {
+      return "pause-circle-filled";
     }
-
-    // Show play icon for all other states
-    return (
-      <TouchableOpacity onPress={handleButtonPress}>
-        <MaterialIcons
-          name="play-circle-filled"
-          size={size}
-          color={color}
-          suppressHighlighting={true}
-        />
-      </TouchableOpacity>
-    );
+    // In all other cases (paused, stopped, loading, different track), show the play icon.
+    // This provides immediate feedback when the user presses play on a different track.
+    return "play-circle-filled";
   };
-
-  return getIcon();
+  // Show play icon for all other states
+  return (
+    <TouchableOpacity onPress={handleButtonPress}>
+      <MaterialIcons
+        name={getIconName()}
+        size={size}
+        color={color}
+        suppressHighlighting={true}
+      />
+    </TouchableOpacity>
+  );
 }

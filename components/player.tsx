@@ -27,8 +27,9 @@ export const Player = () => {
   const { player } = useAudio();
 
   const { id, playbackState, queueLength } = use$(() => {
+    const currentTrack = audio$.currentTrack.get();
     return {
-      id: audio$.currentTrack.id.get(),
+      id: currentTrack?.id,
       playbackState: audio$.playbackState.get(),
       queueLength: audio$.queue.tracks.get().length,
     };

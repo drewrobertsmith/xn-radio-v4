@@ -24,7 +24,6 @@ type PlaybackState =
 
 // The single, global audio state
 export const audio$ = observable({
-  currentTrack: null as Track | null,
   playbackState: "idle" as PlaybackState,
   status: null as AudioStatus | null,
   progress: {} as Record<Track["id"], number>, // { [trackId]: positionInMs }
@@ -34,5 +33,11 @@ export const audio$ = observable({
     total: () => {
       return audio$.queue.tracks.get().length;
     },
+  },
+  // currentTrack is now a computed function.
+  // It automatically returns the first track in the queue, or null if the queue is empty.
+  // Any component observing this will automatically update when the queue changes.
+  currentTrack: (): Track | null => {
+    return audio$.queue.tracks.get()[0] || null;
   },
 });
