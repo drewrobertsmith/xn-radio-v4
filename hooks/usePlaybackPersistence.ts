@@ -54,7 +54,7 @@ export function usePlaybackPersistence() {
   useObserve(() => {
     // This effect runs whenever the current track ID changes.
     // useEffect` pattern inside `useObserve` for cleanup
-    const id = audio$.currentTrack.id.get();
+    audio$.currentTrack.id.get();
     return () => {
       // This cleanup function runs when the ID is about to change.
       // This is the perfect time to save the progress of the *previous* track.

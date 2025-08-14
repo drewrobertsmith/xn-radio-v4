@@ -1,6 +1,5 @@
 import {
   AudioPlayer,
-  AudioStatus,
   setAudioModeAsync,
   useAudioPlayer,
   useAudioPlayerStatus,
@@ -14,7 +13,6 @@ import React, {
 import { Alert } from "react-native";
 import { audio$, Track } from "../state/audio";
 import { useObserve } from "@legendapp/state/react";
-import { mmkv } from "@/utils/mmkv-storage";
 import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
 
 // The context now just provides the player instance and actions
@@ -141,8 +139,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     (item: Track) => {
       if (!player) return;
       audio$.error.set(null);
-      // //optimistically set state for better UI responsiveness
-      // audio$.playbackState.set("playing");
       audio$.currentTrack.set(item);
       addToTopOfQueue(item);
 
@@ -193,7 +189,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const seekTo = useCallback(
     (seconds: number) => {
       if (player) {
-        player.seekTo(seconds); // expo-audio uses milliseconds
+        player.seekTo(seconds);
       }
     },
     [player],
