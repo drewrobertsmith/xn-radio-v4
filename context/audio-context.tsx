@@ -14,6 +14,7 @@ import { Alert } from "react-native";
 import { audio$, Track } from "../state/audio";
 import { useObserve } from "@legendapp/state/react";
 import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
+import { useQueuePersistence } from "@/hooks/useQueuePersistence";
 
 // The context now just provides the player instance and actions
 interface AudioContextType {
@@ -32,6 +33,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const player = useAudioPlayer();
   const playerStatus = useAudioPlayerStatus(player);
   const { saveCurrentTrackProgress } = usePlaybackPersistence();
+  useQueuePersistence();
 
   // configure the audio session on mount
   useEffect(() => {

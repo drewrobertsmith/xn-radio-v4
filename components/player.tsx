@@ -13,7 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAudio } from "@/context/audio-context";
 import { useMetadata } from "@/hooks/useMetadata";
 import { PlayerUI } from "./ui/player-ui";
-import { useSelector } from "@legendapp/state/react";
+import { use$, useSelector } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 
 const { height: screenHeight, width } = Dimensions.get("window");
@@ -26,14 +26,11 @@ export const Player = () => {
   const area = useSafeAreaInsets();
   const { player } = useAudio();
 
-  // const currentTrack = useSelector(audio$.currentTrack);
-  // const playbackState = useSelector(audio$.playbackState);
-  // const status = useSelector(audio$.status);
-  //
-  const { id, playbackState } = useSelector(() => {
+  const { id, playbackState, queueLength } = use$(() => {
     return {
       id: audio$.currentTrack.id.get(),
       playbackState: audio$.playbackState.get(),
+      queueLength: audio$.queue.tracks.get().length,
     };
   });
 
@@ -142,7 +139,10 @@ export const Player = () => {
     }
   }, [tabBarHeight]);
 
-  if (tabBarHeight === 0 || playbackState === "idle") {
+  // The player should show if the state is NOT idle, OR if there are items in the queue.
+  const isPlayerVisible = playbackState !== "idle" || queueLength > 0;
+
+  if (tabBarHeight === 0 || !isPlayerVisible) {
     return null;
   }
 
