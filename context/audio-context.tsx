@@ -126,7 +126,8 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       audio$.error.set(null);
       try {
         console.log("Loading track into player:", track.title);
-        player.replace({ uri: track.url });
+        player.replace({ uri: `${track.url}?utm_source=CustomPlayer7` });
+        console.log("<-------------Track data sent to Omny Studio----------->");
         const resumePosition = audio$.progress[track.id].get() || 0;
         player.seekTo(resumePosition);
       } catch (e) {

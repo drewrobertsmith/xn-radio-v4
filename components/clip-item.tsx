@@ -1,12 +1,12 @@
 import { Clip } from "@/types/types";
-import { formatDate, formatDuration } from "@/utils/formatters";
+import { formatDate } from "@/utils/formatters";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { useRouter } from "expo-router";
 import PlayButton from "./play-button";
 import { Track } from "@/state/audio";
 import QueueButton from "./queue-button";
-import RenderDuration, { RenderClipDuration } from "./duration";
+import { RenderClipDuration } from "./duration";
 
 export default function ClipItem({ item }: { item: Clip }) {
   const { colors } = useAppTheme();
@@ -55,7 +55,7 @@ export default function ClipItem({ item }: { item: Clip }) {
       </TouchableOpacity>
 
       <View className="flex-row items-center gap-2">
-        <QueueButton size={32} color={colors.secondary} item={clipToTrack} />
+        <QueueButton size={32} item={clipToTrack} />
         <PlayButton size={44} color={colors.secondary} track={clipToTrack} />
       </View>
     </View>
