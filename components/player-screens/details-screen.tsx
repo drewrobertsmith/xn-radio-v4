@@ -2,20 +2,22 @@ import { Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
 import { formatDuration } from "@/utils/formatters";
 import Separator from "../ui/separator";
-import { useSelector } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import RenderDuration, { RenderTrackDuration } from "../duration";
 
 export default function DetailsScreen() {
   const { colors } = useAppTheme();
 
-  const { title, duration, description, isLiveStream } = useSelector(() => {
+  const { title, description, isLiveStream, currentTrack } = use$(() => {
     return {
       title: audio$.currentTrack.title.get(),
       isLiveStream: audio$.currentTrack.isLiveStream.get(),
-      duration: audio$.currentTrack.duration.get(),
       description: audio$.currentTrack.description.get(),
+      currentTrack: audio$.currentTrack.get(),
     };
   });
+  //TODO: fix RenderDuration needing a clip object rather than track object
 
   return (
     <View
@@ -26,10 +28,12 @@ export default function DetailsScreen() {
         {title}
       </Text>
       {isLiveStream ? (
-        <Text className="font-semibold color-red-500">On-Air Now</Text>
+        <Text className="font-semibold" style={{ color: colors.error }}>
+          On-Air Now
+        </Text>
       ) : (
         <Text style={{ color: colors.text }}>
-          {formatDuration(duration, "summary")}
+          {RenderTrackDuration(currentTrack)}
         </Text>
       )}
       <Separator />

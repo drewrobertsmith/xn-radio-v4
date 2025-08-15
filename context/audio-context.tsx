@@ -25,6 +25,7 @@ interface AudioContextType {
   seekTo: (seconds: number) => void;
   addToTopOfQueue: (item: Track) => void;
   addToBackOfQueue: (item: Track) => void;
+  removeFromQueue: (trackId: string) => void;
 }
 
 const AudioContext = createContext<AudioContextType | null>(null);
@@ -116,6 +117,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   //     MediaControls.hideNowPlaying();
   //   }
   // });
+  //
 
   //Loads a track into the native player but does NOT play it.
   const loadTrack = useCallback(
@@ -137,6 +139,23 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [player],
   );
+
+  //pre-load the track on startup
+  useEffect(() => {
+    const initialTrack = audio$.currentTrack.get();
+
+    // If there's a track at the top of the queue after loading from storage...
+    if (initialTrack) {
+      console.log(
+        "Pre-loading initial track on app start:",
+        initialTrack.title,
+      );
+      // ...load it into the player so it's ready.
+      loadTrack(initialTrack);
+      // Set the state to paused, so the UI shows it's ready to be played.
+      audio$.playbackState.set("paused");
+    }
+  }, [loadTrack]);
 
   //--- QUEUE CONTROL ---//
 
@@ -178,11 +197,46 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     },
     [loadTrack],
   );
+
+  const removeFromQueue = useCallback(
+    (trackId: string) => {
+      if (!player) return;
+
+      // Get the current track *before* modifying the queue.
+      const currentTrackBeforeRemoval = audio$.currentTrack.get();
+
+      // Create the new queue by filtering out the track to be removed.
+      const newQueue = audio$.queue.tracks
+        .get()
+        .filter((track) => track.id !== trackId);
+
+      // Set the new state. This will trigger persistence hook automatically.
+      audio$.queue.tracks.set(newQueue);
+
+      // If the track just removed was the currently active one...
+      if (currentTrackBeforeRemoval?.id === trackId) {
+        player.replace(null); // Stop and unload the old audio.
+        // Get the new track at the top of the queue (if it exists).
+        const nextTrack = audio$.queue.tracks.get()[0];
+        if (nextTrack) {
+          // If there's a new track, load it and set the state to paused.
+          loadTrack(nextTrack);
+          audio$.playbackState.set("paused");
+        } else {
+          // If the queue is now empty, set the state to idle.
+          audio$.playbackState.set("idle");
+        }
+      }
+    },
+    [player, loadTrack],
+  );
+
   //--- Player Controls ---//
 
   const play = useCallback(
     (item: Track) => {
       if (!player) return;
+      audio$.playbackState.set("loading");
       // First, ensure the track is at the top of the queue and loaded.
       addToTopOfQueue(item);
       // Then, simply tell the player to play.
@@ -230,6 +284,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         seekTo,
         addToTopOfQueue,
         addToBackOfQueue,
+        removeFromQueue,
       }}
     >
       {children}

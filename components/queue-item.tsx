@@ -2,21 +2,30 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { formatDate, formatDuration } from "@/utils/formatters";
 import { Image } from "expo-image";
-import { Track } from "@/state/audio";
+import { audio$, Track } from "@/state/audio";
 import { useAudio } from "@/context/audio-context";
+import { useObserve, useSelector, use$ } from "@legendapp/state/react";
+import { RenderTrackDuration } from "./duration";
 
 export default function QueueItem({ item }: { item: Track }) {
   const { colors } = useAppTheme();
-  const { play } = useAudio();
+  const { play, removeFromQueue } = useAudio();
 
   const handleQueueItemPress = (item: Track) => {
     play(item);
+  };
+
+  const handleLongPress = (item: Track) => {
+    removeFromQueue(item.id);
   };
 
   return (
     <TouchableOpacity
       onPress={() => {
         handleQueueItemPress(item);
+      }}
+      onLongPress={() => {
+        handleLongPress(item);
       }}
     >
       <View className="flex-row justify-between items-center p-2 gap-2 ">
@@ -30,7 +39,7 @@ export default function QueueItem({ item }: { item: Track }) {
             borderRadius: 8,
           }}
         />
-        <View className="w-[85%] gap-1">
+        <View className="flex-1 gap-1">
           <Text className="text-xs" style={{ color: colors.secondaryText }}>
             {formatDate(item.date)}
           </Text>
@@ -48,7 +57,7 @@ export default function QueueItem({ item }: { item: Track }) {
               color: colors.secondaryText,
             }}
           >
-            {formatDuration(item.duration, "summary")}
+            {RenderTrackDuration(item)}
           </Text>
         </View>
       </View>

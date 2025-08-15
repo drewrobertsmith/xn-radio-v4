@@ -26,7 +26,7 @@ export default function PlayerControls() {
           }}
         >
           <View className="relative h-24 w-24 items-center justify-center">
-            <MaterialIcons name="replay" size={64} color={colors.text} />
+            <MaterialIcons name="replay" size={64} color={colors.secondary} />
             <Text
               className="absolute text-sm font-bold bottom-1/3"
               style={{ color: colors.secondaryText }}
@@ -35,7 +35,7 @@ export default function PlayerControls() {
             </Text>
           </View>
         </TouchableOpacity>
-        <PlayButton track={currentTrack} size={112} color={colors.text} />
+        <PlayButton track={currentTrack} size={112} color={colors.secondary} />
         <TouchableOpacity
           onPress={() => {
             seekTo(player.currentTime + 30);
@@ -45,7 +45,7 @@ export default function PlayerControls() {
             <MaterialIcons
               name="replay"
               size={64}
-              color={colors.text}
+              color={colors.secondary}
               style={{
                 transform: [
                   {

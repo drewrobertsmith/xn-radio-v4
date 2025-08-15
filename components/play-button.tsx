@@ -10,14 +10,14 @@ type PlayButtonProps = {
   // The track prop can sometimes be null when the parent is loading
   track: Track | null;
   color: XNTheme["colors"][
-    | "background"
-    | "border"
-    | "card"
-    | "notification"
-    | "primary"
-    | "secondary"
-    | "secondaryText"
-    | "text"];
+  | "background"
+  | "border"
+  | "card"
+  | "notification"
+  | "primary"
+  | "secondary"
+  | "secondaryText"
+  | "text"];
 };
 
 export default function PlayButton({ size, track, color }: PlayButtonProps) {
@@ -55,26 +55,33 @@ export default function PlayButton({ size, track, color }: PlayButtonProps) {
     }
   };
 
-  const getIconName = () => {
-    const isThisTrackPlaying =
-      playbackState === "playing" && currentTrackId === track.id;
+  const renderIcon = () => {
+    const isThisTrackCurrent = currentTrackId === track.id;
 
-    if (isThisTrackPlaying) {
-      return "pause-circle-filled";
+    // If this specific track is the one loading, show a spinner.
+    if (playbackState === "loading" && isThisTrackCurrent) {
+      return <ActivityIndicator size={size} color={color} />;
     }
-    // In all other cases (paused, stopped, loading, different track), show the play icon.
-    // This provides immediate feedback when the user presses play on a different track.
-    return "play-circle-filled";
+
+    // If this specific track is playing, show the pause icon.
+    if (playbackState === "playing" && isThisTrackCurrent) {
+      return (
+        <MaterialIcons name="pause-circle-filled" size={size} color={color} />
+      );
+    }
+
+    // In all other cases (paused, stopped, different track), show the play icon.
+    return (
+      <MaterialIcons name="play-circle-filled" size={size} color={color} />
+    );
   };
-  // Show play icon for all other states
+
   return (
-    <TouchableOpacity onPress={handleButtonPress}>
-      <MaterialIcons
-        name={getIconName()}
-        size={size}
-        color={color}
-        suppressHighlighting={true}
-      />
+    <TouchableOpacity
+      onPress={handleButtonPress}
+      disabled={playbackState === "loading" && currentTrackId === track.id}
+    >
+      {renderIcon()}
     </TouchableOpacity>
   );
 }

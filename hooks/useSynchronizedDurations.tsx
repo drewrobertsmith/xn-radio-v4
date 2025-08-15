@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 
-// The formatDuration function remains the same, no changes needed there.
 export function formatDuration(
   durationSeconds: number,
   numberType: "precise" | "summary",

@@ -34,8 +34,8 @@ export const audio$ = observable({
       return audio$.queue.tracks.get().length;
     },
   },
-  // currentTrack is now a computed function.
-  // It automatically returns the first track in the queue, or null if the queue is empty.
+  // currentTrack is a computed function that automatically returns the first track
+  // in the queue, or null if the queue is empty.
   // Any component observing this will automatically update when the queue changes.
   currentTrack: (): Track | null => {
     return audio$.queue.tracks.get()[0] || null;

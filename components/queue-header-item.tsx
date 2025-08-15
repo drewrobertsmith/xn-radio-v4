@@ -2,39 +2,44 @@ import { useAudio } from "@/context/audio-context";
 import { useAppTheme } from "./ui/theme-provider";
 import { Text, View } from "react-native";
 import { Image } from "expo-image";
-import { formatDate, formatDuration } from "@/utils/formatters";
-import { useSelector } from "@legendapp/state/react";
+import { formatDate } from "@/utils/formatters";
+import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import { RenderTrackDuration } from "./duration";
+import PlayButton from "./play-button";
 
 export default function QueueHeaderItem() {
   const { colors } = useAppTheme();
-  const { player } = useAudio();
-  const { queue } = useSelector(() => {
+
+  const data = use$(() => {
+    const track = audio$.currentTrack.get();
+
+    if (!track) {
+      return null;
+    }
+
+    const status = audio$.status.get();
+
+    const currentTimeInSeconds =
+      status?.isLoaded && status.currentTime ? status.currentTime : 0;
+    const durationInSeconds = track.duration ? track.duration : 0;
+
     return {
-      queue: audio$.queue.tracks.get(),
+      track,
+      currentTime: currentTimeInSeconds,
+      duration: durationInSeconds,
     };
   });
 
-  const topInQueue = queue[0];
+  //If selector returns null (because the queue is empty),
+  // render nothing.
+  if (!data) {
+    return null;
+  }
 
-  const handleProgressWidth =
-    topInQueue.duration > 0
-      ? (player.currentTime / topInQueue.duration) * 100
-      : 0;
+  const { track, currentTime, duration } = data;
 
-  const handleDuration = () => {
-    return (
-      <Text
-        className="text-xs"
-        style={{
-          color: colors.secondaryText,
-        }}
-      >
-        {formatDuration(topInQueue.duration - player.currentTime, "summary")}{" "}
-        left
-      </Text>
-    );
-  };
+  const progressWidth = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <View
@@ -49,13 +54,13 @@ export default function QueueHeaderItem() {
         style={[
           {
             backgroundColor: colors.card,
-            width: `${handleProgressWidth}%`,
+            width: `${progressWidth}%`,
           },
         ]}
       />
       <View>
         <Image
-          source={topInQueue.artwork}
+          source={track.artwork}
           contentFit="contain"
           style={{
             aspectRatio: 1,
@@ -65,9 +70,9 @@ export default function QueueHeaderItem() {
           }}
         />
       </View>
-      <View className="w-[85%] gap-1">
+      <View className="flex-1">
         <Text className="text-xs" style={{ color: colors.secondaryText }}>
-          {formatDate(topInQueue.date)}
+          {formatDate(track.date)}
         </Text>
         <Text
           className="text-sm font-semibold"
@@ -75,9 +80,14 @@ export default function QueueHeaderItem() {
           numberOfLines={2}
           ellipsizeMode="tail"
         >
-          {topInQueue.title}
+          {track.title}
         </Text>
-        {handleDuration()}
+        <Text className="text-xs" style={{ color: colors.secondaryText }}>
+          {RenderTrackDuration(track)}
+        </Text>
+      </View>
+      <View className="flex-2 ml-1">
+        <PlayButton size={44} color={colors.secondary} track={track} />
       </View>
     </View>
   );
