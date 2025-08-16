@@ -1,4 +1,4 @@
-import { observable } from "@legendapp/state";
+import { computed, observable } from "@legendapp/state";
 import { AudioStatus } from "expo-audio";
 
 export interface Track {
@@ -30,14 +30,14 @@ export const audio$ = observable({
   error: null as string | null,
   queue: {
     tracks: [] as Track[],
-    total: () => {
+    total: computed(() => {
       return audio$.queue.tracks.get().length;
-    },
+    }),
   },
   // currentTrack is a computed function that automatically returns the first track
   // in the queue, or null if the queue is empty.
   // Any component observing this will automatically update when the queue changes.
-  currentTrack: (): Track | null => {
+  currentTrack: computed((): Track | null => {
     return audio$.queue.tracks.get()[0] || null;
-  },
+  }),
 });

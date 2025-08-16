@@ -43,9 +43,21 @@ export function usePlaybackPersistence() {
       // Update both MMKV and the global state
       mmkv.set(key, position);
 
-      // ✅ CORRECTED: Use `merge` to safely create or update the progress property.
-      // This prevents a crash if `audio$.progress[track.id]` doesn't exist yet.
-      audio$.progress[track.id].set(position);
+      // 1. `audio$.progress[track.id].set(position)`: This was the original code.
+      //    It fails when `track.id` is new because `audio$.progress[track.id]` is
+      //    `undefined`, and you can't call `.set()` on `undefined`.
+      //
+      // 2. `audio$.progress.merge({ [track.id]: position })`: This was the first
+      //    attempted fix. It failed because the `merge` function is not available
+      //    on the `progress` object in the version of Legend State being used.
+      //
+      // 3. `const newProgress = { ...audio$.progress.peek(), [track.id]: position }; audio$.progress.set(newProgress);`:
+      //    This is the current, correct solution.
+      //    - `peek()` gets the current value of the `progress` object without creating a dependency.
+      //    - The spread operator `{ ... }` creates a new object with the existing progress and the new value.
+      //    - `set()` then updates the state with the new object.
+      const newProgress = { ...audio$.progress.peek(), [track.id]: position };
+      audio$.progress.set(newProgress);
       console.log(`Saved progress for ${track.id} at ${position}ms`);
     }
   };

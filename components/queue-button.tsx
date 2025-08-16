@@ -13,15 +13,13 @@ type QueueButtonProps = {
 
 export default function QueueButton({ item, size }: QueueButtonProps) {
   const { colors } = useAppTheme();
-  const { queue } = use$(() => {
-    return {
-      queue: audio$.queue.tracks.get(),
-    };
-  });
+  const isInQueue = use$(() =>
+    audio$.queue.tracks.get().some((track) => track.id === item.id),
+  );
   const { addToBackOfQueue, removeFromQueue } = useAudio();
 
   const handleQueueIconPress = () => {
-    if (!queue.some((track) => track.id === item.id)) {
+    if (!isInQueue) {
       addToBackOfQueue(item);
     } else {
       removeFromQueue(item.id);
@@ -29,7 +27,7 @@ export default function QueueButton({ item, size }: QueueButtonProps) {
   };
 
   const handleQueueIconState = () => {
-    if (!queue.some((track) => track.id === item.id)) {
+    if (!isInQueue) {
       return (
         <MaterialIcons name="playlist-add" size={size} color={colors.text} />
       );

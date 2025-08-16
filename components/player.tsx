@@ -29,7 +29,7 @@ export const Player = () => {
     return {
       id: currentTrack?.id,
       playbackState: audio$.playbackState.get(),
-      queueLength: audio$.queue.tracks.get().length,
+      queueLength: audio$.queue.total.get(),
     };
   });
 

@@ -9,7 +9,7 @@ import { audio$ } from "@/state/audio";
 export default function PlayerControls() {
   const { colors } = useAppTheme();
   const { player, seekTo } = useAudio();
-  const currentTrack = use$(audio$.currentTrack.get());
+  const currentTrack = use$(audio$.currentTrack);
 
   if (currentTrack?.isLiveStream) {
     return (
