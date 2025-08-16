@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { BottomTabBar, BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { LayoutChangeEvent, View } from "react-native"; // Import View
+import { LayoutChangeEvent, View } from "react-native";
 import { useLayout } from "@/context/layout-context";
 
 export const CustomTabBar = (props: BottomTabBarProps) => {

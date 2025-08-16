@@ -9,7 +9,7 @@ import { useLayout } from "@/context/layout-context";
 import PlayButton from "@/components/play-button";
 import QueueButton from "@/components/queue-button";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useSelector } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { audio$, Track } from "@/state/audio";
 
 export default function ClipPage() {
@@ -17,9 +17,10 @@ export default function ClipPage() {
   const { clipId } = useLocalSearchParams<{ clipId: Clip["Id"] }>();
   const { data: item } = useIndividualClip(clipId);
   const { tabBarHeight } = useLayout();
-  const { id, status } = useSelector(() => {
+  const { id, status } = use$(() => {
+    const currentTrack = audio$.currentTrack.get();
     return {
-      id: audio$.currentTrack.id.get(),
+      id: currentTrack.id,
       status: audio$.status.currentTime.get(),
     };
   });
@@ -68,7 +69,7 @@ export default function ClipPage() {
         gap: 8,
         paddingHorizontal: 8,
         marginVertical: 8,
-        paddingBottom: tabBarHeight,
+        paddingBottom: tabBarHeight + 16,
       }}
       showsVerticalScrollIndicator={false}
     >
@@ -86,7 +87,10 @@ export default function ClipPage() {
           }}
         />
       </View>
-      <Text className="text-2xl font-bold" style={{ color: colors.text }}>
+      <Text
+        className="text-2xl font-bold text-center"
+        style={{ color: colors.text }}
+      >
         {item?.Title}
       </Text>
       <View className="flex-row items-center flex-1 gap-4">
@@ -96,7 +100,7 @@ export default function ClipPage() {
           color={colors.secondary}
         />
         <PlayButton track={clipToTrack} size={88} color={colors.secondary} />
-        <QueueButton item={clipToTrack} size={40} color={colors.secondary} />
+        <QueueButton item={clipToTrack} size={40} />
       </View>
       <View className="w-[100%] flex-row justify-between">
         <Text

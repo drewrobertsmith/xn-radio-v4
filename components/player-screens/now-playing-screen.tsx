@@ -6,8 +6,9 @@ import { useAppTheme } from "../ui/theme-provider";
 import ProgressBar from "../progress-bar";
 import { Metadata } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useSelector } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import { useMetadata } from "@/hooks/useMetadata";
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
@@ -19,11 +20,11 @@ interface NowPlayingScreenProps {
 
 export default function NowPlayingScreen({
   animatedImageStyle,
-  data,
   handleSecondaryText,
 }: NowPlayingScreenProps) {
   const { colors } = useAppTheme();
-  const { title, artwork, id, isLiveStream } = useSelector(() => {
+  const { data } = useMetadata("XNRD", 1);
+  const { title, artwork, id, isLiveStream } = use$(() => {
     return {
       id: audio$.currentTrack.id.get(),
       title: audio$.currentTrack.title.get(),

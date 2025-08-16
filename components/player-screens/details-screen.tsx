@@ -1,10 +1,9 @@
 import { Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
-import { formatDuration } from "@/utils/formatters";
 import Separator from "../ui/separator";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
-import RenderDuration, { RenderTrackDuration } from "../duration";
+import { RenderTrackDuration } from "../duration";
 
 export default function DetailsScreen() {
   const { colors } = useAppTheme();

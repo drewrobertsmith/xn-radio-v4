@@ -7,7 +7,6 @@ import {
   ViewStyle,
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
-import { Metadata } from "@/types/types";
 import {
   NavigationContainer,
   NavigationIndependentTree,
@@ -20,16 +19,14 @@ import NowPlayingScreen from "./player-screens/now-playing-screen";
 import ThemeProvider, { useAppTheme } from "./ui/theme-provider";
 import DetailsScreen from "./player-screens/details-screen";
 import QueueScreen from "./player-screens/queue-screen";
-import { use$, useSelector } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   onCollapse: () => void;
   handleSecondaryText: () => React.ReactNode;
-  data: Metadata | null | undefined;
 }
 
 const Tab = createMaterialTopTabNavigator();
@@ -37,7 +34,6 @@ const Tab = createMaterialTopTabNavigator();
 type PlayerTabParamList = {
   "Now Playing": {
     animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
-    data: Metadata | null | undefined;
     handleSecondaryText: () => React.ReactNode;
   };
   Details: undefined; // This screen takes no parameters
@@ -52,7 +48,6 @@ type NowPlayingScreenProps = MaterialTopTabScreenProps<
 const NowPlayingScreenComponent = (props: NowPlayingScreenProps) => (
   <NowPlayingScreen
     animatedImageStyle={props.route.params.animatedImageStyle}
-    data={props.route.params.data}
     handleSecondaryText={props.route.params.handleSecondaryText}
   />
 );
@@ -65,7 +60,6 @@ export default function FullScreenPlayer({
   animatedFullPlayerStyle,
   animatedImageStyle,
   handleSecondaryText,
-  data,
 }: FullScreenPlayerProps) {
   const { colors } = useAppTheme();
   const queueLength = use$(() => audio$.queue.total.get());
@@ -88,40 +82,34 @@ export default function FullScreenPlayer({
       style={[styles.fullPlayerContainer, animatedFullPlayerStyle]}
     // The full player is only interactive when it's visible
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <NavigationIndependentTree>
-            <NavigationContainer>
-              <ThemeProvider
-              //a second theme provider is needed since this is an independent nav tree for themeing
-              >
-                <Tab.Navigator>
-                  <Tab.Screen
-                    name="Now Playing"
-                    component={NowPlayingScreenComponent}
-                    initialParams={{
-                      animatedImageStyle,
-                      data,
-                      handleSecondaryText,
-                    }}
-                  />
-                  <Tab.Screen
-                    name="Details"
-                    component={DetailsScreenComponent}
-                  />
-                  <Tab.Screen
-                    name="Queue"
-                    component={QueueScreenComponent}
-                    options={{
-                      tabBarBadge: () => <TabBarBadge />,
-                    }}
-                  />
-                </Tab.Navigator>
-              </ThemeProvider>
-            </NavigationContainer>
-          </NavigationIndependentTree>
-        </View>
-      </GestureHandlerRootView>
+      <View style={{ flex: 1 }}>
+        <NavigationIndependentTree>
+          <NavigationContainer>
+            <ThemeProvider
+            //a second theme provider is needed since this is an independent nav tree for themeing
+            >
+              <Tab.Navigator>
+                <Tab.Screen
+                  name="Now Playing"
+                  component={NowPlayingScreenComponent}
+                  initialParams={{
+                    animatedImageStyle,
+                    handleSecondaryText,
+                  }}
+                />
+                <Tab.Screen name="Details" component={DetailsScreenComponent} />
+                <Tab.Screen
+                  name="Queue"
+                  component={QueueScreenComponent}
+                  options={{
+                    tabBarBadge: () => <TabBarBadge />,
+                  }}
+                />
+              </Tab.Navigator>
+            </ThemeProvider>
+          </NavigationContainer>
+        </NavigationIndependentTree>
+      </View>
     </Animated.View>
   );
 }

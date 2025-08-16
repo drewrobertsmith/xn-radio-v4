@@ -9,20 +9,18 @@ import {
   ViewStyle,
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
-import { XNTheme } from "./ui/theme-provider";
-import { Metadata } from "@/types/types";
+import { useAppTheme, XNTheme } from "./ui/theme-provider";
 import { Image } from "expo-image";
 import PlayButton from "./play-button";
-import { audio$, Track } from "@/state/audio";
-import { useSelector } from "@legendapp/state/react";
+import { audio$ } from "@/state/audio";
+import { use$ } from "@legendapp/state/react";
+import { useMetadata } from "@/hooks/useMetadata";
 
 interface MiniPlayerProps {
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   onExpand: () => void;
   handleSecondaryText: () => React.ReactNode;
-  colors: XNTheme["colors"];
-  data: Metadata | null | undefined;
 }
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
@@ -32,21 +30,21 @@ export default function MiniPlayer({
   onExpand,
   animatedImageStyle,
   handleSecondaryText,
-  colors,
-  data,
 }: MiniPlayerProps) {
-  // ✅ ONE subscription gets the whole object.
-  const currentTrack = useSelector(audio$.currentTrack);
+  const { title, id, artwork, currentTrack } = use$(() => {
+    const currentTrack = audio$.currentTrack.get();
+    return {
+      currentTrack,
+      title: currentTrack?.title,
+      id: currentTrack?.id,
+      artwork: currentTrack?.artwork,
+    };
+  });
 
-  // ✅ Then, derive the other values from the result. No more selectors needed.
-  // This is just plain JavaScript, running after the component re-renders.
-  const title = currentTrack?.title;
-  const id = currentTrack?.id;
-  const artwork = currentTrack?.artwork;
+  const { data } = useMetadata("XNRD", 1);
+  const { colors } = useAppTheme();
 
-  // If there's no track, we can't render, so return null.
   if (!currentTrack) {
-    // Or return a placeholder view. This prevents errors on the line below.
     return null;
   }
 

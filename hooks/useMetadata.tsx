@@ -1,6 +1,6 @@
 import { audio$ } from "@/state/audio";
 import { Metadata, Station } from "@/types/types";
-import { useSelector } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { useQuery } from "@tanstack/react-query";
 import { XMLParser } from "fast-xml-parser";
 
@@ -70,10 +70,11 @@ export const useMetadata = (
   tritonId: Station["callLetters"],
   numberToFetch: number,
 ) => {
-  const { playbackState, id } = useSelector(() => {
+  const { playbackState, id } = use$(() => {
+    const currentTrack = audio$.currentTrack.get();
     return {
       playbackState: audio$.playbackState.get(),
-      id: audio$.currentTrack.id.get(),
+      id: currentTrack?.id,
     };
   });
 

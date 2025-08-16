@@ -7,8 +7,6 @@ import FullScreenPlayer from "../full-screen-player";
 import MiniPlayer from "../mini-player";
 
 interface PlayerUIProps {
-  colors: XNTheme["colors"];
-  data: Metadata | null | undefined;
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -18,8 +16,6 @@ interface PlayerUIProps {
 }
 
 function PlayerUIComponent({
-  colors,
-  data,
   animatedImageStyle,
   animatedFullPlayerStyle,
   animatedMiniPlayerStyle,
@@ -34,15 +30,12 @@ function PlayerUIComponent({
         onExpand={onExpand}
         animatedImageStyle={animatedImageStyle}
         handleSecondaryText={handleSecondaryText}
-        colors={colors}
-        data={data}
       />
       <FullScreenPlayer
         animatedFullPlayerStyle={animatedFullPlayerStyle}
         onCollapse={onCollapse}
         animatedImageStyle={animatedImageStyle}
         handleSecondaryText={handleSecondaryText}
-        data={data}
       />
     </>
   );

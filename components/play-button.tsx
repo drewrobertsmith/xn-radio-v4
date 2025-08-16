@@ -1,6 +1,6 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { ActivityIndicator, Pressable, TouchableOpacity } from "react-native";
-import { useSelector } from "@legendapp/state/react";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
+import { use$ } from "@legendapp/state/react";
 import { audio$, Track } from "@/state/audio";
 import { XNTheme } from "./ui/theme-provider";
 import { useAudio } from "@/context/audio-context";
@@ -23,12 +23,12 @@ type PlayButtonProps = {
 export default function PlayButton({ size, track, color }: PlayButtonProps) {
   const { play, pause, resume } = useAudio();
 
-  const { playbackState, currentTrackId } = useSelector(() => {
-    const current = audio$.currentTrack.get(); // Get the whole object
+  const { playbackState, currentTrackId } = use$(() => {
+    const currentTrack = audio$.currentTrack.get(); // Get the whole object
     return {
       playbackState: audio$.playbackState.get(),
       // Safely get the id, returning null if no track exists
-      currentTrackId: current ? current.id : null,
+      currentTrackId: currentTrack ? currentTrack.id : null,
     };
   });
 

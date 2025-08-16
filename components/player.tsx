@@ -10,10 +10,9 @@ import Animated, {
 } from "react-native-reanimated";
 import { useAppTheme } from "./ui/theme-provider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAudio } from "@/context/audio-context";
 import { useMetadata } from "@/hooks/useMetadata";
 import { PlayerUI } from "./ui/player-ui";
-import { use$, useSelector } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 
 const { height: screenHeight, width } = Dimensions.get("window");
@@ -24,7 +23,6 @@ export const Player = () => {
   const { tabBarHeight } = useLayout();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
-  const { player } = useAudio();
 
   const { id, playbackState, queueLength } = use$(() => {
     const currentTrack = audio$.currentTrack.get();
@@ -189,8 +187,6 @@ export const Player = () => {
           pointerEvents="auto"
         >
           <PlayerUI
-            colors={colors}
-            data={data}
             animatedImageStyle={animatedImageStyle}
             animatedFullPlayerStyle={animatedFullPlayerStyle}
             animatedMiniPlayerStyle={animatedMiniPlayerStyle}
