@@ -6,7 +6,6 @@ import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
-  withTiming,
 } from "react-native-reanimated";
 import { useAppTheme } from "./ui/theme-provider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -36,8 +35,6 @@ export const Player = () => {
   const { data } = useMetadata(id, 1);
 
   const animatedIndex = useSharedValue(0);
-  const largePlayerOpacity = useSharedValue(0);
-  const smallPlayerOpacity = useSharedValue(1);
 
   // When using a wrapper, the snap points are relative to the wrapper.
   const snapPoints = useMemo(() => [MINI_PLAYER_HEIGHT, "100%"], []);
@@ -49,26 +46,6 @@ export const Player = () => {
   const collapse = useCallback(() => {
     bottomSheetRef.current?.snapToIndex(0);
   }, []);
-
-  const onAnimate = useCallback(
-    (fromIndex: number, toIndex: number) => {
-      const isExpanding = fromIndex === 0 && toIndex === 1;
-      const isCollapsing = fromIndex === 1 && toIndex === 0;
-
-      if (isExpanding) {
-        // Fade in the large player, fade out the small one
-        largePlayerOpacity.value = withTiming(1, { duration: 300 });
-        smallPlayerOpacity.value = withTiming(0, { duration: 100 });
-      }
-
-      if (isCollapsing) {
-        // Do the reverse
-        largePlayerOpacity.value = withTiming(0, { duration: 100 });
-        smallPlayerOpacity.value = withTiming(1, { duration: 300 });
-      }
-    },
-    [largePlayerOpacity, smallPlayerOpacity],
-  );
 
   // Animated style for the album art
   const animatedImageStyle = useAnimatedStyle(() => {
@@ -92,17 +69,29 @@ export const Player = () => {
 
   // Animated style for the full player container
   const animatedFullPlayerStyle = useAnimatedStyle(() => {
+    // By changing the input range of the interpolation, we can control *when* the fade happens.
+    // Here, the full player fades in during the first 50% of the gesture,
+    // making the transition feel faster and more responsive.
+    const opacity = interpolate(
+      animatedIndex.value,
+      [0, 0.5], // Input range
+      [0, 1], // Output range
+      "clamp", // Extrapolation
+    );
     return {
-      opacity: largePlayerOpacity.value,
-      pointerEvents: largePlayerOpacity.value > 0.5 ? "auto" : "none",
+      opacity,
+      pointerEvents: opacity > 0.5 ? "auto" : "none",
     };
   });
 
-  // NEW: Animated style for the mini player container
+  // Animated style for the mini player container
   const animatedMiniPlayerStyle = useAnimatedStyle(() => {
+    // The mini player fades out very quickly (in the first 10% of the gesture)
+    // to avoid a long, slow cross-fade where both players are visible.
+    const opacity = interpolate(animatedIndex.value, [0, 0.1], [1, 0], "clamp");
     return {
-      opacity: smallPlayerOpacity.value,
-      pointerEvents: smallPlayerOpacity.value > 0.5 ? "auto" : "none",
+      opacity,
+      pointerEvents: opacity > 0.5 ? "auto" : "none",
     };
   });
 
@@ -166,7 +155,6 @@ export const Player = () => {
         snapPoints={snapPoints}
         animatedIndex={animatedIndex}
         enableDynamicSizing={false}
-        onAnimate={onAnimate}
         enablePanDownToClose={false}
         enableOverDrag={false}
         topInset={area.top}
