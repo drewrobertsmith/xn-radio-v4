@@ -22,6 +22,7 @@ import DetailsScreen from "./player-screens/details-screen";
 import QueueScreen from "./player-screens/queue-screen";
 import { use$, useSelector } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -67,7 +68,7 @@ export default function FullScreenPlayer({
   data,
 }: FullScreenPlayerProps) {
   const { colors } = useAppTheme();
-  const queueLength = useSelector(() => audio$.queue.total.get());
+  const queueLength = use$(() => audio$.queue.total.get());
 
   const TabBarBadge = () => {
     return (
@@ -87,35 +88,40 @@ export default function FullScreenPlayer({
       style={[styles.fullPlayerContainer, animatedFullPlayerStyle]}
     // The full player is only interactive when it's visible
     >
-      <View style={{ flex: 1 }}>
-        <NavigationIndependentTree>
-          <NavigationContainer>
-            <ThemeProvider
-            //a second theme provider is needed since this is an independent nav tree for themeing
-            >
-              <Tab.Navigator>
-                <Tab.Screen
-                  name="Now Playing"
-                  component={NowPlayingScreenComponent}
-                  initialParams={{
-                    animatedImageStyle,
-                    data,
-                    handleSecondaryText,
-                  }}
-                />
-                <Tab.Screen name="Details" component={DetailsScreenComponent} />
-                <Tab.Screen
-                  name="Queue"
-                  component={QueueScreenComponent}
-                  options={{
-                    tabBarBadge: () => <TabBarBadge />,
-                  }}
-                />
-              </Tab.Navigator>
-            </ThemeProvider>
-          </NavigationContainer>
-        </NavigationIndependentTree>
-      </View>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <NavigationIndependentTree>
+            <NavigationContainer>
+              <ThemeProvider
+              //a second theme provider is needed since this is an independent nav tree for themeing
+              >
+                <Tab.Navigator>
+                  <Tab.Screen
+                    name="Now Playing"
+                    component={NowPlayingScreenComponent}
+                    initialParams={{
+                      animatedImageStyle,
+                      data,
+                      handleSecondaryText,
+                    }}
+                  />
+                  <Tab.Screen
+                    name="Details"
+                    component={DetailsScreenComponent}
+                  />
+                  <Tab.Screen
+                    name="Queue"
+                    component={QueueScreenComponent}
+                    options={{
+                      tabBarBadge: () => <TabBarBadge />,
+                    }}
+                  />
+                </Tab.Navigator>
+              </ThemeProvider>
+            </NavigationContainer>
+          </NavigationIndependentTree>
+        </View>
+      </GestureHandlerRootView>
     </Animated.View>
   );
 }
