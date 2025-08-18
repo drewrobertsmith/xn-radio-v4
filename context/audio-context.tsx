@@ -26,6 +26,7 @@ interface AudioContextType {
   addToTopOfQueue: (item: Track) => void;
   addToBackOfQueue: (item: Track) => void;
   removeFromQueue: (trackId: string) => void;
+  saveCurrentTrackProgress: () => void;
 }
 
 const AudioContext = createContext<AudioContextType | null>(null);
@@ -288,6 +289,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         addToTopOfQueue,
         addToBackOfQueue,
         removeFromQueue,
+        saveCurrentTrackProgress,
       }}
     >
       {children}
