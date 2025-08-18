@@ -1,6 +1,5 @@
-import { Platform, Text, View } from "react-native";
+import { Platform, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
-import { useSynchronizedDurations } from "@/hooks/useSynchronizedDurations";
 import { useAudio } from "@/context/audio-context";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
@@ -8,67 +7,51 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
   useSharedValue,
-  useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
 } from "react-native-reanimated";
-import { useState } from "react";
+import { formatDurationForProgressBar } from "@/utils/formatDurationForProgressBar";
+import { AnimatedText } from "./ui/animatedText";
 
 export default function ProgressBar() {
   const { colors } = useAppTheme();
   const { seekTo, saveCurrentTrackProgress } = useAudio();
-  const [barWidth, setBarWidth] = useState(0);
 
+  // Store barWidth on the UI thread to prevent re-renders
+  const barWidth = useSharedValue(0);
   const isScrubbing = useSharedValue(false);
   const scrubbingTime = useSharedValue(0);
 
+  // This part remains the same, it's already efficient
   const { duration, currentTime: actualCurrentTime } = use$(() => {
     const track = audio$.currentTrack.get();
     const status = audio$.status.get();
-
     const currentTimeInSeconds =
       status?.isLoaded && status.currentTime ? status.currentTime : 0;
     const durationInSeconds = track?.duration ? track.duration : 0;
-
     return {
       currentTime: currentTimeInSeconds,
       duration: durationInSeconds,
     };
   });
 
-  // Derived value for the time to display (runs on UI thread).
-  // This value updates whenever isScrubbing, scrubbingTime, or actualCurrentTime changes.
+  // Derived value for the time to display (UI thread).
+  // This is the single source of truth for the current time in the UI.
   const displayCurrentTime = useDerivedValue(() => {
     return isScrubbing.value ? scrubbingTime.value : actualCurrentTime;
   });
 
-  // State variable on the JavaScript thread to hold the current time.
-  // This is the value that useSynchronizedDurations will consume.
-  const [jsCurrentTime, setJsCurrentTime] = useState(0);
+  // Derived values for formatted text strings (UI thread).
+  const formattedCurrentTime = useDerivedValue(() => {
+    return formatDurationForProgressBar(displayCurrentTime.value);
+  });
 
-  // useAnimatedReaction observes displayCurrentTime (on UI thread)
-  // and updates jsCurrentTime (on JS thread) using runOnJS.
-  useAnimatedReaction(
-    () => {
-      // This function runs on the UI thread (worklet)
-      return displayCurrentTime.value; // Observe the derived value
-    },
-    (currentValue) => {
-      // This function also runs on the UI thread (worklet)
-      // We use runOnJS to execute setJsCurrentTime on the JavaScript thread.
-      runOnJS(setJsCurrentTime)(currentValue);
-    },
-    [], // Dependencies for useAnimatedReaction. Empty array means it runs once.
-    // displayCurrentTime is already reactive, so no need to list it here.
-  );
+  const formattedRemainingTime = useDerivedValue(() => {
+    const remaining = duration - displayCurrentTime.value;
+    return `-${formatDurationForProgressBar(remaining < 0 ? 0 : remaining)}`;
+  });
 
-  // Call useSynchronizedDurations with the JS-thread current time.
-  // This hook is now called correctly within the component's render function.
-  const { formattedCurrentTime, formattedRemainingTime } =
-    useSynchronizedDurations(jsCurrentTime, duration);
-
-  // Animated style for the progress bar width (runs on UI thread).
-  // This directly uses the displayCurrentTime.value from the UI thread.
+  // Animated style for the progress bar width (UI thread).
   const animatedProgressStyle = useAnimatedStyle(() => {
     const progress =
       duration > 0 ? (displayCurrentTime.value / duration) * 100 : 0;
@@ -77,24 +60,31 @@ export default function ProgressBar() {
     };
   });
 
-  // Create the gesture handler (runs on UI thread)
+  // --- JS Thread Logic (for initial render) ---
+  // Calculate the initial strings using the values from use$
+  const initialFormattedCurrentTime =
+    formatDurationForProgressBar(actualCurrentTime);
+  const initialFormattedRemainingTime = `-${formatDurationForProgressBar(
+    Math.max(0, duration - actualCurrentTime),
+  )}`;
+
+  // OPTIMIZED Gesture handler (UI thread)
   const panGesture = Gesture.Pan()
-    .onBegin((event) => {
+    .onBegin(() => {
       isScrubbing.value = true;
-      const newPosition = (event.x / barWidth) * duration;
-      const clampedPosition = Math.max(0, Math.min(newPosition, duration));
-      scrubbingTime.value = clampedPosition;
-      runOnJS(seekTo)(clampedPosition);
     })
     .onUpdate((event) => {
-      const newPosition = (event.x / barWidth) * duration;
-      const clampedPosition = Math.max(0, Math.min(newPosition, duration));
-      scrubbingTime.value = clampedPosition;
-      runOnJS(seekTo)(clampedPosition);
+      // Update the UI instantly without hammering the audio engine
+      const newPosition = (event.x / barWidth.value) * duration;
+      scrubbingTime.value = Math.max(0, Math.min(newPosition, duration));
     })
     .onEnd(() => {
-      isScrubbing.value = false;
+      // Only seek and save on the JS thread when the user releases their finger
+      runOnJS(seekTo)(scrubbingTime.value);
       runOnJS(saveCurrentTrackProgress)();
+    })
+    .onFinalize(() => {
+      isScrubbing.value = false;
     });
 
   return (
@@ -102,46 +92,33 @@ export default function ProgressBar() {
       <GestureDetector gesture={panGesture}>
         <View
           onLayout={(event) => {
-            setBarWidth(event.nativeEvent.layout.width);
+            // Set the shared value without causing a re-render
+            barWidth.value = event.nativeEvent.layout.width;
           }}
           hitSlop={{ top: 20, bottom: 20, right: 0, left: 0 }}
-          style={[
-            {
-              backgroundColor: colors.border,
-            },
-          ]}
+          style={[{ backgroundColor: colors.border }]}
           className="h-4 rounded items-stretch"
         >
           <Animated.View
             className="h-full rounded"
             style={[
-              {
-                backgroundColor: colors.secondary,
-              },
+              { backgroundColor: colors.secondary },
               animatedProgressStyle,
             ]}
           />
         </View>
       </GestureDetector>
       <View className="w-[100%] justify-between flex-row">
-        <Text
-          className="w-[70] text-left"
-          style={{
-            color: colors.secondaryText,
-            fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
-          }}
-        >
-          {formattedCurrentTime}
-        </Text>
-        <Text
-          className="w-[70] text-right"
-          style={{
-            color: colors.secondaryText,
-            fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
-          }}
-        >
-          -{formattedRemainingTime}
-        </Text>
+        <AnimatedText
+          animatedValue={formattedCurrentTime}
+          initalValue={initialFormattedCurrentTime}
+          style={{ width: 70, textAlign: "left" }}
+        />
+        <AnimatedText
+          animatedValue={formattedRemainingTime}
+          initalValue={initialFormattedRemainingTime}
+          style={{ width: 70, textAlign: "right" }}
+        />
       </View>
     </View>
   );

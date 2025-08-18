@@ -4,7 +4,7 @@ import { Platform, StyleSheet, TextInput } from "react-native";
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
-export function AnimatedText({ animatedValue, style }) {
+export function AnimatedText({ animatedValue, initalValue, style }) {
   const { colors } = useAppTheme();
 
   const animatedProps = useAnimatedProps(() => {
@@ -17,7 +17,7 @@ export function AnimatedText({ animatedValue, style }) {
     <AnimatedTextInput
       underlineColorAndroid="transparent"
       editable={false}
-      value={animatedValue.value} // Set initial value
+      value={initalValue} // Set initial value
       style={[
         styles.text,
         {
