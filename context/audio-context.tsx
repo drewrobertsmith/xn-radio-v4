@@ -164,7 +164,9 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     (item: Track) => {
       // Get the current queue and filter out the item if it already exists.
       const currentQueue = audio$.queue.tracks.get();
-      const newQueue = currentQueue.filter((track) => track.id !== item.id);
+      const newQueue = currentQueue.filter(
+        (track: Track) => track.id !== item.id,
+      );
 
       // Add the item to the very beginning of the new queue.
       newQueue.unshift(item);

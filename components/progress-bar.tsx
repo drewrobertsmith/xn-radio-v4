@@ -1,7 +1,6 @@
 import { Platform, Text, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { useSynchronizedDurations } from "@/hooks/useSynchronizedDurations";
-import { useAudio } from "@/context/audio-context";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 

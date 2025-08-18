@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Animated, { AnimatedStyle } from "react-native-reanimated";
+import Animated, { AnimatedStyle, SharedValue } from "react-native-reanimated";
 import {
   NavigationContainer,
   NavigationIndependentTree,
@@ -27,6 +27,7 @@ interface FullScreenPlayerProps {
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   onCollapse: () => void;
   handleSecondaryText: () => React.ReactNode;
+  animatedIndex: SharedValue<number>;
 }
 
 const Tab = createMaterialTopTabNavigator();

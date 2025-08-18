@@ -1,7 +1,5 @@
-import { XNTheme } from "./theme-provider";
-import { Metadata } from "@/types/types";
 import { ImageStyle, StyleProp, ViewStyle } from "react-native";
-import { AnimatedStyle } from "react-native-reanimated";
+import { AnimatedStyle, SharedValue } from "react-native-reanimated";
 import { memo } from "react";
 import FullScreenPlayer from "../full-screen-player";
 import MiniPlayer from "../mini-player";

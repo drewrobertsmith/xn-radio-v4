@@ -1,10 +1,9 @@
 import { Image } from "expo-image";
-import Animated, { AnimatedStyle } from "react-native-reanimated";
+import Animated, { AnimatedStyle, SharedValue } from "react-native-reanimated";
 import PlayerControls from "../player-controls";
 import { ImageStyle, StyleProp, StyleSheet, Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
 import ProgressBar from "../progress-bar";
-import { Metadata } from "@/types/types";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
@@ -15,7 +14,6 @@ const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 interface NowPlayingScreenProps {
   animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   handleSecondaryText: () => React.ReactNode;
-  data: Metadata | null | undefined;
 }
 
 export default function NowPlayingScreen({

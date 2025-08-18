@@ -39,6 +39,12 @@ const fetchLiveMetadataFromTriton = async (
   tritonId: Station["callLetters"],
   numberToFetch: number,
 ): Promise<Metadata> => {
+  if (!tritonId)
+    return {
+      cue_title: "Xn Radio",
+      track_album_name: "",
+      track_artist_name: "",
+    };
   const url = "https://np.tritondigital.com/public/nowplaying";
   const response = await fetch(
     `${url}?mountName=${tritonId}&numberToFetch=${numberToFetch}`,
