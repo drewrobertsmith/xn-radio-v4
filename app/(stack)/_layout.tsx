@@ -1,7 +1,8 @@
+import { useAppTheme } from "@/components/ui/theme-provider";
 import { Stack } from "expo-router";
-import { Platform } from "react-native";
 
 export default function PodcastLayout() {
+  const { colors } = useAppTheme();
   return (
     <Stack>
       <Stack.Screen
@@ -16,7 +17,15 @@ export default function PodcastLayout() {
           title: "",
         }}
       />
-      <Stack.Screen name="(episode)" options={{ title: "" }} />
+      <Stack.Screen
+        name="(episode)"
+        options={{
+          title: "",
+          headerShadowVisible: false,
+          headerStyle: { backgroundColor: colors.background },
+          headerBackVisible: true,
+        }}
+      />
     </Stack>
   );
 }

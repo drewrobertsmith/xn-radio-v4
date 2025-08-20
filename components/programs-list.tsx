@@ -3,6 +3,8 @@ import ProgramItem from "./program-item";
 import { Program } from "@/types/types";
 import { RefetchOptions } from "@tanstack/react-query";
 import { useLayout } from "@/context/layout-context";
+import { Button, Text, View } from "react-native";
+import { useAppTheme } from "./ui/theme-provider";
 
 type ListProps = {
   data: Program[];
@@ -18,6 +20,22 @@ export default function ProgramsList({
   refetch,
 }: ListProps) {
   const { tabBarHeight } = useLayout();
+  const { colors } = useAppTheme();
+
+  const ListEmptyComponent = () => {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text style={{ color: colors.secondaryText }}>No Items</Text>
+        <Button
+          title="Refresh"
+          color={colors.primary}
+          onPress={() => {
+            refetch({ cancelRefetch: false });
+          }}
+        />
+      </View>
+    );
+  };
 
   return (
     <LegendList
@@ -35,6 +53,7 @@ export default function ProgramsList({
         paddingTop: 8,
         paddingBottom: tabBarHeight,
       }}
+      ListEmptyComponent={ListEmptyComponent}
     />
   );
 }

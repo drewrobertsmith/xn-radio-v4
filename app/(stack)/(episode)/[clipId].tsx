@@ -3,7 +3,7 @@ import { useIndividualClip } from "@/hooks/useIndividualClip";
 import { Clip } from "@/types/types";
 import { formatDate, formatDuration } from "@/utils/formatters";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { useLayout } from "@/context/layout-context";
 import PlayButton from "@/components/play-button";
@@ -20,7 +20,7 @@ export default function ClipPage() {
   const { id, status } = use$(() => {
     const currentTrack = audio$.currentTrack.get();
     return {
-      id: currentTrack.id,
+      id: currentTrack?.id,
       status: audio$.status.currentTime.get(),
     };
   });
