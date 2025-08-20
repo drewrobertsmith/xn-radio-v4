@@ -8,7 +8,7 @@ import { RenderTrackDuration } from "../duration";
 export default function DetailsScreen() {
   const { colors } = useAppTheme();
 
-  const { title, description, isLiveStream, currentTrack } = use$(() => {
+  const { title, description, currentTrack } = use$(() => {
     return {
       title: audio$.currentTrack.title.get(),
       isLiveStream: audio$.currentTrack.isLiveStream.get(),
@@ -16,8 +16,6 @@ export default function DetailsScreen() {
       currentTrack: audio$.currentTrack.get(),
     };
   });
-  //TODO: fix RenderDuration needing a clip object rather than track object
-
   return (
     <View
       className="flex-1 p-4 text gap-2"
@@ -26,13 +24,13 @@ export default function DetailsScreen() {
       <Text className="text-lg font-bold" style={{ color: colors.text }}>
         {title}
       </Text>
-      {isLiveStream ? (
+      {!currentTrack?.duration ? (
         <Text className="font-semibold" style={{ color: colors.error }}>
-          On-Air Now
+          ON AIR
         </Text>
       ) : (
-        <Text style={{ color: colors.text }}>
-          {RenderTrackDuration(currentTrack)}
+        <Text style={{ color: colors.secondaryText }}>
+          <RenderTrackDuration track={currentTrack} />
         </Text>
       )}
       <Separator />

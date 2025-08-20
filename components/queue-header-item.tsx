@@ -1,4 +1,3 @@
-import { useAudio } from "@/context/audio-context";
 import { useAppTheme } from "./ui/theme-provider";
 import { Text, View } from "react-native";
 import { Image } from "expo-image";
@@ -71,9 +70,11 @@ export default function QueueHeaderItem() {
         />
       </View>
       <View className="flex-1">
-        <Text className="text-xs" style={{ color: colors.secondaryText }}>
-          {formatDate(track.date)}
-        </Text>
+        {!track.date ? null : (
+          <Text className="text-xs" style={{ color: colors.secondaryText }}>
+            {formatDate(track.date)}
+          </Text>
+        )}
         <Text
           className="text-sm font-semibold"
           style={{ color: colors.text }}
@@ -83,7 +84,13 @@ export default function QueueHeaderItem() {
           {track.title}
         </Text>
         <Text className="text-xs" style={{ color: colors.secondaryText }}>
-          {RenderTrackDuration(track)}
+          {!track.duration ? (
+            <Text className="font-semibold" style={{ color: colors.error }}>
+              ON AIR
+            </Text>
+          ) : (
+            <RenderTrackDuration track={track} />
+          )}
         </Text>
       </View>
       <View className="flex-2 ml-1">

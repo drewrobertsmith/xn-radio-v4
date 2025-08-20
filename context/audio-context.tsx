@@ -219,6 +219,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
 
       // If the track just removed was the currently active one...
       if (currentTrackBeforeRemoval?.id === trackId) {
+        player.pause();
         // player.replace(null); // Stop and unload the old audio.
         // Get the new track at the top of the queue (if it exists).
         const nextTrack = audio$.queue.tracks.get()[0];

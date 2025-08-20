@@ -49,7 +49,7 @@ export default function ClipItem({ item }: { item: Clip }) {
             className="text-sm font-[500]"
             style={{ color: colors.secondaryText }}
           >
-            {RenderClipDuration(item)}
+            <RenderClipDuration item={item} />
           </Text>
         </View>
       </TouchableOpacity>

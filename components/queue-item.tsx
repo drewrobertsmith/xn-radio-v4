@@ -38,10 +38,12 @@ export default function QueueItem({ item }: { item: Track }) {
             borderRadius: 8,
           }}
         />
-        <View className="flex-1 gap-1">
-          <Text className="text-xs" style={{ color: colors.secondaryText }}>
-            {formatDate(item?.date)}
-          </Text>
+        <View className="flex-1">
+          {!item.date ? null : (
+            <Text className="text-xs" style={{ color: colors.secondaryText }}>
+              {formatDate(item.date)}
+            </Text>
+          )}
           <Text
             className="text-sm font-semibold"
             style={{ color: colors.text }}
@@ -50,13 +52,14 @@ export default function QueueItem({ item }: { item: Track }) {
           >
             {item.title}
           </Text>
-          <Text
-            className="text-xs"
-            style={{
-              color: colors.secondaryText,
-            }}
-          >
-            {RenderTrackDuration(item)}
+          <Text className="text-xs" style={{ color: colors.secondaryText }}>
+            {!item.duration ? (
+              <Text className="font-semibold" style={{ color: colors.error }}>
+                ON AIR
+              </Text>
+            ) : (
+              <RenderTrackDuration track={item} />
+            )}
           </Text>
         </View>
       </View>
