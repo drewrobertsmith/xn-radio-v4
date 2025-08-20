@@ -30,7 +30,7 @@ export const audio$ = observable({
   error: null as string | null,
   queue: {
     tracks: [] as Track[],
-    total: computed(() => {
+    total: computed((): number => {
       return audio$.queue.tracks.get().length;
     }),
   },

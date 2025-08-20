@@ -108,7 +108,7 @@ export default function RootLayout() {
                   <Tabs.Screen
                     name="profile"
                     options={{
-                      // href: null, //hide route for now
+                      href: null, //hide route for now
                       title: "Profile",
                       tabBarIcon: ({ color }) => (
                         <MaterialIcons

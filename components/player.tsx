@@ -123,7 +123,7 @@ export const Player = () => {
 
   useEffect(() => {
     if (tabBarHeight > 0) {
-      bottomSheetRef.current?.snapToIndex(1);
+      bottomSheetRef.current?.snapToIndex(0);
     }
   }, [tabBarHeight]);
 

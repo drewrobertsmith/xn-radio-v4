@@ -97,7 +97,7 @@ export default function ProgressBar() {
           }}
           hitSlop={{ top: 20, bottom: 20, right: 0, left: 0 }}
           style={[{ backgroundColor: colors.border }]}
-          className="h-4 rounded items-stretch"
+          className="h-2 rounded items-stretch"
         >
           <Animated.View
             className="h-full rounded"
