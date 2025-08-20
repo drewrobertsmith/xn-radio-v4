@@ -3,11 +3,14 @@ import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
-import { Track } from "@/state/audio";
+import { audio$, Track } from "@/state/audio";
+import { use$ } from "@legendapp/state/react";
+import { useAudio } from "@/context/audio-context";
 
 const XN_URL =
   "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3";
 const xnLogo = require("../assets/images/splash-icon.png");
+const xnMotionLogo = require("../assets/gifs/xn_motion1x1.gif");
 
 const XN: Track = {
   id: "XNRD",
@@ -21,13 +24,18 @@ const XN: Track = {
 export default function Index() {
   const { colors } = useAppTheme();
   const { data } = useMetadata(XN.id, 1);
+  const currentTrack = use$(audio$.currentTrack.get());
+  const { player } = useAudio();
 
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
         {/* <Text style={{ color: colors.text }}>{MediaControls.hello()}</Text> */}
         <Image
-          source={xnLogo}
+          source={
+            player.playing && currentTrack?.isLiveStream ? xnMotionLogo : xnLogo
+          }
+          transition={500}
           contentFit="contain"
           cachePolicy="memory-disk"
           style={{
