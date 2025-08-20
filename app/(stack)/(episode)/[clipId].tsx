@@ -3,7 +3,7 @@ import { useIndividualClip } from "@/hooks/useIndividualClip";
 import { Clip } from "@/types/types";
 import { formatDate, formatDuration } from "@/utils/formatters";
 import { Image } from "expo-image";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { useLayout } from "@/context/layout-context";
 import PlayButton from "@/components/play-button";

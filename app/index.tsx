@@ -35,7 +35,7 @@ export default function Index() {
           source={
             player.playing && currentTrack?.isLiveStream ? xnMotionLogo : xnLogo
           }
-          transition={500}
+          transition={200}
           contentFit="contain"
           cachePolicy="memory-disk"
           style={{
