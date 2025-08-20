@@ -1,27 +1,22 @@
 import { Image } from "expo-image";
-import Animated, { AnimatedStyle, SharedValue } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import PlayerControls from "../player-controls";
-import { ImageStyle, StyleProp, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
 import ProgressBar from "../progress-bar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 import { useMetadata } from "@/hooks/useMetadata";
+import { useCallback } from "react";
+import { usePlayerAnimation } from "@/context/player-animation-context";
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
-interface NowPlayingScreenProps {
-  animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
-  handleSecondaryText: () => React.ReactNode;
-}
-
-export default function NowPlayingScreen({
-  animatedImageStyle,
-  handleSecondaryText,
-}: NowPlayingScreenProps) {
+export default function NowPlayingScreen() {
   const { colors } = useAppTheme();
   const { data } = useMetadata("XNRD", 1);
+  const { animatedImageStyle } = usePlayerAnimation();
   const { title, artwork, id, isLiveStream } = use$(() => {
     return {
       id: audio$.currentTrack.id.get(),
@@ -30,6 +25,17 @@ export default function NowPlayingScreen({
       isLiveStream: audio$.currentTrack.isLiveStream.get(),
     };
   });
+
+  const handleSecondaryText = useCallback(() => {
+    if (id === "XNRD" && data) {
+      return (
+        <Text className="text-sm" style={{ color: colors.secondaryText }}>
+          {data?.track_artist_name}
+        </Text>
+      );
+    }
+    return null;
+  }, [id, data, colors.secondaryText]);
 
   return (
     <BottomSheetScrollView

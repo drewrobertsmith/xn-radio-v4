@@ -1,20 +1,17 @@
 import { useLayout } from "@/context/layout-context";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { Dimensions, Text } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
-  useSharedValue,
 } from "react-native-reanimated";
 import { useAppTheme } from "./ui/theme-provider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useMetadata } from "@/hooks/useMetadata";
 import { PlayerUI } from "./ui/player-ui";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import { usePlayerAnimation } from "@/context/player-animation-context";
 
-const { height: screenHeight, width } = Dimensions.get("window");
 const MINI_PLAYER_HEIGHT = 64;
 
 export const Player = () => {
@@ -22,19 +19,14 @@ export const Player = () => {
   const { tabBarHeight } = useLayout();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
+  const { screenHeight, animatedIndex } = usePlayerAnimation();
 
-  const { id, playbackState, queueLength } = use$(() => {
-    const currentTrack = audio$.currentTrack.get();
+  const { playbackState, queueLength } = use$(() => {
     return {
-      id: currentTrack?.id,
       playbackState: audio$.playbackState.get(),
       queueLength: audio$.queue.total.get(),
     };
   });
-
-  const { data } = useMetadata(id, 1);
-
-  const animatedIndex = useSharedValue(0);
 
   // When using a wrapper, the snap points are relative to the wrapper.
   const snapPoints = useMemo(() => [MINI_PLAYER_HEIGHT, "100%"], []);
@@ -46,26 +38,6 @@ export const Player = () => {
   const collapse = useCallback(() => {
     bottomSheetRef.current?.snapToIndex(0);
   }, []);
-
-  // Animated style for the album art
-  const animatedImageStyle = useAnimatedStyle(() => {
-    const size = interpolate(
-      animatedIndex.value,
-      [0, 1],
-      [50, width - 24], // from 50x50 to full width minus padding
-    );
-    const borderRadius = interpolate(
-      animatedIndex.value,
-      [0, 1],
-      [8, 16], // from rounded corners to larger rounded corners
-    );
-
-    return {
-      width: size,
-      height: size,
-      borderRadius,
-    };
-  });
 
   // Animated style for the full player container
   const animatedFullPlayerStyle = useAnimatedStyle(() => {
@@ -94,17 +66,6 @@ export const Player = () => {
       pointerEvents: opacity > 0.5 ? "auto" : "none",
     };
   });
-
-  const handleSecondaryText = useCallback(() => {
-    if (id === "XNRD" && data) {
-      return (
-        <Text className="text-sm" style={{ color: colors.secondaryText }}>
-          {data?.track_artist_name}
-        </Text>
-      );
-    }
-    return null;
-  }, [id, data, colors.secondaryText]);
 
   const animatedPadding = useAnimatedStyle(() => {
     const bottomPadding = interpolate(
@@ -175,12 +136,10 @@ export const Player = () => {
           pointerEvents="auto"
         >
           <PlayerUI
-            animatedImageStyle={animatedImageStyle}
             animatedFullPlayerStyle={animatedFullPlayerStyle}
             animatedMiniPlayerStyle={animatedMiniPlayerStyle}
             onExpand={expand}
             onCollapse={collapse}
-            handleSecondaryText={handleSecondaryText}
           />
         </BottomSheetView>
       </BottomSheet>

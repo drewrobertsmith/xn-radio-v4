@@ -11,7 +11,9 @@ const LayoutContext = createContext<LayoutContextType | null>(null);
 export const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   const [tabBarHeight, setTabBarHeight] = useState(0);
 
-  // In LayoutProvider, the value object { tabBarHeight, setTabBarHeight } is recreated on every single render. If any component consuming this context re-renders, the provider itself re-renders, creating a new value object. This can cause all consumers of the context to re-render, even if the data they care about hasn't changed
+  // In LayoutProvider, the value object { tabBarHeight, setTabBarHeight } is recreated on every single render.
+  // If any component consuming this context re-renders, the provider itself re-renders, creating a new value object.
+  // This can cause all consumers of the context to re-render, even if the data they care about hasn't changed
 
   const value = useMemo(
     () => ({

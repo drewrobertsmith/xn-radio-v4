@@ -1,20 +1,10 @@
-import {
-  ImageStyle,
-  StyleProp,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from "react-native";
-import Animated, { AnimatedStyle, SharedValue } from "react-native-reanimated";
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
+import Animated, { AnimatedStyle } from "react-native-reanimated";
 import {
   NavigationContainer,
   NavigationIndependentTree,
 } from "@react-navigation/native";
-import {
-  createMaterialTopTabNavigator,
-  MaterialTopTabScreenProps,
-} from "@react-navigation/material-top-tabs";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import NowPlayingScreen from "./player-screens/now-playing-screen";
 import ThemeProvider, { useAppTheme } from "./ui/theme-provider";
 import DetailsScreen from "./player-screens/details-screen";
@@ -24,43 +14,13 @@ import { audio$ } from "@/state/audio";
 
 interface FullScreenPlayerProps {
   animatedFullPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
-  animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
   onCollapse: () => void;
-  handleSecondaryText: () => React.ReactNode;
-  animatedIndex: SharedValue<number>;
 }
 
 const Tab = createMaterialTopTabNavigator();
 
-type PlayerTabParamList = {
-  "Now Playing": {
-    animatedImageStyle: StyleProp<AnimatedStyle<ImageStyle>>;
-    handleSecondaryText: () => React.ReactNode;
-  };
-  Details: undefined; // This screen takes no parameters
-  Queue: undefined; // This screen also takes no parameters
-};
-
-type NowPlayingScreenProps = MaterialTopTabScreenProps<
-  PlayerTabParamList,
-  "Now Playing"
->;
-
-const NowPlayingScreenComponent = (props: NowPlayingScreenProps) => (
-  <NowPlayingScreen
-    animatedImageStyle={props.route.params.animatedImageStyle}
-    handleSecondaryText={props.route.params.handleSecondaryText}
-  />
-);
-
-const DetailsScreenComponent = () => <DetailsScreen />;
-
-const QueueScreenComponent = () => <QueueScreen />;
-
 export default function FullScreenPlayer({
   animatedFullPlayerStyle,
-  animatedImageStyle,
-  handleSecondaryText,
 }: FullScreenPlayerProps) {
   const { colors } = useAppTheme();
   const queueLength = use$(() => audio$.queue.total.get());
@@ -90,18 +50,11 @@ export default function FullScreenPlayer({
             //a second theme provider is needed since this is an independent nav tree for themeing
             >
               <Tab.Navigator>
-                <Tab.Screen
-                  name="Now Playing"
-                  component={NowPlayingScreenComponent}
-                  initialParams={{
-                    animatedImageStyle,
-                    handleSecondaryText,
-                  }}
-                />
-                <Tab.Screen name="Details" component={DetailsScreenComponent} />
+                <Tab.Screen name="Now Playing" component={NowPlayingScreen} />
+                <Tab.Screen name="Details" component={DetailsScreen} />
                 <Tab.Screen
                   name="Queue"
-                  component={QueueScreenComponent}
+                  component={QueueScreen}
                   options={{
                     tabBarBadge: () => <TabBarBadge />,
                   }}
