@@ -66,6 +66,8 @@ export default function MiniPlayer({
     return null;
   }
 
+  const isLiveStream = id === "XNRD";
+
   return (
     <Pressable
       onPress={onExpand}
@@ -83,7 +85,9 @@ export default function MiniPlayer({
             { borderColor: colors.border, borderWidth: 1 },
             animatedImageStyle,
           ]}
-          cachePolicy="none"
+          cachePolicy={isLiveStream ? "none" : "disk"}
+          placeholder={{ blurhash: "L6Pj0^i_.AyE_3t7t7Rk~qofbHxu" }}
+          transition={300}
         />
         <View className="w-[66%]">
           <Text

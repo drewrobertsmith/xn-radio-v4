@@ -1,8 +1,10 @@
 import { useLayout } from "@/context/layout-context";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Animated, {
   interpolate,
+  runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useAppTheme } from "./ui/theme-provider";
@@ -20,6 +22,7 @@ export const Player = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
   const { screenHeight, animatedIndex } = usePlayerAnimation();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const { playbackState, queueLength } = use$(() => {
     return {
@@ -39,6 +42,18 @@ export const Player = () => {
     bottomSheetRef.current?.snapToIndex(0);
   }, []);
 
+  // Sync UI thread animation with JS thread state ---
+  // This reaction runs on the UI thread and updates the JS thread state
+  // only when the player crosses a threshold. This is more efficient
+  // than checking on every frame.
+  useAnimatedReaction(
+    () => animatedIndex.value > 0.5,
+    (isPlayerExpanded, wasPlayerExpanded) => {
+      runOnJS(setIsExpanded)(isPlayerExpanded);
+    },
+    [animatedIndex],
+  );
+
   // Animated style for the full player container
   const animatedFullPlayerStyle = useAnimatedStyle(() => {
     // By changing the input range of the interpolation, we can control *when* the fade happens.
@@ -46,13 +61,14 @@ export const Player = () => {
     // making the transition feel faster and more responsive.
     const opacity = interpolate(
       animatedIndex.value,
-      [0, 0.5], // Input range
+      [0.2, 0.7], // Input range
       [0, 1], // Output range
       "clamp", // Extrapolation
     );
     return {
       opacity,
-      pointerEvents: opacity > 0.5 ? "auto" : "none",
+      // Set display to 'none' when fully collapsed to remove it from the layout tree
+      display: animatedIndex.value < 0.01 ? "none" : "flex",
     };
   });
 
@@ -60,10 +76,10 @@ export const Player = () => {
   const animatedMiniPlayerStyle = useAnimatedStyle(() => {
     // The mini player fades out very quickly (in the first 10% of the gesture)
     // to avoid a long, slow cross-fade where both players are visible.
-    const opacity = interpolate(animatedIndex.value, [0, 0.1], [1, 0], "clamp");
+    const opacity = interpolate(animatedIndex.value, [0, 0.3], [1, 0], "clamp");
     return {
       opacity,
-      pointerEvents: opacity > 0.5 ? "auto" : "none",
+      display: animatedIndex.value > 0.99 ? "none" : "flex",
     };
   });
 
@@ -82,16 +98,16 @@ export const Player = () => {
     };
   });
 
-  useEffect(() => {
-    if (tabBarHeight > 0) {
-      bottomSheetRef.current?.snapToIndex(0);
-    }
-  }, [tabBarHeight]);
-
   // The player should show if the state is NOT idle, OR if there are items in the queue.
   const isPlayerVisible = playbackState !== "idle" || queueLength > 0;
 
-  if (tabBarHeight === 0 || !isPlayerVisible) {
+  // useEffect(() => {
+  //   if (isPlayerVisible && tabBarHeight > 0) {
+  //     bottomSheetRef.current?.snapToIndex(0);
+  //   }
+  // }, [tabBarHeight, isPlayerVisible]);
+
+  if (!isPlayerVisible) {
     return null;
   }
 
@@ -110,39 +126,44 @@ export const Player = () => {
       // to the tab bar underneath.
       pointerEvents="box-none"
     >
-      <BottomSheet
-        ref={bottomSheetRef}
-        index={0}
-        snapPoints={snapPoints}
-        animatedIndex={animatedIndex}
-        enableDynamicSizing={false}
-        enablePanDownToClose={false}
-        enableOverDrag={false}
-        topInset={area.top}
-        handleComponent={null}
-        containerStyle={{
-          borderRadius: 8,
-        }}
-        backgroundStyle={{
-          backgroundColor: colors.card,
-        }}
-        style={{ padding: 8 }}
-      >
-        <BottomSheetView
-          style={{
-            flex: 1,
-            bottom: area.bottom,
+      {tabBarHeight > 0 && (
+        <BottomSheet
+          ref={bottomSheetRef}
+          index={0}
+          snapPoints={snapPoints}
+          animatedIndex={animatedIndex}
+          activeOffsetX={[-20, 20]}
+          activeOffsetY={[-5, 5]}
+          enableDynamicSizing={false}
+          enablePanDownToClose={false}
+          enableOverDrag={false}
+          topInset={area.top}
+          handleComponent={null}
+          containerStyle={{
+            borderRadius: 8,
           }}
-          pointerEvents="auto"
+          backgroundStyle={{
+            backgroundColor: colors.card,
+          }}
+          style={{ padding: 8 }}
         >
-          <PlayerUI
-            animatedFullPlayerStyle={animatedFullPlayerStyle}
-            animatedMiniPlayerStyle={animatedMiniPlayerStyle}
-            onExpand={expand}
-            onCollapse={collapse}
-          />
-        </BottomSheetView>
-      </BottomSheet>
+          <BottomSheetView
+            style={{
+              flex: 1,
+              bottom: area.bottom,
+            }}
+            pointerEvents="auto"
+          >
+            <PlayerUI
+              isExpanded={isExpanded}
+              animatedFullPlayerStyle={animatedFullPlayerStyle}
+              animatedMiniPlayerStyle={animatedMiniPlayerStyle}
+              onExpand={expand}
+              onCollapse={collapse}
+            />
+          </BottomSheetView>
+        </BottomSheet>
+      )}
     </Animated.View>
   );
 };

@@ -1,6 +1,6 @@
 import { StyleProp, ViewStyle } from "react-native";
 import { AnimatedStyle } from "react-native-reanimated";
-import { memo } from "react";
+import React, { memo } from "react";
 import FullScreenPlayer from "../full-screen-player";
 import MiniPlayer from "../mini-player";
 
@@ -9,6 +9,7 @@ interface PlayerUIProps {
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
   onExpand: () => void;
   onCollapse: () => void;
+  isExpanded: boolean;
 }
 
 function PlayerUIComponent({
@@ -16,6 +17,7 @@ function PlayerUIComponent({
   animatedMiniPlayerStyle,
   onExpand,
   onCollapse,
+  isExpanded,
 }: PlayerUIProps) {
   return (
     <>
@@ -23,12 +25,14 @@ function PlayerUIComponent({
         animatedMiniPlayerStyle={animatedMiniPlayerStyle}
         onExpand={onExpand}
       />
-      <FullScreenPlayer
-        animatedFullPlayerStyle={animatedFullPlayerStyle}
-        onCollapse={onCollapse}
-      />
+      {isExpanded && (
+        <FullScreenPlayer
+          animatedFullPlayerStyle={animatedFullPlayerStyle}
+          onCollapse={onCollapse}
+        />
+      )}
     </>
   );
 }
 
-export const PlayerUI = memo(PlayerUIComponent);
+export const PlayerUI = React.memo(PlayerUIComponent);
