@@ -81,8 +81,6 @@ const PlayerTabNavigator = ({ onCollapse }: { onCollapse: () => void }) => {
       <NavigationContainer>
         <ThemeProvider>
           <Tab.Navigator
-            // Here is the key: we provide our custom animated component
-            // to render the tab bar.
             tabBar={(props) => <AnimatedTabBar {...props} />}
             screenOptions={{
               tabBarStyle: {
@@ -103,9 +101,6 @@ const PlayerTabNavigator = ({ onCollapse }: { onCollapse: () => void }) => {
                 tabBarBadge: () => <TabBarBadge />,
               }}
             />
-            {/* Note: The TabBarBadge logic would now move inside QueueScreen
-                or be handled via navigator options if needed. For simplicity,
-                I've removed it from this component. */}
           </Tab.Navigator>
         </ThemeProvider>
       </NavigationContainer>

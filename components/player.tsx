@@ -43,20 +43,6 @@ export const Player = () => {
     bottomSheetRef.current?.snapToIndex(0);
   }, []);
 
-  // Sync UI thread animation with JS thread state ---
-  // This reaction runs on the UI thread and updates the JS thread state
-  // only when the player crosses a threshold. This is more efficient
-  // than checking on every frame.
-  // useAnimatedReaction(
-  //   () => animatedIndex.value > 0.5,
-  //   (isPlayerExpanded, wasPlayerExpanded) => {
-  //     if (isPlayerExpanded !== wasPlayerExpanded) {
-  //       runOnJS(setIsExpanded)(isPlayerExpanded);
-  //     }
-  //   },
-  //   [animatedIndex],
-  // );
-
   useAnimatedReaction(
     () => animatedIndex.value,
     (currentValue, previousValue) => {
@@ -114,12 +100,6 @@ export const Player = () => {
 
   // The player should show if the state is NOT idle, OR if there are items in the queue.
   const isPlayerVisible = playbackState !== "idle" || queueLength > 0;
-
-  // useEffect(() => {
-  //   if (isPlayerVisible && tabBarHeight > 0) {
-  //     bottomSheetRef.current?.snapToIndex(0);
-  //   }
-  // }, [tabBarHeight, isPlayerVisible]);
 
   if (!isPlayerVisible) {
     return null;
