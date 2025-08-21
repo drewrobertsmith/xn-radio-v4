@@ -9,7 +9,7 @@ interface PlayerUIProps {
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
   onExpand: () => void;
   onCollapse: () => void;
-  isExpanded: boolean;
+  isAnimationComplete: boolean;
 }
 
 function PlayerUIComponent({
@@ -17,7 +17,7 @@ function PlayerUIComponent({
   animatedMiniPlayerStyle,
   onExpand,
   onCollapse,
-  isExpanded,
+  isAnimationComplete,
 }: PlayerUIProps) {
   return (
     <>
@@ -25,12 +25,11 @@ function PlayerUIComponent({
         animatedMiniPlayerStyle={animatedMiniPlayerStyle}
         onExpand={onExpand}
       />
-      {isExpanded && (
-        <FullScreenPlayer
-          animatedFullPlayerStyle={animatedFullPlayerStyle}
-          onCollapse={onCollapse}
-        />
-      )}
+      <FullScreenPlayer
+        animatedFullPlayerStyle={animatedFullPlayerStyle}
+        onCollapse={onCollapse}
+        isAnimationComplete={isAnimationComplete}
+      />
     </>
   );
 }

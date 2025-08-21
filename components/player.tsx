@@ -1,6 +1,6 @@
 import { useLayout } from "@/context/layout-context";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Animated, {
   interpolate,
   runOnJS,
@@ -22,7 +22,7 @@ export const Player = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const area = useSafeAreaInsets();
   const { screenHeight, animatedIndex } = usePlayerAnimation();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
   const { playbackState, queueLength } = use$(() => {
     return {
@@ -39,6 +39,7 @@ export const Player = () => {
   }, []);
 
   const collapse = useCallback(() => {
+    setIsAnimationComplete(false);
     bottomSheetRef.current?.snapToIndex(0);
   }, []);
 
@@ -46,10 +47,23 @@ export const Player = () => {
   // This reaction runs on the UI thread and updates the JS thread state
   // only when the player crosses a threshold. This is more efficient
   // than checking on every frame.
+  // useAnimatedReaction(
+  //   () => animatedIndex.value > 0.5,
+  //   (isPlayerExpanded, wasPlayerExpanded) => {
+  //     if (isPlayerExpanded !== wasPlayerExpanded) {
+  //       runOnJS(setIsExpanded)(isPlayerExpanded);
+  //     }
+  //   },
+  //   [animatedIndex],
+  // );
+
   useAnimatedReaction(
-    () => animatedIndex.value > 0.5,
-    (isPlayerExpanded, wasPlayerExpanded) => {
-      runOnJS(setIsExpanded)(isPlayerExpanded);
+    () => animatedIndex.value,
+    (currentValue, previousValue) => {
+      // Check if the sheet has just arrived at the fully expanded state (index 1)
+      if (currentValue === 1 && previousValue !== 1) {
+        runOnJS(setIsAnimationComplete)(true);
+      }
     },
     [animatedIndex],
   );
@@ -68,7 +82,7 @@ export const Player = () => {
     return {
       opacity,
       // Set display to 'none' when fully collapsed to remove it from the layout tree
-      display: animatedIndex.value < 0.01 ? "none" : "flex",
+      pointerEvents: animatedIndex.value > 0.5 ? "auto" : "none",
     };
   });
 
@@ -79,7 +93,7 @@ export const Player = () => {
     const opacity = interpolate(animatedIndex.value, [0, 0.3], [1, 0], "clamp");
     return {
       opacity,
-      display: animatedIndex.value > 0.99 ? "none" : "flex",
+      pointerEvents: animatedIndex.value < 0.5 ? "auto" : "none",
     };
   });
 
@@ -114,6 +128,10 @@ export const Player = () => {
   return (
     // 1. The Wrapper View creates a container that is ONLY the size of the mini-player.
     <Animated.View
+      // Hardware Acceleration for the main container ---
+      // This renders the entire bottom sheet to a hardware texture during animation.
+      // It's highly effective for complex views that are transforming.
+      renderToHardwareTextureAndroid={true}
       style={[
         {
           position: "absolute",
@@ -155,7 +173,7 @@ export const Player = () => {
             pointerEvents="auto"
           >
             <PlayerUI
-              isExpanded={isExpanded}
+              isAnimationComplete={isAnimationComplete}
               animatedFullPlayerStyle={animatedFullPlayerStyle}
               animatedMiniPlayerStyle={animatedMiniPlayerStyle}
               onExpand={expand}

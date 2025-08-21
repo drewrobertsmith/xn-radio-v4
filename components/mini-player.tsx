@@ -39,7 +39,8 @@ export default function MiniPlayer({
 
   const { data } = useMetadata("XNRD", 1);
   const { colors } = useAppTheme();
-  const { animatedImageStyle } = usePlayerAnimation();
+  const { animatedImageStyle, animatedImageContainerStyle } =
+    usePlayerAnimation();
 
   const handleMetadataDisplay = useCallback(() => {
     if (id === "XNRD" && data) {
@@ -77,18 +78,20 @@ export default function MiniPlayer({
       <Animated.View
         style={[styles.miniPlayerContainer, animatedMiniPlayerStyle]}
       >
-        <AnimatedExpoImage
-          source={artwork}
-          contentFit="contain"
-          style={[
-            styles.albumArt,
-            { borderColor: colors.border, borderWidth: 1 },
-            animatedImageStyle,
-          ]}
-          cachePolicy={isLiveStream ? "none" : "disk"}
-          placeholder={{ blurhash: "L6Pj0^i_.AyE_3t7t7Rk~qofbHxu" }}
-          transition={300}
-        />
+        <Animated.View style={[animatedImageContainerStyle]}>
+          <AnimatedExpoImage
+            source={artwork}
+            contentFit="cover"
+            style={[
+              styles.albumArt,
+              { borderColor: colors.border, borderWidth: 1 },
+              animatedImageStyle,
+            ]}
+            cachePolicy={isLiveStream ? "none" : "disk"}
+            placeholder={{ blurhash: "L6Pj0^i_.AyE_3t7t7Rk~qofbHxu" }}
+            transition={300}
+          />
+        </Animated.View>
         <View className="w-[66%]">
           <Text
             style={{ color: colors.text }}
@@ -113,8 +116,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   albumArt: {
-    height: 50,
-    width: 50,
-    borderRadius: 8,
+    height: "100%",
+    width: "100%",
   },
 });

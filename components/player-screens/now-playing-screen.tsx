@@ -16,7 +16,8 @@ const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 export default function NowPlayingScreen() {
   const { colors } = useAppTheme();
   const { data } = useMetadata("XNRD", 1);
-  const { animatedImageStyle } = usePlayerAnimation();
+  const { animatedImageStyle, animatedImageContainerStyle } =
+    usePlayerAnimation();
   const { title, artwork, id, isLiveStream } = use$(() => {
     return {
       id: audio$.currentTrack.id.get(),
@@ -47,7 +48,13 @@ export default function NowPlayingScreen() {
         paddingTop: 16,
       }}
     >
-      <AnimatedExpoImage source={artwork} style={[animatedImageStyle]} />
+      <Animated.View style={[animatedImageContainerStyle]}>
+        <AnimatedExpoImage
+          source={artwork}
+          style={[{ height: "100%", width: "100%" }, animatedImageStyle]}
+          contentFit="cover"
+        />
+      </Animated.View>
       <View style={styles.fullTrackInfo}>
         <Text
           className="text-center font-semibold text-lg px-1"
