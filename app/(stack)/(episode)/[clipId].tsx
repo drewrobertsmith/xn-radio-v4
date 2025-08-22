@@ -11,6 +11,8 @@ import QueueButton from "@/components/queue-button";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { use$ } from "@legendapp/state/react";
 import { audio$, Track } from "@/state/audio";
+import RenderHTML from "react-native-render-html";
+import DescriptionHTML from "@/components/description-html";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();
@@ -25,6 +27,8 @@ export default function ClipPage() {
     };
   });
 
+  if (!item) return;
+
   const clipToTrack: Track = {
     id: item?.Id,
     title: item?.Title,
@@ -33,6 +37,7 @@ export default function ClipPage() {
     date: item?.PublishedUtc,
     artwork: item?.ImageUrl,
     description: item?.Description,
+    descriptionHTML: item.DescriptionHtml,
   };
 
   const handleDuration = () => {
@@ -111,9 +116,7 @@ export default function ClipPage() {
         </Text>
         {handleDuration()}
       </View>
-      <Text className="text-base" style={{ color: colors.text }}>
-        {item?.Description}
-      </Text>
+      <DescriptionHTML description={item.DescriptionHtml} />
     </ScrollView>
   );
 }

@@ -32,8 +32,6 @@ export default function PlayButton({ size, track, color }: PlayButtonProps) {
     };
   });
 
-  console.log("Play Button: ", playbackState);
-
   // If there's no track associated with this button, render nothing.
   if (!track) {
     return null;

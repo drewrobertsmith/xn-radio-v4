@@ -6,8 +6,6 @@ import { useMetadata } from "@/hooks/useMetadata";
 import { audio$, Track } from "@/state/audio";
 import { use$ } from "@legendapp/state/react";
 import { useAudio } from "@/context/audio-context";
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useLayout } from "@/context/layout-context";
 
 const XN_URL =
   "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3";
@@ -28,14 +26,11 @@ export default function Index() {
   const { data } = useMetadata(XN.id, 1);
   const currentTrack = use$(audio$.currentTrack.get());
   const { player } = useAudio();
-  const { tabBarHeight } = useLayout();
-
-  console.log(tabBarHeight);
 
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
-        {/* <Text style={{ color: colors.text }}>{MediaControls.hello()}</Text> */}
+        {/* <Text style={{ color: colors.text }}>{nativeControls.hello()}</Text> */}
         <Image
           source={
             player.playing && currentTrack?.isLiveStream ? xnMotionLogo : xnLogo

@@ -12,6 +12,7 @@ export interface Track {
   artwork?: string;
   isLiveStream?: boolean;
   description?: string;
+  descriptionHTML?: string;
 }
 
 type PlaybackState =

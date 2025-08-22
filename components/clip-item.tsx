@@ -20,6 +20,7 @@ export default function ClipItem({ item }: { item: Clip }) {
     date: item.PublishedUtc,
     artwork: item.ImageUrl,
     description: item.Description,
+    descriptionHTML: item.DescriptionHtml,
   };
 
   return (
