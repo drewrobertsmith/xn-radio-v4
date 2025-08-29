@@ -14,10 +14,13 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LayoutProvider } from "@/context/layout-context";
 import { CustomTabBar } from "@/components/ui/custom-tab-bar";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { useCallback } from "react";
-import { AudioProvider } from "@/context/audio-context";
+import { useCallback, useEffect, useState } from "react";
 import { Player } from "@/components/player";
 import { PlayerAnimationProvider } from "@/context/player-animation-context";
+import TrackPlayer from "react-native-track-player";
+import { PlaybackService } from "@/services/playback-service";
+import { SetupService } from "@/services/setup-track-player-service";
+import { QueueInitialTracksService } from "@/services/queue-initial-track.service";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -62,6 +65,32 @@ export default function RootLayout() {
     [],
   );
 
+  TrackPlayer.registerPlaybackService(() => PlaybackService);
+
+  const isPlayerReady = useSetupPlayer();
+
+  function useSetupPlayer() {
+    const [playerReady, setPlayerReady] = useState<boolean>(false);
+
+    useEffect(() => {
+      let unmounted = false;
+      (async () => {
+        await SetupService();
+        if (unmounted) return;
+        setPlayerReady(true);
+        const queue = await TrackPlayer.getQueue();
+        if (unmounted) return;
+        if (queue.length <= 0) {
+          await QueueInitialTracksService();
+        }
+      })();
+      return () => {
+        unmounted = true;
+      };
+    }, []);
+    return playerReady;
+  }
+
   return (
     <ConvexAuthProvider
       client={convex}
@@ -82,52 +111,46 @@ export default function RootLayout() {
           <LayoutProvider>
             <PlayerAnimationProvider>
               <GestureHandlerRootView style={{ flex: 1 }}>
-                <AudioProvider>
-                  <Tabs tabBar={renderTabBar}>
-                    <Tabs.Screen
-                      name="index"
-                      options={{
-                        title: "Radio",
-                        tabBarIcon: ({ color }) => (
-                          <MaterialIcons
-                            name="cell-tower"
-                            size={24}
-                            color={color}
-                          />
-                        ),
-                      }}
-                    />
-                    <Tabs.Screen
-                      name="(stack)"
-                      options={{
-                        headerShown: false,
-                        title: "Podcasts",
-                        tabBarIcon: ({ color }) => (
-                          <MaterialIcons
-                            name="headset"
-                            size={24}
-                            color={color}
-                          />
-                        ),
-                      }}
-                    />
-                    <Tabs.Screen
-                      name="profile"
-                      options={{
-                        href: null, //hide route for now
-                        title: "Profile",
-                        tabBarIcon: ({ color }) => (
-                          <MaterialIcons
-                            name="tag-faces"
-                            size={24}
-                            color={color}
-                          />
-                        ),
-                      }}
-                    />
-                  </Tabs>
-                  <Player />
-                </AudioProvider>
+                <Tabs tabBar={renderTabBar}>
+                  <Tabs.Screen
+                    name="index"
+                    options={{
+                      title: "Radio",
+                      tabBarIcon: ({ color }) => (
+                        <MaterialIcons
+                          name="cell-tower"
+                          size={24}
+                          color={color}
+                        />
+                      ),
+                    }}
+                  />
+                  <Tabs.Screen
+                    name="(stack)"
+                    options={{
+                      headerShown: false,
+                      title: "Podcasts",
+                      tabBarIcon: ({ color }) => (
+                        <MaterialIcons name="headset" size={24} color={color} />
+                      ),
+                    }}
+                  />
+                  <Tabs.Screen
+                    name="profile"
+                    options={{
+                      href: null, //hide route for now
+                      title: "Profile",
+                      tabBarIcon: ({ color }) => (
+                        <MaterialIcons
+                          name="tag-faces"
+                          size={24}
+                          color={color}
+                        />
+                      ),
+                    }}
+                  />
+                </Tabs>
+                <Player />
               </GestureHandlerRootView>
             </PlayerAnimationProvider>
           </LayoutProvider>

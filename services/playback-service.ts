@@ -1,37 +1,79 @@
-import { audio$ } from "@/state/audio";
-import * as TaskManager from "expo-task-manager";
+import TrackPlayer, { Event } from "react-native-track-player";
 
-export const AUDIO_TASK = "audio-task";
+export async function PlaybackService() {
+  TrackPlayer.addEventListener(Event.RemotePlayPause, () => {
+    console.log("Event.RemotePlayPause");
+    TrackPlayer.pause();
+  });
 
-console.log("Defining the audio task...");
+  TrackPlayer.addEventListener(Event.RemotePause, () => {
+    console.log("Event.RemotePause");
+    TrackPlayer.pause();
+  });
 
-TaskManager.defineTask(AUDIO_TASK, async ({ data, error }) => {
-  if (error) {
-    console.error("Task Manager Error:", error);
-    return;
-  }
+  TrackPlayer.addEventListener(Event.RemotePlay, () => {
+    console.log("Event.RemotePlay");
+    TrackPlayer.play();
+  });
 
-  if (data) {
-    // `eventName` is the key from the native media controls
-    const { eventName } = data as { eventName: string };
-    console.log("Background Task: Received native event: ", eventName);
+  TrackPlayer.addEventListener(Event.RemoteNext, () => {
+    console.log("Event.RemoteNext");
+    TrackPlayer.skipToNext();
+  });
 
-    switch (eventName) {
-      case "play":
-        audio$.playbackState.set("playing");
-        break;
-      case "pause":
-        audio$.playbackState.set("paused");
-        break;
-      case "next":
-        audio$.playNextTrack();
-        break;
-      case "previous":
-        audio$.playPreviousTrack();
-        break;
-      // You can also handle other events like 'seek' if needed
-    }
-  }
-});
+  TrackPlayer.addEventListener(Event.RemotePrevious, () => {
+    console.log("Event.RemotePrevious");
+    TrackPlayer.skipToPrevious();
+  });
 
-console.log("Audio task defined");
+  TrackPlayer.addEventListener(Event.RemoteJumpForward, async (event) => {
+    console.log("Event.RemoteJumpForward", event);
+    TrackPlayer.seekBy(event.interval);
+  });
+
+  TrackPlayer.addEventListener(Event.RemoteJumpBackward, async (event) => {
+    console.log("Event.RemoteJumpBackward", event);
+    TrackPlayer.seekBy(-event.interval);
+  });
+
+  TrackPlayer.addEventListener(Event.RemoteSeek, (event) => {
+    console.log("Event.RemoteSeek", event);
+    TrackPlayer.seekTo(event.position);
+  });
+
+  TrackPlayer.addEventListener(Event.RemoteDuck, async (event) => {
+    console.log("Event.RemoteDuck", event);
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackQueueEnded, (event) => {
+    console.log("Event.PlaybackQueueEnded", event);
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
+    console.log("Event.PlaybackActiveTrackChanged", event);
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
+    console.log("Event.PlaybackProgressUpdated", event);
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackPlayWhenReadyChanged, (event) => {
+    console.log("Event.PlaybackPlayWhenReadyChanged", event);
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackState, (event) => {
+    console.log("Event.PlaybackState", event);
+  });
+
+  TrackPlayer.addEventListener(Event.MetadataChapterReceived, (event) => {
+    console.log("Event.MetadataChapterReceived", event);
+  });
+
+  TrackPlayer.addEventListener(Event.MetadataTimedReceived, (event) => {
+    console.log("Event.MetadataTimedReceived", event);
+  });
+
+  TrackPlayer.addEventListener(Event.MetadataCommonReceived, (event) => {
+    console.log("Event.MetadataCommonReceived", event);
+  });
+}

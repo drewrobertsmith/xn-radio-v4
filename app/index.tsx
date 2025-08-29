@@ -1,40 +1,38 @@
 import { useAppTheme } from "@/components/ui/theme-provider";
 import { Image } from "expo-image";
-import { Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
-import { audio$, Track } from "@/state/audio";
+import { audio$ } from "@/state/audio";
 import { use$ } from "@legendapp/state/react";
 import { useAudio } from "@/context/audio-context";
+import TrackPlayer, { Track } from "react-native-track-player";
 
-const XN_URL =
-  "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3";
 const xnLogo = require("../assets/images/splash-icon.png");
 const xnMotionLogo = require("../assets/gifs/xn_motion1x1.gif");
 
 const XN: Track = {
   id: "XNRD",
-  url: XN_URL,
+  url: "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3",
   title: "XN Radio LIVE",
   artist: "XN Radio",
-  artwork: xnLogo,
   isLiveStream: true,
 };
 
 export default function Index() {
   const { colors } = useAppTheme();
   const { data } = useMetadata(XN.id, 1);
-  const currentTrack = use$(audio$.currentTrack.get());
-  const { player } = useAudio();
+  // const currentTrack = use$(audio$.currentTrack.get());
+  // const { player } = useAudio();
 
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
-        {/* <Text style={{ color: colors.text }}>{nativeControls.hello()}</Text> */}
         <Image
-          source={
-            player.playing && currentTrack?.isLiveStream ? xnMotionLogo : xnLogo
-          }
+          // source={
+          //   player.playing && currentTrack?.isLiveStream ? xnMotionLogo : xnLogo
+          // }
+          source={xnLogo}
           transition={200}
           contentFit="contain"
           cachePolicy="memory-disk"
@@ -54,8 +52,20 @@ export default function Index() {
             {data ? data?.track_artist_name : null}
           </Text>
         </View>
-
-        <PlayButton size={88} track={XN} color={colors.secondary} />
+        <Button
+          title="Play"
+          onPress={() => {
+            TrackPlayer.load(XN);
+            TrackPlayer.play();
+          }}
+        />
+        <Button
+          title="Stop"
+          onPress={() => {
+            TrackPlayer.stop();
+          }}
+        />
+        {/* <PlayButton size={88} track={XN} color={colors.secondary} /> */}
       </View>
     </View>
   );

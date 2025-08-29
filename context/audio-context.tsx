@@ -11,10 +11,11 @@ import React, {
   useEffect,
 } from "react";
 import { Alert } from "react-native";
-import { audio$, Track } from "../state/audio";
+import { audio$ } from "../state/audio";
 import { useObserve } from "@legendapp/state/react";
 import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
 import { useQueuePersistence } from "@/hooks/useQueuePersistence";
+import { Track } from "react-native-track-player";
 
 // The context now just provides the player instance and actions
 interface AudioContextType {
@@ -38,32 +39,32 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   useQueuePersistence();
 
   // configure the audio session on mount
-  useEffect(() => {
-    const configureAudioSession = async () => {
-      try {
-        await setAudioModeAsync({
-          shouldPlayInBackground: true,
-          playsInSilentMode: true,
-          interruptionModeAndroid: "doNotMix",
-          interruptionMode: "doNotMix",
-        });
-        console.log("Audio session configured for background playback.");
-      } catch (e) {
-        const errorMessage =
-          e instanceof Error
-            ? e.message
-            : "An  unknown error occired while setting audio mode";
-        Alert.alert("Audio Error", errorMessage);
-      }
-    };
-
-    configureAudioSession();
-
-    //unload the player when the provider is unmounted
-    return () => {
-      player.release();
-    };
-  }, [player]);
+  // useEffect(() => {
+  //   const configureAudioSession = async () => {
+  //     try {
+  //       await setAudioModeAsync({
+  //         shouldPlayInBackground: true,
+  //         playsInSilentMode: true,
+  //         interruptionModeAndroid: "doNotMix",
+  //         interruptionMode: "doNotMix",
+  //       });
+  //       console.log("Audio session configured for background playback.");
+  //     } catch (e) {
+  //       const errorMessage =
+  //         e instanceof Error
+  //           ? e.message
+  //           : "An  unknown error occired while setting audio mode";
+  //       Alert.alert("Audio Error", errorMessage);
+  //     }
+  //   };
+  //
+  //   configureAudioSession();
+  //
+  //   //unload the player when the provider is unmounted
+  //   return () => {
+  //     player.release();
+  //   };
+  // }, [player]);
 
   //sync expo-audio status with global state
   useEffect(() => {
