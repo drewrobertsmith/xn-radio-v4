@@ -14,13 +14,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { LayoutProvider } from "@/context/layout-context";
 import { CustomTabBar } from "@/components/ui/custom-tab-bar";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { Player } from "@/components/player";
 import { PlayerAnimationProvider } from "@/context/player-animation-context";
 import TrackPlayer from "react-native-track-player";
-import { PlaybackService } from "@/services/playback-service";
-import { SetupService } from "@/services/setup-track-player-service";
-import { QueueInitialTracksService } from "@/services/queue-initial-track.service";
+import { useSetupPlayer } from "@/hooks/useSetupPlayer";
+import { PlaybackService } from "@/services/playback.service";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -34,6 +33,9 @@ export const unstable_settings = {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 // SplashScreen.preventAutoHideAsync();
+
+// Register the service right away, outside of any component lifecycle
+TrackPlayer.registerPlaybackService(() => PlaybackService);
 
 export default function RootLayout() {
   const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
@@ -65,31 +67,8 @@ export default function RootLayout() {
     [],
   );
 
-  TrackPlayer.registerPlaybackService(() => PlaybackService);
-
   const isPlayerReady = useSetupPlayer();
-
-  function useSetupPlayer() {
-    const [playerReady, setPlayerReady] = useState<boolean>(false);
-
-    useEffect(() => {
-      let unmounted = false;
-      (async () => {
-        await SetupService();
-        if (unmounted) return;
-        setPlayerReady(true);
-        const queue = await TrackPlayer.getQueue();
-        if (unmounted) return;
-        if (queue.length <= 0) {
-          await QueueInitialTracksService();
-        }
-      })();
-      return () => {
-        unmounted = true;
-      };
-    }, []);
-    return playerReady;
-  }
+  console.log("isPlayerReady? ", isPlayerReady);
 
   return (
     <ConvexAuthProvider
