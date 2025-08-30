@@ -63,7 +63,7 @@ export async function PlaybackService() {
     // Get the full track object from the player
     const track = TrackPlayer.getActiveTrack();
     // Update Legend State with the new active track
-    audio$.currentrack.set(track);
+    audio$.currentTrack.set(track);
   });
 
   TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {

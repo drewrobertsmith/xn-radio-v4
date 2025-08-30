@@ -50,11 +50,15 @@ export const audio$ = observable({
   playerState: State.None as State,
 
   /** The full track object that is currently active or loaded. Undefined if nothing is loaded. */
-  currentrack: undefined as Track | undefined,
+  currentTrack: undefined as Track | undefined,
 
   /** The current queue of tracks in the player. */
-  queue: [] as Track[],
-
+  queue: {
+    tracks: [] as Track[],
+    total: computed((): number => {
+      return audio$.queue.tracks.get().length;
+    }),
+  },
   /** The playback progress. Updated frequently during playback. */
   progress: {
     position: 0,

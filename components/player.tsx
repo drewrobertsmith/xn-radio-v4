@@ -13,6 +13,7 @@ import { PlayerUI } from "./ui/player-ui";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 import { usePlayerAnimation } from "@/context/player-animation-context";
+import { State } from "react-native-track-player";
 
 const MINI_PLAYER_HEIGHT = 64;
 
@@ -26,7 +27,7 @@ export const Player = () => {
 
   const { playbackState, queueLength } = use$(() => {
     return {
-      playbackState: audio$.playbackState.get(),
+      playbackState: audio$.playerState.get(),
       queueLength: audio$.queue.total.get(),
     };
   });
@@ -99,7 +100,7 @@ export const Player = () => {
   });
 
   // The player should show if the state is NOT idle, OR if there are items in the queue.
-  const isPlayerVisible = playbackState !== "idle" || queueLength > 0;
+  const isPlayerVisible = playbackState !== State.None || queueLength > 0;
 
   if (!isPlayerVisible) {
     return null;

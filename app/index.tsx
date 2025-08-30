@@ -52,20 +52,12 @@ export default function Index() {
             {data ? data?.track_artist_name : null}
           </Text>
         </View>
-        <Button
-          title="Play"
-          onPress={() => {
-            TrackPlayer.load(XN);
-            TrackPlayer.play();
-          }}
+        <PlayButton
+          size={88}
+          track={XN}
+          color={colors.secondary}
+          isLiveStream
         />
-        <Button
-          title="Stop"
-          onPress={() => {
-            TrackPlayer.stop();
-          }}
-        />
-        {/* <PlayButton size={88} track={XN} color={colors.secondary} /> */}
       </View>
     </View>
   );
