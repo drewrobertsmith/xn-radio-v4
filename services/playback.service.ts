@@ -1,6 +1,10 @@
-import TrackPlayer, { Event } from "react-native-track-player";
+import { audio$ } from "@/state/audio";
+import TrackPlayer, { Event, State } from "react-native-track-player";
 
 export async function PlaybackService() {
+  // --- Remote Control Listeners ---
+  // These are for handling lock screen and notification controls
+
   TrackPlayer.addEventListener(Event.RemotePlayPause, () => {
     console.log("Event.RemotePlayPause");
     TrackPlayer.pause();
@@ -45,24 +49,47 @@ export async function PlaybackService() {
     console.log("Event.RemoteDuck", event);
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackQueueEnded, (event) => {
-    console.log("Event.PlaybackQueueEnded", event);
+  // --- State Management Listeners ---
+  // These listeners are the core of the integration between RNTP and LegendState
+
+  TrackPlayer.addEventListener(Event.PlaybackState, ({ state }) => {
+    console.log("Event.PlaybackState", state);
+    // Update Legend State with the new player state
+    audio$.playerState.set(state);
   });
 
   TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
     console.log("Event.PlaybackActiveTrackChanged", event);
+    // Get the full track object from the player
+    const track = TrackPlayer.getActiveTrack();
+    // Update Legend State with the new active track
+    audio$.currentrack.set(track);
   });
 
   TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
-    console.log("Event.PlaybackProgressUpdated", event);
+    //console.log("Event.PlaybackProgressUpdated", event);
+    // Update Legend State with the new progress
+    audio$.progress.set({
+      position: event.position,
+      duration: event.duration,
+      buffered: event.buffered,
+    });
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackError, (event) => {
+    console.error("Event.PlaybackError", event);
+    // Update Legend State with the error message
+    audio$.error.set(event.message);
+    // reset other states here
+    audio$.playerState.set(State.Error);
+  });
+
+  TrackPlayer.addEventListener(Event.PlaybackQueueEnded, (event) => {
+    console.log("Event.PlaybackQueueEnded", event);
   });
 
   TrackPlayer.addEventListener(Event.PlaybackPlayWhenReadyChanged, (event) => {
     console.log("Event.PlaybackPlayWhenReadyChanged", event);
-  });
-
-  TrackPlayer.addEventListener(Event.PlaybackState, (event) => {
-    console.log("Event.PlaybackState", event);
   });
 
   TrackPlayer.addEventListener(Event.MetadataChapterReceived, (event) => {

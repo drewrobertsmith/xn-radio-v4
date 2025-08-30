@@ -20,6 +20,7 @@ import { PlayerAnimationProvider } from "@/context/player-animation-context";
 import TrackPlayer from "react-native-track-player";
 import { useSetupPlayer } from "@/hooks/useSetupPlayer";
 import { PlaybackService } from "@/services/playback.service";
+import { AudioProvider } from "@/context/audio-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -86,54 +87,60 @@ export default function RootLayout() {
           console.log("TanStack Query cache restored from MMKV.");
         }}
       >
-        <ThemeProvider>
-          <LayoutProvider>
-            <PlayerAnimationProvider>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <Tabs tabBar={renderTabBar}>
-                  <Tabs.Screen
-                    name="index"
-                    options={{
-                      title: "Radio",
-                      tabBarIcon: ({ color }) => (
-                        <MaterialIcons
-                          name="cell-tower"
-                          size={24}
-                          color={color}
-                        />
-                      ),
-                    }}
-                  />
-                  <Tabs.Screen
-                    name="(stack)"
-                    options={{
-                      headerShown: false,
-                      title: "Podcasts",
-                      tabBarIcon: ({ color }) => (
-                        <MaterialIcons name="headset" size={24} color={color} />
-                      ),
-                    }}
-                  />
-                  <Tabs.Screen
-                    name="profile"
-                    options={{
-                      href: null, //hide route for now
-                      title: "Profile",
-                      tabBarIcon: ({ color }) => (
-                        <MaterialIcons
-                          name="tag-faces"
-                          size={24}
-                          color={color}
-                        />
-                      ),
-                    }}
-                  />
-                </Tabs>
-                <Player />
-              </GestureHandlerRootView>
-            </PlayerAnimationProvider>
-          </LayoutProvider>
-        </ThemeProvider>
+        <AudioProvider>
+          <ThemeProvider>
+            <LayoutProvider>
+              <PlayerAnimationProvider>
+                <GestureHandlerRootView style={{ flex: 1 }}>
+                  <Tabs tabBar={renderTabBar}>
+                    <Tabs.Screen
+                      name="index"
+                      options={{
+                        title: "Radio",
+                        tabBarIcon: ({ color }) => (
+                          <MaterialIcons
+                            name="cell-tower"
+                            size={24}
+                            color={color}
+                          />
+                        ),
+                      }}
+                    />
+                    <Tabs.Screen
+                      name="(stack)"
+                      options={{
+                        headerShown: false,
+                        title: "Podcasts",
+                        tabBarIcon: ({ color }) => (
+                          <MaterialIcons
+                            name="headset"
+                            size={24}
+                            color={color}
+                          />
+                        ),
+                      }}
+                    />
+                    <Tabs.Screen
+                      name="profile"
+                      options={{
+                        href: null, //hide route for now
+                        title: "Profile",
+                        tabBarIcon: ({ color }) => (
+                          <MaterialIcons
+                            name="tag-faces"
+                            size={24}
+                            color={color}
+                          />
+                        ),
+                      }}
+                    />
+                  </Tabs>
+                  <Player />
+                </GestureHandlerRootView>
+              </PlayerAnimationProvider>
+            </LayoutProvider>
+          </ThemeProvider>
+        </AudioProvider>
       </PersistQueryClientProvider>
     </ConvexAuthProvider>
   );
