@@ -1,12 +1,11 @@
 import { useAppTheme } from "@/components/ui/theme-provider";
 import { Image } from "expo-image";
-import { Button, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import PlayButton from "@/components/play-button";
 import { useMetadata } from "@/hooks/useMetadata";
 import { audio$ } from "@/state/audio";
 import { use$ } from "@legendapp/state/react";
-import { useAudio } from "@/context/audio-context";
-import TrackPlayer, { Track } from "react-native-track-player";
+import { State, Track } from "react-native-track-player";
 
 const xnLogo = require("../assets/images/splash-icon.png");
 const xnMotionLogo = require("../assets/gifs/xn_motion1x1.gif");
@@ -16,23 +15,25 @@ const XN: Track = {
   url: "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3",
   title: "XN Radio LIVE",
   artist: "XN Radio",
+  artwork: xnLogo,
   isLiveStream: true,
 };
 
 export default function Index() {
   const { colors } = useAppTheme();
   const { data } = useMetadata(XN.id, 1);
-  // const currentTrack = use$(audio$.currentTrack.get());
-  // const { player } = useAudio();
+  const currentTrack = use$(audio$.currentTrack);
+  const playerState = use$(audio$.playerState);
 
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
         <Image
-          // source={
-          //   player.playing && currentTrack?.isLiveStream ? xnMotionLogo : xnLogo
-          // }
-          source={xnLogo}
+          source={
+            playerState === State.Playing && currentTrack?.isLiveStream
+              ? xnMotionLogo
+              : xnLogo
+          }
           transition={200}
           contentFit="contain"
           cachePolicy="memory-disk"

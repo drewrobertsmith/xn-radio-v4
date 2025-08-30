@@ -1,5 +1,4 @@
 import { computed, observable } from "@legendapp/state";
-import { AudioStatus } from "expo-audio";
 import { State, Track } from "react-native-track-player";
 
 //simple interface based on Event.PlaybackProgressUpdated's first three params

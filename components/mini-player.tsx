@@ -103,7 +103,12 @@ export default function MiniPlayer({
           </Text>
           {handleSecondaryText()}
         </View>
-        <PlayButton track={currentTrack} size={44} color={colors.secondary} />
+        <PlayButton
+          track={currentTrack}
+          size={44}
+          color={colors.secondary}
+          isLiveStream={currentTrack.isLiveStream}
+        />
       </Animated.View>
     </Pressable>
   );

@@ -1,17 +1,13 @@
-import { Alert, Dimensions, Linking, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
 import Separator from "../ui/separator";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
 import { RenderTrackDuration } from "../duration";
-import RenderHTML from "react-native-render-html";
-import { router } from "expo-router";
-import Constants from "expo-constants";
 import DescriptionHTML from "../description-html";
 
 export default function DetailsScreen() {
   const { colors } = useAppTheme();
-  const { width } = Dimensions.get("window");
 
   const { title, currentTrack } = use$(() => {
     return {

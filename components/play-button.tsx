@@ -3,7 +3,7 @@ import { ActivityIndicator, TouchableOpacity } from "react-native";
 import { use$ } from "@legendapp/state/react";
 import { XNTheme } from "./ui/theme-provider";
 import { useAudio } from "@/context/audio-context";
-import TrackPlayer, { State, Track } from "react-native-track-player";
+import { State, Track } from "react-native-track-player";
 import { audio$ } from "@/state/audio";
 
 type PlayButtonProps = {
@@ -19,7 +19,7 @@ type PlayButtonProps = {
   | "secondary"
   | "secondaryText"
   | "text"];
-  isLiveStream: boolean;
+  isLiveStream?: boolean;
 };
 
 export default function PlayButton({
@@ -44,55 +44,48 @@ export default function PlayButton({
     return null;
   }
 
-  const handleButtonPress = () => {
-    const isThisTrackPlaying =
-      playbackState === State.Playing && currentTrackId === track.id;
-    const isThisTrackPaused =
-      playbackState === State.Paused && currentTrackId === track.id;
+  const isThisTrackCurrent = currentTrackId === track.id;
+  const isThisTrackPlaying =
+    playbackState === State.Playing && isThisTrackCurrent;
+  const isThisTrackPaused =
+    playbackState === State.Paused && isThisTrackCurrent;
+  const isThisTrackLoading =
+    playbackState === State.Loading && isThisTrackCurrent;
 
+  const handleButtonPress = () => {
+    // Case 1: This specific track is currently playing.
     if (isThisTrackPlaying) {
-      // If this exact track is playing, pause it.
-      pause();
-    } else if (isThisTrackPaused && isLiveStream) {
-      stop();
-    } else {
-      // For all other cases (different track, idle, stopped), play this track.
+      // If it's playing, we decide whether to stop or pause.
+      if (isLiveStream) {
+        stop();
+      } else {
+        pause();
+      }
+    }
+    // Case 2: This track is NOT playing (it's paused, stopped, idle, or a different track is playing).
+    else {
+      // In all other cases, the desired action is to start playing this track.
       play(track);
     }
   };
-
   const renderIcon = () => {
-    const isThisTrackCurrent = currentTrackId === track.id;
-
-    // If this specific track is the one loading, show a spinner.
-    if (playbackState === State.Loading && isThisTrackCurrent) {
+    if (isThisTrackLoading) {
       return <ActivityIndicator size={size} color={color} />;
-    } else if (
-      playbackState === State.Playing &&
-      isThisTrackCurrent &&
-      isLiveStream
-    ) {
-      return <MaterialIcons name="stop-circle" size={size} color={color} />;
     }
 
-    // If this specific track is playing, show the pause icon.
-    else if (playbackState === State.Playing && isThisTrackCurrent) {
-      return (
-        <MaterialIcons name="pause-circle-filled" size={size} color={color} />
-      );
+    if (isThisTrackPlaying) {
+      const iconName = isLiveStream ? "stop-circle" : "pause-circle-filled";
+      return <MaterialIcons name={iconName} size={size} color={color} />;
     }
 
-    // In all other cases (paused, stopped, different track), show the play icon.
+    // Default case for paused, stopped, idle, etc.
     return (
       <MaterialIcons name="play-circle-filled" size={size} color={color} />
     );
   };
 
   return (
-    <TouchableOpacity
-      onPress={handleButtonPress}
-      disabled={playbackState === State.Loading && currentTrackId === track.id}
-    >
+    <TouchableOpacity onPress={handleButtonPress} disabled={isThisTrackLoading}>
       {renderIcon()}
     </TouchableOpacity>
   );

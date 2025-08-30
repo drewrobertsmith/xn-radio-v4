@@ -17,7 +17,7 @@ export default function QueueHeaderItem() {
       return null;
     }
 
-    const status = audio$.status.get();
+    const status = audio$.playerState.get();
 
     const currentTimeInSeconds =
       status?.isLoaded && status.currentTime ? status.currentTime : 0;
@@ -94,7 +94,12 @@ export default function QueueHeaderItem() {
         </Text>
       </View>
       <View className="flex-2 ml-1">
-        <PlayButton size={44} color={colors.secondary} track={track} />
+        <PlayButton
+          size={44}
+          color={colors.secondary}
+          track={track}
+          isLiveStream={track.isLiveStream}
+        />
       </View>
     </View>
   );

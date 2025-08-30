@@ -8,13 +8,23 @@ import { audio$ } from "@/state/audio";
 
 export default function PlayerControls() {
   const { colors } = useAppTheme();
-  const { player, seekTo } = useAudio();
+  const { seekTo } = useAudio();
   const currentTrack = use$(audio$.currentTrack);
+  const currentProgress = use$(audio$.progress);
 
-  if (currentTrack?.isLiveStream) {
+  if (!currentTrack) {
+    return null;
+  }
+
+  if (currentTrack.isLiveStream) {
     return (
       <View className="flex-row items-center gap-5">
-        <PlayButton track={currentTrack} size={112} color={colors.secondary} />
+        <PlayButton
+          track={currentTrack}
+          size={112}
+          color={colors.secondary}
+          isLiveStream={currentTrack.isLiveStream}
+        />
       </View>
     );
   } else {
@@ -22,7 +32,7 @@ export default function PlayerControls() {
       <View className="flex-row items-center gap-5">
         <TouchableOpacity
           onPress={() => {
-            seekTo(player.currentTime - 15);
+            seekTo(currentProgress.position - 15);
           }}
         >
           <View className="relative h-24 w-24 items-center justify-center">
@@ -35,10 +45,15 @@ export default function PlayerControls() {
             </Text>
           </View>
         </TouchableOpacity>
-        <PlayButton track={currentTrack} size={112} color={colors.secondary} />
+        <PlayButton
+          track={currentTrack}
+          size={112}
+          color={colors.secondary}
+          isLiveStream={currentTrack.isLiveStream}
+        />
         <TouchableOpacity
           onPress={() => {
-            seekTo(player.currentTime + 30);
+            seekTo(currentProgress.position + 30);
           }}
         >
           <View className="relative h-24 w-24 items-center justify-center">
