@@ -65,6 +65,8 @@ export const audio$ = observable({
     buffered: 0,
   } as ProgressState,
 
+  savedProgress: {} as Record<string, number>,
+
   /** Holds any fatal playback error messages. */
   error: null as string | null,
 });

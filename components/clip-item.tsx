@@ -4,9 +4,9 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { useRouter } from "expo-router";
 import PlayButton from "./play-button";
-import { Track } from "@/state/audio";
 import QueueButton from "./queue-button";
 import { RenderClipDuration } from "./duration";
+import { Track } from "react-native-track-player";
 
 export default function ClipItem({ item }: { item: Clip }) {
   const { colors } = useAppTheme();

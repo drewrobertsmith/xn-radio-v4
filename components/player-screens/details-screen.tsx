@@ -16,6 +16,11 @@ export default function DetailsScreen() {
       currentTrack: audio$.currentTrack.get(),
     };
   });
+
+  if (!currentTrack) {
+    return null;
+  }
+
   return (
     <View
       className="flex-1 p-4 text gap-2"
@@ -24,7 +29,7 @@ export default function DetailsScreen() {
       <Text className="text-lg font-bold" style={{ color: colors.text }}>
         {title}
       </Text>
-      {!currentTrack?.duration ? (
+      {!currentTrack.duration ? (
         <Text className="font-semibold" style={{ color: colors.error }}>
           ON AIR
         </Text>
@@ -34,10 +39,7 @@ export default function DetailsScreen() {
         </Text>
       )}
       <Separator />
-      {/* <Text className="text-base" style={{ color: colors.text }}> */}
-      {/*   {description} */}
-      {/* </Text> */}
-      <DescriptionHTML description={currentTrack?.descriptionHTML} />
+      <DescriptionHTML description={currentTrack.descriptionHTML} />
     </View>
   );
 }

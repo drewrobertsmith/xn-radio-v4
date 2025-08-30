@@ -10,9 +10,10 @@ import PlayButton from "@/components/play-button";
 import QueueButton from "@/components/queue-button";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { use$ } from "@legendapp/state/react";
-import { audio$, Track } from "@/state/audio";
-import RenderHTML from "react-native-render-html";
+import { audio$ } from "@/state/audio";
 import DescriptionHTML from "@/components/description-html";
+import { Track } from "react-native-track-player";
+import { RenderClipDuration } from "@/components/duration";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();
@@ -23,7 +24,7 @@ export default function ClipPage() {
     const currentTrack = audio$.currentTrack.get();
     return {
       id: currentTrack?.id,
-      status: audio$.status.currentTime.get(),
+      status: audio$.progress.get(),
     };
   });
 
@@ -40,31 +41,28 @@ export default function ClipPage() {
     descriptionHTML: item.DescriptionHtml,
   };
 
-  const handleDuration = () => {
-    if (id === item?.Id) {
-      return (
-        <Text
-          className="text-sm font-[500]"
-          style={{ color: colors.secondaryText }}
-        >
-          {formatDuration(
-            item?.DurationSeconds - status?.currentTime,
-            "summary",
-          )}{" "}
-          left
-        </Text>
-      );
-    } else {
-      return (
-        <Text
-          className="text-sm font-[500]"
-          style={{ color: colors.secondaryText }}
-        >
-          {formatDuration(item?.DurationSeconds, "summary")}
-        </Text>
-      );
-    }
-  };
+  // const handleDuration = () => {
+  //   if (id === item?.Id) {
+  //     return (
+  //       <Text
+  //         className="text-sm font-[500]"
+  //         style={{ color: colors.secondaryText }}
+  //       >
+  //         {formatDuration(item.DurationSeconds - status.position, "summary")}{" "}
+  //         left
+  //       </Text>
+  //     );
+  //   } else {
+  //     return (
+  //       <Text
+  //         className="text-sm font-[500]"
+  //         style={{ color: colors.secondaryText }}
+  //       >
+  //         {formatDuration(item?.DurationSeconds, "summary")}
+  //       </Text>
+  //     );
+  //   }
+  // };
 
   return (
     <ScrollView
@@ -114,7 +112,12 @@ export default function ClipPage() {
         >
           {formatDate(item?.PublishedUtc)}
         </Text>
-        {handleDuration()}
+        <Text
+          className="text-sm font-[500]"
+          style={{ color: colors.secondaryText }}
+        >
+          <RenderClipDuration item={item} />
+        </Text>
       </View>
       <DescriptionHTML description={item.DescriptionHtml} />
     </ScrollView>

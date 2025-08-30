@@ -1,7 +1,8 @@
-import { audio$, Track } from "@/state/audio";
+import { audio$ } from "@/state/audio";
 import { mmkv } from "@/utils/mmkv-storage";
 import { useObserve } from "@legendapp/state/react";
 import { useEffect, useRef } from "react";
+import { Track } from "react-native-track-player";
 
 // store the entire queue under one single, well-known key.
 const QUEUE_KEY = "audio_queue";

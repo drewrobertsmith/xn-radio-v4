@@ -1,82 +1,64 @@
-import { audio$, Track } from "@/state/audio";
+import { audio$ } from "@/state/audio";
 import { Clip } from "@/types/types";
 import { formatDuration } from "@/utils/formatters";
 import { observer, use$ } from "@legendapp/state/react";
 import { Text } from "react-native";
+import { State, Track } from "react-native-track-player";
 
-export const RenderClipDuration = observer(function RenderClipDuration({
-  item,
-}: {
-  item: Clip;
-}) {
-  const effectiveProgressSec = use$(() => {
-    const currentTrackId = audio$.currentTrack.id.get();
-    const playbackState = audio$.playbackState.get();
-
-    // Check if THIS ClipItem is the one that's currently loaded in the player.
-    const isPlayingThisItem = currentTrackId === item.Id;
-
-    // If this item is the one playing or paused, use the LIVE player time.
-    // This will cause this specific ClipItem to re-render as the time updates.
-    if (
-      isPlayingThisItem &&
-      (playbackState === "playing" || playbackState === "paused")
-    ) {
-      return audio$.status.currentTime.get();
-    }
-
-    // Otherwise, for all other items, just use the last saved progress.
-    // This will not cause re-renders unless the saved progress changes.
-    return audio$.progress[item.Id].get();
-  });
-
-  const progressSeconds = effectiveProgressSec || 0;
-  if (progressSeconds > 1) {
-    // Check for > 1 to avoid showing "1s left" for negligible progress
-    const remaining = item.DurationSeconds - progressSeconds;
-    // Ensure we don't show a negative duration if there's a slight delay
-    if (remaining < 0) return null;
-    return <Text>{formatDuration(remaining, "summary")} left</Text>;
-  }
-  return <Text>{formatDuration(item.DurationSeconds, "summary")}</Text>;
-});
-
-// Define the props for the component
-type RenderTrackDurationProps = {
-  track: Track;
+type RenderRemainingDurationProps = {
+  id: string;
+  duration: number;
 };
 
-export const RenderTrackDuration = observer(function RenderTrackDuration({
-  track,
-}: RenderTrackDurationProps) {
-  const effectiveProgressSec = use$(() => {
-    const currentTrackId = audio$.currentTrack.id.get();
-    const playbackState = audio$.playbackState.get();
+export const RenderRemainingDuration = observer(
+  function RenderRemainingDuration({
+    id,
+    duration,
+  }: RenderRemainingDurationProps) {
+    // This hook now intelligently selects which progress to display.
+    const effectivePosition = use$(() => {
+      const playerState = audio$.playerState.get();
+      const currentTrackId = audio$.currentTrack.id.get();
 
-    // Check if THIS ClipItem is the one that's currently loaded in the player.
-    const isPlayingThisItem = currentTrackId === track.id;
+      const isThisItemActive =
+        currentTrackId === id &&
+        (playerState === State.Playing || playerState === State.Paused);
 
-    // If this item is the one playing or paused, use the LIVE player time.
-    // This will cause this specific ClipItem to re-render as the time updates.
-    if (
-      isPlayingThisItem &&
-      (playbackState === "playing" || playbackState === "paused")
-    ) {
-      return audio$.status.currentTime.get();
+      // If this item is the one playing/paused, use the LIVE player position.
+      if (isThisItemActive) {
+        return audio$.progress.position.get();
+      }
+
+      // --- THIS IS THE NEW LOGIC ---
+      // Otherwise, for all other items, look up its saved progress in our map.
+      // .get() will return undefined if the key doesn't exist, which is fine.
+      return audio$.savedProgress[id].get();
+    });
+
+    // Use the calculated position, defaulting to 0 if it's null or undefined.
+    const position = effectivePosition || 0;
+
+    if (!duration || duration <= 0) {
+      return null;
     }
 
-    // Otherwise, for all other items, just use the last saved progress.
-    // This will not cause re-renders unless the saved progress changes.
-    return audio$.progress[track.id].get();
-  });
+    if (position > 1) {
+      const remaining = duration - position;
+      if (remaining < 0) return null;
+      return <Text>{formatDuration(remaining, "summary")} left</Text>;
+    }
 
-  const progressSeconds = effectiveProgressSec || 0;
-  if (progressSeconds > 1) {
-    // Check for > 1 to avoid showing "1s left" for negligible progress
-    const remaining = track?.duration - progressSeconds;
-    // Ensure we don't show a negative duration if there's a slight delay
-    if (remaining < 0) return null;
-    return <Text>{formatDuration(remaining, "summary")} left</Text>;
-  }
-  return <Text>{formatDuration(track?.duration, "summary")}</Text>;
-});
+    return <Text>{formatDuration(duration, "summary")}</Text>;
+  },
+);
+export function RenderClipDuration({ item }: { item: Clip }) {
+  return (
+    <RenderRemainingDuration id={item.Id} duration={item.DurationSeconds} />
+  );
+}
+
+export function RenderTrackDuration({ track }: { track: Track }) {
+  // Ensure track.duration is a valid number before passing it
+  const duration = typeof track?.duration === "number" ? track.duration : 0;
+  return <RenderRemainingDuration id={track.id} duration={duration} />;
+}

@@ -9,10 +9,11 @@ const PROGRESS_KEY_PREFIX = "progress_";
 /**
  * A hook to manage the persistence of audio playback progress using MMKV.
  * It loads progress on startup and saves it at critical points (pause, track change, app background).
+ * The loading of progress is handled by the AudioProvider's play function.
  */
 
 export function usePlaybackPersistence() {
-  // 1. Load all saved progress from MMKV into Legend-State on mount
+  // 1. Load all saved progress from MMKV into our new state property on mount.
   useEffect(() => {
     const allKeys = mmkv.getAllKeys();
     const progressKeys = allKeys.filter((key) =>
@@ -27,41 +28,24 @@ export function usePlaybackPersistence() {
         progressMap[trackId] = position;
       }
     }
-    audio$.progress.set(progressMap);
-    console.log("Playback progress loaded into state");
+    // Set the entire map in our global state.
+    audio$.savedProgress.set(progressMap);
+    console.log("All saved playback progress loaded into state.");
   }, []);
 
-  // 2. Function to save the current track's progress
+  // 2. Update the save function to write to both MMKV and the state.
   const saveCurrentTrackProgress = () => {
     const track = audio$.currentTrack.get();
-    const status = audio$.status.get();
+    const position = audio$.progress.position.get();
 
-    if (track?.id && status?.isLoaded) {
-      const position = status.currentTime;
+    if (track?.id && position > 0) {
       const key = `${PROGRESS_KEY_PREFIX}${track.id}`;
-
-      // Update both MMKV and the global state
+      // a. Write to persistent storage
       mmkv.set(key, position);
-
-      // 1. `audio$.progress[track.id].set(position)`: This was the original code.
-      //    It fails when `track.id` is new because `audio$.progress[track.id]` is
-      //    `undefined`, and you can't call `.set()` on `undefined`.
-      //
-      // 2. `audio$.progress.merge({ [track.id]: position })`: This was the first
-      //    attempted fix. It failed because the `merge` function is not available
-      //    on the `progress` object in the version of Legend State being used.
-      //
-      // 3. `const newProgress = { ...audio$.progress.peek(), [track.id]: position }; audio$.progress.set(newProgress);`:
-      //    This is the current, correct solution.
-      //    - `peek()` gets the current value of the `progress` object without creating a dependency.
-      //    - The spread operator `{ ... }` creates a new object with the existing progress and the new value.
-      //    - `set()` then updates the state with the new object.
-      const newProgress = { ...audio$.progress.peek(), [track.id]: position };
-      audio$.progress.set(newProgress);
-      console.log(`Saved progress for ${track.id} at ${position}ms`);
+      // b. Update our reactive state map so the UI updates instantly
+      audio$.savedProgress[track.id].set(position);
     }
   };
-
   // 3. Observe state to save progress on track changes or pause
   useObserve(() => {
     // This effect runs whenever the current track ID changes.

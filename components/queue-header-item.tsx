@@ -10,35 +10,24 @@ import PlayButton from "./play-button";
 export default function QueueHeaderItem() {
   const { colors } = useAppTheme();
 
-  const data = use$(() => {
-    const track = audio$.currentTrack.get();
+  // 1. Get State Directly and Reactively
+  // This is much cleaner than the previous derived state object.
+  // The component will now automatically re-render when the track or progress changes.
+  const track = use$(audio$.currentTrack);
+  const progress = use$(audio$.progress);
 
-    if (!track) {
-      return null;
-    }
-
-    const status = audio$.playerState.get();
-
-    const currentTimeInSeconds =
-      status?.isLoaded && status.currentTime ? status.currentTime : 0;
-    const durationInSeconds = track.duration ? track.duration : 0;
-
-    return {
-      track,
-      currentTime: currentTimeInSeconds,
-      duration: durationInSeconds,
-    };
-  });
-
-  //If selector returns null (because the queue is empty),
-  // render nothing.
-  if (!data) {
+  // 2. Handle the "No Track" Case
+  // If there's no track, the queue is empty, so render nothing.
+  if (!track) {
     return null;
   }
 
-  const { track, currentTime, duration } = data;
-
-  const progressWidth = duration > 0 ? (currentTime / duration) * 100 : 0;
+  // 3. Calculate Progress Reactively
+  // Use the duration from the progress object for the most accuracy,
+  // but fall back to the track's metadata duration if needed.
+  const duration = progress.duration || track.duration || 0;
+  const position = progress.position || 0;
+  const progressWidth = duration > 0 ? (position / duration) * 100 : 0;
 
   return (
     <View
@@ -48,6 +37,7 @@ export default function QueueHeaderItem() {
         backgroundColor: colors.border,
       }}
     >
+      {/* The progress bar now works correctly */}
       <View
         className="absolute h-[150%] left-0  rounded-2xl"
         style={[
@@ -84,7 +74,8 @@ export default function QueueHeaderItem() {
           {track.title}
         </Text>
         <Text className="text-xs" style={{ color: colors.secondaryText }}>
-          {!track.duration ? (
+          {/* Use track.isLiveStream for a more direct check */}
+          {track.isLiveStream ? (
             <Text className="font-semibold" style={{ color: colors.error }}>
               ON AIR
             </Text>

@@ -23,15 +23,30 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const currentTrack = use$(audio$.currentTrack);
 
   const { saveCurrentTrackProgress } = usePlaybackPersistence();
-  // useQueuePersistence();
+  useQueuePersistence();
 
   //--- Player Controls ---//
 
   const play = useCallback(
     async (item: Track) => {
-      if (currentTrack?.id !== item.id) {
+      const isNewTrack = currentTrack?.id !== item.id;
+
+      if (isNewTrack) {
         await TrackPlayer.setQueue([item]);
         audio$.queue.tracks.set([item]);
+      }
+
+      // --- THE REFACTORED LOGIC ---
+      // Before playing, get the saved position from our GLOBAL STATE, not storage.
+      // .get() will return undefined if no progress is saved for this track.
+      const savedPosition = audio$.savedProgress[item.id].get();
+
+      // If we are playing a new track and found a saved position, seek to it.
+      if (isNewTrack && savedPosition && savedPosition > 0) {
+        console.log(
+          `Found saved progress for ${item.id} in state, seeking to ${savedPosition}s`,
+        );
+        await TrackPlayer.seekTo(savedPosition);
       }
       await TrackPlayer.play();
     },
