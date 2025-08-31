@@ -1,7 +1,7 @@
 import { useAppTheme } from "@/components/ui/theme-provider";
 import { useIndividualClip } from "@/hooks/useIndividualClip";
 import { Clip } from "@/types/types";
-import { formatDate, formatDuration } from "@/utils/formatters";
+import { formatDate } from "@/utils/formatters";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
@@ -9,8 +9,6 @@ import { useLayout } from "@/context/layout-context";
 import PlayButton from "@/components/play-button";
 import QueueButton from "@/components/queue-button";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
 import DescriptionHTML from "@/components/description-html";
 import { Track } from "react-native-track-player";
 import { RenderClipDuration } from "@/components/duration";
@@ -20,49 +18,19 @@ export default function ClipPage() {
   const { clipId } = useLocalSearchParams<{ clipId: Clip["Id"] }>();
   const { data: item } = useIndividualClip(clipId);
   const { tabBarHeight } = useLayout();
-  const { id, status } = use$(() => {
-    const currentTrack = audio$.currentTrack.get();
-    return {
-      id: currentTrack?.id,
-      status: audio$.progress.get(),
-    };
-  });
 
   if (!item) return;
 
   const clipToTrack: Track = {
-    id: item?.Id,
-    title: item?.Title,
-    url: item?.AudioUrl,
-    duration: item?.DurationSeconds,
-    date: item?.PublishedUtc,
-    artwork: item?.ImageUrl,
-    description: item?.Description,
+    id: item.Id,
+    title: item.Title,
+    url: item.AudioUrl,
+    duration: item.DurationSeconds,
+    date: item.PublishedUtc,
+    artwork: item.ImageUrl,
+    description: item.Description,
     descriptionHTML: item.DescriptionHtml,
   };
-
-  // const handleDuration = () => {
-  //   if (id === item?.Id) {
-  //     return (
-  //       <Text
-  //         className="text-sm font-[500]"
-  //         style={{ color: colors.secondaryText }}
-  //       >
-  //         {formatDuration(item.DurationSeconds - status.position, "summary")}{" "}
-  //         left
-  //       </Text>
-  //     );
-  //   } else {
-  //     return (
-  //       <Text
-  //         className="text-sm font-[500]"
-  //         style={{ color: colors.secondaryText }}
-  //       >
-  //         {formatDuration(item?.DurationSeconds, "summary")}
-  //       </Text>
-  //     );
-  //   }
-  // };
 
   return (
     <ScrollView
@@ -78,7 +46,7 @@ export default function ClipPage() {
     >
       <View className="w-[50%]">
         <Image
-          source={item?.ImageUrl}
+          source={item.ImageUrl}
           contentFit="contain"
           cachePolicy="memory-disk"
           style={{
@@ -94,7 +62,7 @@ export default function ClipPage() {
         className="text-2xl font-bold text-center"
         style={{ color: colors.text }}
       >
-        {item?.Title}
+        {item.Title}
       </Text>
       <View className="flex-row items-center flex-1 gap-4">
         <MaterialIcons
@@ -110,7 +78,7 @@ export default function ClipPage() {
           className="text-sm font-[500]"
           style={{ color: colors.secondaryText }}
         >
-          {formatDate(item?.PublishedUtc)}
+          {formatDate(item.PublishedUtc)}
         </Text>
         <Text
           className="text-sm font-[500]"

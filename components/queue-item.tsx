@@ -2,9 +2,9 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { formatDate } from "@/utils/formatters";
 import { Image } from "expo-image";
-import { Track } from "@/state/audio";
 import { useAudio } from "@/context/audio-context";
 import { RenderTrackDuration } from "./duration";
+import { Track } from "react-native-track-player";
 
 export default function QueueItem({ item }: { item: Track }) {
   const { colors } = useAppTheme();

@@ -25,6 +25,53 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const { saveCurrentTrackProgress } = usePlaybackPersistence();
   useQueuePersistence();
 
+  //--- QUEUE CONTROL ---//
+
+  const addToBackOfQueue = useCallback(async (item: Track) => {
+    // 1. Check against our Legend State mirror to prevent duplicates
+    const currentQueue = audio$.queue.tracks.get();
+    if (currentQueue.some((track) => track.id === item.id)) {
+      // Alert.alert("Episode already in queue");
+      return;
+    }
+    // 2. Command the player to add the track
+    await TrackPlayer.add(item);
+    // 3. Synchronize our Legend State mirror
+    audio$.queue.tracks.push(item);
+  }, []);
+
+  const addToTopOfQueue = useCallback(async (item: Track) => {
+    // Get the current queue and filter out the item if it already exists.
+    const currentQueue = audio$.queue.tracks.get();
+    const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
+    const insertAtIndex =
+      currentTrackIndex !== undefined ? currentTrackIndex + 1 : 0;
+    await TrackPlayer.add(item, insertAtIndex);
+
+    // 2. Synchronize our Legend State mirror
+    const newQueue = [...currentQueue];
+    newQueue.splice(insertAtIndex, 0, item);
+    audio$.queue.tracks.set(newQueue);
+  }, []);
+
+  const removeFromQueue = useCallback(async (trackId: string) => {
+    // 1. Find the index of the track to remove from the REAL player queue
+    const playerQueue = await TrackPlayer.getQueue();
+    const indexToRemove = playerQueue.findIndex(
+      (track) => track.id === trackId,
+    );
+
+    if (indexToRemove !== -1) {
+      await TrackPlayer.remove(indexToRemove);
+
+      // 3. Synchronize our Legend State mirror
+      const newLocalQueue = audio$.queue.tracks
+        .get()
+        .filter((track) => track.id !== trackId);
+      audio$.queue.tracks.set(newLocalQueue);
+    }
+  }, []);
+
   //--- Player Controls ---//
 
   const play = useCallback(
@@ -32,11 +79,9 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       const isNewTrack = currentTrack?.id !== item.id;
 
       if (isNewTrack) {
-        await TrackPlayer.setQueue([item]);
-        audio$.queue.tracks.set([item]);
+        addToTopOfQueue(item);
       }
 
-      // --- THE REFACTORED LOGIC ---
       // Before playing, get the saved position from our GLOBAL STATE, not storage.
       // .get() will return undefined if no progress is saved for this track.
       const savedPosition = audio$.savedProgress[item.id].get();
@@ -50,7 +95,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       }
       await TrackPlayer.play();
     },
-    [currentTrack],
+    [currentTrack, addToTopOfQueue],
   );
 
   const pause = useCallback(async () => {
@@ -65,86 +110,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   const seekTo = useCallback(async (seconds: number) => {
     await TrackPlayer.seekTo(seconds);
   }, []);
-
-  //--- QUEUE CONTROL ---//
-
-  // const addToBackOfQueue = useCallback(
-  //   async (item: Track) => {
-  //     if (!audio$.queue.tracks.some((track) => track.id.get() === item.id)) {
-  //       const wasQueueEmpty = audio$.queue.tracks.get().length === 0;
-  //       audio$.queue.tracks.push(item);
-  //
-  //       // If the queue was empty, this new track is now the first one.
-  //       // Load it into the player so it's ready.
-  //       if (wasQueueEmpty) {
-  //         loadTrack(item);
-  //         audio$.playbackState.set("paused");
-  //       }
-  //     } else {
-  //       Alert.alert("Episode already in queue");
-  //     }
-  //   },
-  //   [loadTrack],
-  // );
-  const addToBackOfQueue = () => { };
-
-  // const addToTopOfQueue = useCallback(
-  //   (item: Track) => {
-  //     // Get the current queue and filter out the item if it already exists.
-  //     const currentQueue = audio$.queue.tracks.get();
-  //     const newQueue = currentQueue.filter(
-  //       (track: Track) => track.id !== item.id,
-  //     );
-  //
-  //     // Add the item to the very beginning of the new queue.
-  //     newQueue.unshift(item);
-  //
-  //     // Set the new queue state.
-  //     audio$.queue.tracks.set(newQueue);
-  //
-  //     // Since this is now the first item, load it into the player.
-  //     loadTrack(item);
-  //     // Set state to paused, making it "ready to play".
-  //     audio$.playbackState.set("paused");
-  //   },
-  //   [loadTrack],
-  // );
-  const addToTopOfQueue = () => { };
-
-  // const removeFromQueue = useCallback(
-  //   (trackId: string) => {
-  //     if (!player) return;
-  //
-  //     // Get the current track *before* modifying the queue.
-  //     const currentTrackBeforeRemoval = audio$.currentTrack.get();
-  //
-  //     // Create the new queue by filtering out the track to be removed.
-  //     const newQueue = audio$.queue.tracks
-  //       .get()
-  //       .filter((track) => track.id !== trackId);
-  //
-  //     // Set the new state. This will trigger persistence hook automatically.
-  //     audio$.queue.tracks.set(newQueue);
-  //
-  //     // If the track just removed was the currently active one...
-  //     if (currentTrackBeforeRemoval?.id === trackId) {
-  //       player.pause();
-  //       // player.replace(null); // Stop and unload the old audio.
-  //       // Get the new track at the top of the queue (if it exists).
-  //       const nextTrack = audio$.queue.tracks.get()[0];
-  //       if (nextTrack) {
-  //         // If there's a new track, load it and set the state to paused.
-  //         loadTrack(nextTrack);
-  //         audio$.playbackState.set("paused");
-  //       } else {
-  //         // If the queue is now empty, set the state to idle.
-  //         audio$.playbackState.set("idle");
-  //       }
-  //     }
-  //   },
-  //   [player, loadTrack],
-  // );
-  const removeFromQueue = () => { };
 
   return (
     <AudioContext.Provider

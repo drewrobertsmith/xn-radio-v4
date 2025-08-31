@@ -31,6 +31,10 @@
             "playerservices.streamtheworld.com": {
               "NSIncludesSubdomains": true,
               "NSExceptionAllowsInsecureHTTPLoads": true
+            },
+            "live.streamtheworld.com": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": true
             }
           }
         },

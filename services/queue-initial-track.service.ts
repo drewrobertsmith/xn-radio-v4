@@ -1,5 +1,11 @@
+// @/services/queue-initial-track.service.ts
+
 import TrackPlayer, { type Track } from "react-native-track-player";
 
+/**
+ * A simple service whose only job is to add the default
+ * track(s) to the player's queue. It does not manage state.
+ */
 export const QueueInitialTracksService = async (): Promise<void> => {
   const xnLogo = require("../assets/images/splash-icon.png");
 
@@ -12,5 +18,9 @@ export const QueueInitialTracksService = async (): Promise<void> => {
     isLiveStream: true,
   };
 
-  await TrackPlayer.add([XN_STREAM]);
+  // The service's ONLY responsibility:
+  await TrackPlayer.add(XN_STREAM);
+
+  // REMOVED: The redundant state synchronization.
+  // The useSetupPlayer hook will handle this.
 };

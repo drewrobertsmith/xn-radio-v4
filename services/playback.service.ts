@@ -64,15 +64,19 @@ export async function PlaybackService() {
     const track = TrackPlayer.getActiveTrack();
     // Update Legend State with the new active track
     audio$.currentTrack.set(track);
+
+    // Re-fetch the entire queue from the player to ensure our legendstate mirror is uopdated remotely.
+    const queue = TrackPlayer.getQueue();
+    audio$.queue.tracks.set(queue);
   });
 
   TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
     //console.log("Event.PlaybackProgressUpdated", event);
     // Update Legend State with the new progress
     audio$.progress.set({
-      position: event.position,
-      duration: event.duration,
-      buffered: event.buffered,
+      position: event.position ?? 0,
+      duration: event.duration ?? 0,
+      buffered: event.buffered ?? 0,
     });
   });
 
