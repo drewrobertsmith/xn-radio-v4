@@ -3,8 +3,9 @@ import Constants from "expo-constants";
 import * as Linking from "expo-linking";
 import RenderHTML from "react-native-render-html";
 import { useAppTheme } from "./ui/theme-provider";
-import { Track } from "@/state/audio";
 import { router } from "expo-router";
+import { Track } from "react-native-track-player";
+import { useMemo } from "react";
 
 export default function DescriptionHTML({
   description,
@@ -14,12 +15,18 @@ export default function DescriptionHTML({
   const { width } = Dimensions.get("window");
   const { colors } = useAppTheme();
 
-  if (!description) return;
+  // 1. Sanitize the HTML to remove form elements that can cause crashes.
+  // 2. Use useMemo to ensure this only runs when the description actually changes.
+  const sanitizedHtml = useMemo(() => {
+    if (!description) return "";
+    // This regex finds and removes <input> and <textarea> tags.
+    return description.replace(/<input.*?>|<textarea.*?>/gi, "");
+  }, [description]);
 
   return (
     <RenderHTML
       contentWidth={width}
-      source={{ html: description }}
+      source={{ html: sanitizedHtml }}
       systemFonts={Constants.systemFonts}
       baseStyle={{
         fontSize: 16,
