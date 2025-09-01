@@ -5,7 +5,7 @@ import { SetupService } from "@/services/setup-track-player.service";
 import { audio$ } from "@/state/audio";
 import { mmkv } from "@/utils/mmkv-storage";
 
-const QUEUE_KEY = "audio_queue"; // Ensure this key is consistent
+const QUEUE_KEY = "audio_queue";
 
 export function useSetupPlayer() {
   const [isPlayerReady, setPlayerReady] = useState<boolean>(false);
@@ -14,41 +14,39 @@ export function useSetupPlayer() {
     let isMounted = true;
 
     async function setup() {
+      // 1. Basic player setup
       await SetupService();
       if (!isMounted) return;
 
-      // 1. Determine inital queue
+      // 2. Determine the definitive initial queue
       let initialQueue: Track[] = [];
       const savedQueueJSON = mmkv.getString(QUEUE_KEY);
 
-      // 3. Decide the initial queue based on whether a saved queue exists.
+      // The primary condition is the EXISTENCE of the key.
       if (savedQueueJSON !== undefined) {
-        // A queue HAS been saved before (even an empty one).
-        // This is NOT a first launch.
+        // A queue HAS been saved before (even an empty one). This is a returning user.
         console.log("Found existing queue in storage. Loading it.");
         try {
-          const savedTracks: Track[] = JSON.parse(savedQueueJSON);
-          // Only add to the player if the queue isn't empty.
-          if (Array.isArray(savedTracks) && savedTracks.length > 0) {
+          const savedTracks = JSON.parse(savedQueueJSON);
+          if (Array.isArray(savedTracks)) {
             initialQueue = savedTracks;
           }
         } catch (e) {
           console.error("Failed to parse saved queue, starting fresh.", e);
         }
-      }
-
-      // If, after trying to load, the queue is still empty, it's a first launch.
-      if (initialQueue.length === 0) {
-        console.log("No valid saved queue found. Adding initial track.");
-        // This service should just return the track object, not add it.
+      } else {
+        // The queue key does NOT exist. This is a TRUE first launch.
+        console.log("No saved queue found. Adding initial track.");
         initialQueue = [await QueueInitialTracksService()];
       }
 
-      // 2. Update the player first
-      // Use `setQueue` for a clean reset, which is safer on startup than `add`.
-      await TrackPlayer.setQueue(initialQueue);
+      // 3. Command both systems with our definitive queue
+      if (initialQueue.length > 0) {
+        // Use `setQueue` for a clean reset, which is safer on startup.
+        await TrackPlayer.setQueue(initialQueue);
+      }
 
-      // 3. Set Legend State mirror to match EXACTLY what we just told the player.
+      // Set our Legend State mirror to match EXACTLY what we just decided.
       if (!isMounted) return;
       audio$.queue.tracks.set(initialQueue);
 
@@ -56,7 +54,6 @@ export function useSetupPlayer() {
     }
 
     setup();
-
     return () => {
       isMounted = false;
     };

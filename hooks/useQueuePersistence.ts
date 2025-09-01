@@ -1,6 +1,7 @@
 import { audio$ } from "@/state/audio";
 import { mmkv } from "@/utils/mmkv-storage";
 import { useObserve } from "@legendapp/state/react";
+import { useRef } from "react";
 
 const QUEUE_KEY = "audio_queue";
 
@@ -10,16 +11,25 @@ const QUEUE_KEY = "audio_queue";
  * The loading of the queue is handled by the useSetupPlayer hook.
  */
 export function useQueuePersistence() {
+  // A ref to prevent saving on the very first render before setup is complete.
+  const isReadyForSaving = useRef(false);
+
   // Observe the queue state and save it whenever it changes.
   useObserve(() => {
-    // By getting the queue here, we tell useObserve to run this
+    // Get the tracks array. This creates the subscription.
     // effect whenever the queue array changes (add, remove, reorder).
-    const queue = audio$.queue.tracks.get();
+    const tracks = audio$.queue.tracks.get();
 
-    // Save the queue even if it's empty. This is important for when
-    // the user clears their queue and expects it to be empty on next launch.
-    const queueJson = JSON.stringify(queue);
-    mmkv.set(QUEUE_KEY, queueJson);
-    console.log("Queue changed, saving to MMKV.");
+    // On the first run, isReadyForSaving.current is false, so we do nothing.
+    // After the initial state is set by useSetupPlayer, this will run again,
+    // and from then on, it will save all subsequent changes.
+    if (isReadyForSaving.current) {
+      console.log("Queue changed, saving to MMKV.");
+      const queueJson = JSON.stringify(tracks);
+      mmkv.set(QUEUE_KEY, queueJson);
+    }
+
+    // After the first run, we are ready to save any future changes.
+    isReadyForSaving.current = true;
   });
 }
