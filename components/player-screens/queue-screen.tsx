@@ -18,19 +18,9 @@ const ListEmptyComponent = () => {
 
 export default function QueueScreen() {
   const { colors } = useAppTheme();
-
-  const upNext = use$(() => {
-    const queue = audio$.queue.tracks.get();
-    const current = audio$.currentTrack.get();
-
-    // If there's no current track, show the whole queue.
-    if (!current) {
-      return queue;
-    }
-
-    // Otherwise, show all tracks that are NOT the current one.
-    return queue.filter((track) => track.id !== current.id);
-  });
+  const queue = use$(audio$.queue.tracks); //subscribe to queue updates
+  const current = use$(audio$.currentTrack);
+  console.log("Queue Screen queue ->", queue);
 
   return (
     <BottomSheetFlatList
@@ -40,7 +30,7 @@ export default function QueueScreen() {
         paddingTop: 16,
         gap: 8,
       }}
-      data={upNext}
+      data={queue.filter((track) => track.id !== current?.id)}
       keyExtractor={(item) => item.id}
       renderItem={({ item }) => <QueueItem item={item} />}
       ListHeaderComponent={QueueHeaderItem}

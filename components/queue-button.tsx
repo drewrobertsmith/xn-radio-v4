@@ -1,10 +1,11 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View } from "react-native";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { audio$, Track } from "@/state/audio";
+import { audio$, } from "@/state/audio";
 import { use$ } from "@legendapp/state/react";
 import { useAudio } from "@/context/audio-context";
 import { useAppTheme } from "./ui/theme-provider";
+import { Track } from "react-native-track-player";
 
 type QueueButtonProps = {
   item: Track;
@@ -20,8 +21,11 @@ export default function QueueButton({ item, size }: QueueButtonProps) {
 
   const handleQueueIconPress = () => {
     if (!isInQueue) {
+      console.log("not in queue, adding to back of queue");
       addToBackOfQueue(item);
     } else {
+      //this is not being fired
+      console.log("already in queue, removing")
       removeFromQueue(item.id);
     }
   };

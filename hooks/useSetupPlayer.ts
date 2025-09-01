@@ -31,6 +31,7 @@ export function useSetupPlayer() {
           if (Array.isArray(savedTracks)) {
             initialQueue = savedTracks;
           }
+          console.log("Saved queue is: ", initialQueue);
         } catch (e) {
           console.error("Failed to parse saved queue, starting fresh.", e);
         }
