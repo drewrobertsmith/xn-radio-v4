@@ -58,17 +58,20 @@ export async function PlaybackService() {
     audio$.playerState.set(state);
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackActiveTrackChanged, (event) => {
-    console.log("Event.PlaybackActiveTrackChanged", event);
-    // Get the full track object from the player
-    const track = TrackPlayer.getActiveTrack();
-    // Update Legend State with the new active track
-    audio$.currentTrack.set(track);
+  TrackPlayer.addEventListener(
+    Event.PlaybackActiveTrackChanged,
+    async (event) => {
+      console.log("Event.PlaybackActiveTrackChanged", event);
+      // Get the full track object from the player
+      const track = await TrackPlayer.getActiveTrack();
+      // Update Legend State with the new active track
+      audio$.currentTrack.set(track);
 
-    // Re-fetch the entire queue from the player to ensure our legendstate mirror is uopdated remotely.
-    const queue = TrackPlayer.getQueue();
-    audio$.queue.tracks.set(queue);
-  });
+      // re-fetch the entire queue from the player to ensure our legendstate mirror is updated remotely.
+      const queue = await TrackPlayer.getQueue();
+      audio$.queue.tracks.set(queue);
+    },
+  );
 
   TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
     //console.log("Event.PlaybackProgressUpdated", event);
