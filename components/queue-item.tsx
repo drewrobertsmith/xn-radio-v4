@@ -10,14 +10,12 @@ export default function QueueItem({ item }: { item: Track }) {
   const { colors } = useAppTheme();
   const { play, removeFromQueue } = useAudio();
 
-  const handleQueueItemPress = async (item: Track) => {
-    // Instead of calling the complex `play` function, we can just tell
-    // the player to skip to this track's index. This is more direct.
+  const handleQueueItemPress = (item: Track) => {
     // const playerQueue = await TrackPlayer.getQueue();
     // const index = playerQueue.findIndex((track) => track.id === item.id);
     // if (index > -1) {
     //   await TrackPlayer.skip(index);
-    //   play(item);
+    play(item);
     // }
   };
 

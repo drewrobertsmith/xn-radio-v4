@@ -51,15 +51,15 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Scenario 3: The track is not in the queue at all.
+    console.log("TRACK IS NOT IN QUEUE");
     await TrackPlayer.add(item, 0);
+
     const newLocalQueue = [item, ...audio$.queue.tracks.get()];
     audio$.queue.tracks.set(newLocalQueue);
 
-    await TrackPlayer.skip(0);
-    // If we have a saved position, seek to it now.
-    if (savedPosition && savedPosition > 0) {
-      await TrackPlayer.seekTo(savedPosition);
-    }
+    await TrackPlayer.skip(0, savedPosition);
+    console.log("Playing: ", currentTrack);
+    // audio$.currentTrack.set(item);
     await TrackPlayer.play();
   }, []);
 
@@ -69,13 +69,16 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
   }, [saveCurrentTrackProgress]);
 
   const stop = useCallback(async () => {
-    saveCurrentTrackProgress();
     await TrackPlayer.stop();
-  }, [saveCurrentTrackProgress]);
-
-  const seekTo = useCallback(async (seconds: number) => {
-    await TrackPlayer.seekTo(seconds);
   }, []);
+
+  const seekTo = useCallback(
+    async (seconds: number) => {
+      await TrackPlayer.seekTo(seconds);
+      saveCurrentTrackProgress();
+    },
+    [saveCurrentTrackProgress],
+  );
 
   //--- QUEUE CONTROL ---//
 
@@ -84,7 +87,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     // 1. Check against our Legend State mirror to prevent duplicates
     const currentQueue = audio$.queue.tracks.get();
     if (currentQueue.some((track) => track.id === item.id)) return;
-    console.log("adding to trackpler queue");
     // 2. Command the player to add the track
     await TrackPlayer.add(item);
     audio$.queue.tracks.push(item);

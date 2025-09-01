@@ -1,3 +1,4 @@
+import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
 import { audio$ } from "@/state/audio";
 import TrackPlayer, { Event, State } from "react-native-track-player";
 

@@ -44,16 +44,19 @@ export function usePlaybackPersistence() {
       mmkv.set(key, position);
       // b. Update our reactive state map so the UI updates instantly
       audio$.savedProgress[track.id].set(position);
+      console.log(`Saving PRogress for ${track} at posiiton: ${position}`);
     }
   };
   // 3. Observe state to save progress on track changes or pause
   useObserve(() => {
     // This effect runs whenever the current track ID changes.
     // useEffect` pattern inside `useObserve` for cleanup
+
     audio$.currentTrack.id.get();
     return () => {
       // This cleanup function runs when the ID is about to change.
       // This is the perfect time to save the progress of the *previous* track.
+      console.log("track progress saved");
       saveCurrentTrackProgress();
     };
   });
