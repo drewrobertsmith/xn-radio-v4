@@ -62,14 +62,35 @@ export async function PlaybackService() {
     Event.PlaybackActiveTrackChanged,
     async (event) => {
       console.log("Event.PlaybackActiveTrackChanged", event);
-      // Get the full track object from the player
-      const track = await TrackPlayer.getActiveTrack();
-      // Update Legend State with the new active track
-      audio$.currentTrack.set(track);
+
+      // --- Queue Mgmt --- //
+      // 1. Update the current track directly from the event payload (more efficient!)
+      // We use `?? undefined` for type safety, as event.track can be undefined.
+      audio$.currentTrack.set(event.track ?? undefined);
 
       // re-fetch the entire queue from the player to ensure our legendstate mirror is updated remotely.
       const queue = await TrackPlayer.getQueue();
       audio$.queue.tracks.set(queue);
+
+      // --- Automatic Seek --- //
+      // This logic now runs only when a track finishes playing naturally.
+      const { lastTrack, lastPosition } = event;
+      if (
+        lastTrack &&
+        lastTrack.duration &&
+        lastPosition >= lastTrack.duration - 1 // Check if the last track finished
+      ) {
+        const newTrack = event.track;
+        if (newTrack && !newTrack.isLiveStream) {
+          const savedPosition = audio$.savedProgress[newTrack.id].get();
+          if (savedPosition && savedPosition > 0) {
+            console.log(
+              `[PlaybackService] Auto-seeking to saved position for ${newTrack.title}`,
+            );
+            await TrackPlayer.seekTo(savedPosition);
+          }
+        }
+      }
     },
   );
 
