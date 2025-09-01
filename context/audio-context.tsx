@@ -15,6 +15,7 @@ interface AudioContextType {
   addToBackOfQueue: (item: Track) => void;
   removeFromQueue: (trackId: string) => void;
   saveCurrentTrackProgress: () => void;
+  clearQueue: () => void;
 }
 
 const AudioContext = createContext<AudioContextType | null>(null);
@@ -120,6 +121,15 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
+  const clearQueue = useCallback(async () => {
+    await TrackPlayer.removeUpcomingTracks();
+    const activeTrack = audio$.currentTrack.get();
+    const newLocalQueue = audio$.queue.tracks
+      .get()
+      .filter((track) => track.id === activeTrack?.id);
+    audio$.queue.tracks.set(newLocalQueue);
+  }, []);
+
   return (
     <AudioContext.Provider
       value={{
@@ -131,6 +141,7 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
         addToBackOfQueue,
         removeFromQueue,
         saveCurrentTrackProgress,
+        clearQueue,
       }}
     >
       {children}

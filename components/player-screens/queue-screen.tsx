@@ -1,11 +1,12 @@
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { useAppTheme } from "../ui/theme-provider";
 import Separator from "../ui/separator";
-import { Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 import QueueHeaderItem from "../queue-header-item";
 import QueueItem from "../queue-item";
 import { use$ } from "@legendapp/state/react";
 import { audio$ } from "@/state/audio";
+import { useAudio } from "@/context/audio-context";
 
 const ListEmptyComponent = () => {
   const { colors } = useAppTheme();
@@ -18,24 +19,33 @@ const ListEmptyComponent = () => {
 
 export default function QueueScreen() {
   const { colors } = useAppTheme();
+  const { clearQueue } = useAudio();
   const queue = use$(audio$.queue.tracks); //subscribe to queue updates
   const current = use$(audio$.currentTrack);
   console.log("Queue Screen queue ->", queue);
 
   return (
-    <BottomSheetFlatList
-      contentContainerStyle={{
-        flex: 1,
-        backgroundColor: colors.card,
-        paddingTop: 16,
-        gap: 8,
-      }}
-      data={queue.filter((track) => track.id !== current?.id)}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <QueueItem item={item} />}
-      ListHeaderComponent={QueueHeaderItem}
-      ItemSeparatorComponent={Separator}
-      ListEmptyComponent={ListEmptyComponent}
-    />
+    <View className="flex-1">
+      <Button
+        onPress={() => {
+          clearQueue();
+        }}
+        title="Clear Queue"
+      />
+      <BottomSheetFlatList
+        contentContainerStyle={{
+          flex: 1,
+          backgroundColor: colors.card,
+          paddingTop: 16,
+          gap: 8,
+        }}
+        data={queue.filter((track) => track.id !== current?.id)}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <QueueItem item={item} />}
+        ListHeaderComponent={QueueHeaderItem}
+        ItemSeparatorComponent={Separator}
+        ListEmptyComponent={ListEmptyComponent}
+      />
+    </View>
   );
 }
