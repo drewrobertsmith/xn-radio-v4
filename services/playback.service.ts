@@ -112,8 +112,11 @@ export async function PlaybackService() {
     audio$.playerState.set(State.Error);
   });
 
-  TrackPlayer.addEventListener(Event.PlaybackQueueEnded, (event) => {
+  TrackPlayer.addEventListener(Event.PlaybackQueueEnded, async (event) => {
     console.log("Event.PlaybackQueueEnded", event);
+    await TrackPlayer.reset(); //reset player and clear queue
+    audio$.currentTrack.set(undefined); //reset currentTrack
+    audio$.queue.tracks.set([]); //reset legendstate queue
   });
 
   TrackPlayer.addEventListener(Event.PlaybackPlayWhenReadyChanged, (event) => {

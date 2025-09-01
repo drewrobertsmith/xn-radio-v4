@@ -5,20 +5,21 @@ import { XNTheme } from "./ui/theme-provider";
 import { useAudio } from "@/context/audio-context";
 import { State, Track } from "react-native-track-player";
 import { audio$ } from "@/state/audio";
+import { useRef } from "react";
 
 type PlayButtonProps = {
   size: number;
   // The track prop can sometimes be null when the parent is loading
   track: Track | null;
   color: XNTheme["colors"][
-  | "background"
-  | "border"
-  | "card"
-  | "notification"
-  | "primary"
-  | "secondary"
-  | "secondaryText"
-  | "text"];
+    | "background"
+    | "border"
+    | "card"
+    | "notification"
+    | "primary"
+    | "secondary"
+    | "secondaryText"
+    | "text"];
   isLiveStream?: boolean;
 };
 
@@ -47,10 +48,11 @@ export default function PlayButton({
   const isThisTrackCurrent = currentTrackId === track.id;
   const isThisTrackPlaying =
     playbackState === State.Playing && isThisTrackCurrent;
-  const isThisTrackPaused =
-    playbackState === State.Paused && isThisTrackCurrent;
   const isThisTrackLoading =
     playbackState === State.Loading && isThisTrackCurrent;
+  const isThisTrackBuffering =
+    playbackState === State.Buffering && isThisTrackCurrent;
+  const isThisTrackReady = playbackState === State.Ready && isThisTrackCurrent;
 
   const handleButtonPress = () => {
     // Case 1: This specific track is currently playing.
@@ -69,8 +71,14 @@ export default function PlayButton({
     }
   };
   const renderIcon = () => {
-    if (isThisTrackLoading) {
-      return <ActivityIndicator size={size} color={color} />;
+    if (isLiveStream && (isThisTrackLoading || isThisTrackBuffering)) {
+      return <MaterialIcons name="stop-circle" size={size} color={color} />;
+    }
+
+    if (!isLiveStream && (isThisTrackLoading || isThisTrackBuffering)) {
+      return (
+        <MaterialIcons name="pause-circle-filled" size={size} color={color} />
+      );
     }
 
     if (isThisTrackPlaying) {

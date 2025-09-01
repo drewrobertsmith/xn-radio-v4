@@ -3,7 +3,6 @@ import { audio$ } from "../state/audio";
 import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
 import { useQueuePersistence } from "@/hooks/useQueuePersistence";
 import TrackPlayer, { Track } from "react-native-track-player";
-import { use$ } from "@legendapp/state/react";
 
 // The context now just provides the player instance and actions
 interface AudioContextType {

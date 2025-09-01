@@ -22,7 +22,6 @@ export default function QueueScreen() {
   const { clearQueue } = useAudio();
   const queue = use$(audio$.queue.tracks); //subscribe to queue updates
   const current = use$(audio$.currentTrack);
-  console.log("Queue Screen queue ->", queue);
 
   return (
     <View className="flex-1">
