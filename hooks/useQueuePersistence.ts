@@ -14,14 +14,12 @@ export function useQueuePersistence() {
   useObserve(() => {
     // By getting the queue here, we tell useObserve to run this
     // effect whenever the queue array changes (add, remove, reorder).
-    const queue = audio$.queue.get(); // Assuming audio$.queue is the array
+    const queue = audio$.queue.tracks.get();
 
     // Save the queue even if it's empty. This is important for when
     // the user clears their queue and expects it to be empty on next launch.
     const queueJson = JSON.stringify(queue);
     mmkv.set(QUEUE_KEY, queueJson);
-    // console.log("Queue changed, saving to MMKV.");
+    console.log("Queue changed, saving to MMKV.");
   });
-
-  // This hook no longer needs to return anything.
 }
