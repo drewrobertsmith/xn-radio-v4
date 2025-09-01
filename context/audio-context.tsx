@@ -25,43 +25,72 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
 
   //--- Player Controls ---//
 
+  // const play = useCallback(async (item: Track) => {
+  //   const playerQueue = await TrackPlayer.getQueue();
+  //   const currentTrack = await TrackPlayer.getActiveTrack();
+  //
+  //   // Scenario 1: The track is already active. Just play.
+  //   if (currentTrack?.id === item.id) {
+  //     await TrackPlayer.play();
+  //     return;
+  //   }
+  //
+  //   // Check for a saved position BEFORE we do anything else.
+  //   const savedPosition = audio$.savedProgress[item.id].get();
+  //
+  //   // Scenario 2: The track is in the queue, but not active.
+  //   const indexInQueue = playerQueue.findIndex((track) => track.id === item.id);
+  //   if (indexInQueue > -1) {
+  //     await TrackPlayer.skip(indexInQueue);
+  //     // If we have a saved position, seek to it now.
+  //     if (savedPosition && savedPosition > 0) {
+  //       await TrackPlayer.seekTo(savedPosition);
+  //     }
+  //     await TrackPlayer.play();
+  //     return;
+  //   }
+  //
+  //   // Scenario 3: The track is not in the queue at all.
+  //   await TrackPlayer.add(item, 0);
+  //   const newLocalQueue = [item, ...audio$.queue.tracks.get()];
+  //   audio$.queue.tracks.set(newLocalQueue);
+  //
+  //   await TrackPlayer.skip(0);
+  //   // If we have a saved position, seek to it now.
+  //   if (savedPosition && savedPosition > 0) {
+  //     await TrackPlayer.seekTo(savedPosition);
+  //   }
+  //   await TrackPlayer.play();
+  // }, []);
+
   const play = useCallback(async (item: Track) => {
-    const playerQueue = await TrackPlayer.getQueue();
     const currentTrack = await TrackPlayer.getActiveTrack();
 
-    // Scenario 1: The track is already active. Just play.
-    if (currentTrack?.id === item.id) {
-      await TrackPlayer.play();
-      return;
-    }
+    // If the track is not the current one, we need to load it.
+    if (currentTrack?.id !== item.id) {
+      const queue = await TrackPlayer.getQueue();
+      const indexInQueue = queue.findIndex((track) => track.id === item.id);
 
-    // Check for a saved position BEFORE we do anything else.
-    const savedPosition = audio$.savedProgress[item.id].get();
-
-    // Scenario 2: The track is in the queue, but not active.
-    const indexInQueue = playerQueue.findIndex((track) => track.id === item.id);
-    if (indexInQueue > -1) {
-      await TrackPlayer.skip(indexInQueue);
-      // If we have a saved position, seek to it now.
-      if (savedPosition && savedPosition > 0) {
-        await TrackPlayer.seekTo(savedPosition);
+      if (indexInQueue > -1) {
+        // The track is already in the queue, just skip to it.
+        await TrackPlayer.skip(indexInQueue);
+      } else {
+        // The track is not in the queue. Add it to the top and skip to it.
+        await TrackPlayer.add(item, 0);
+        await TrackPlayer.skip(0);
       }
-      await TrackPlayer.play();
-      return;
     }
 
-    // Scenario 3: The track is not in the queue at all.
-    await TrackPlayer.add(item, 0);
-    const newLocalQueue = audio$.queue.tracks.get();
-    newLocalQueue.unshift(item);
-    audio$.queue.tracks.set(newLocalQueue);
-
-    await TrackPlayer.skip(0);
-    // If we have a saved position, seek to it now.
+    // Now that the correct track is loaded and active, check for a saved position.
+    const savedPosition = audio$.savedProgress[item.id].get();
     if (savedPosition && savedPosition > 0) {
       await TrackPlayer.seekTo(savedPosition);
     }
+
+    // Finally, play.
     await TrackPlayer.play();
+
+    // NOTE: We do NOT set audio$.queue.tracks here. The PlaybackService will handle it.
   }, []);
 
   const pause = useCallback(async () => {
@@ -87,23 +116,15 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     if (currentQueue.some((track) => track.id === item.id)) return;
     // 2. Command the player to add the track
     await TrackPlayer.add(item);
-    // 3. Synchronize our Legend State mirror
-    audio$.queue.tracks.push(item);
   }, []);
 
   // This function is for "Play Next". It adds a track right after the current one.
   const playNextInQueue = useCallback(async (item: Track) => {
     // Get the current queue and filter out the item if it already exists.
-    const currentQueue = audio$.queue.tracks.get();
     const currentTrackIndex = await TrackPlayer.getActiveTrackIndex();
     const insertAtIndex =
       currentTrackIndex !== undefined ? currentTrackIndex + 1 : 0;
     await TrackPlayer.add(item, insertAtIndex);
-
-    // 2. Synchronize our Legend State mirror
-    const newQueue = [...currentQueue];
-    newQueue.splice(insertAtIndex, 0, item);
-    audio$.queue.tracks.set(newQueue);
   }, []);
 
   const removeFromQueue = useCallback(async (trackId: string) => {
@@ -115,12 +136,6 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (indexToRemove !== -1) {
       await TrackPlayer.remove(indexToRemove);
-
-      // 3. Synchronize our Legend State mirror
-      const newLocalQueue = audio$.queue.tracks
-        .get()
-        .filter((track) => track.id !== trackId);
-      audio$.queue.tracks.set(newLocalQueue);
     }
   }, []);
 

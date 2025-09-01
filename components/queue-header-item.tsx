@@ -10,13 +10,11 @@ import PlayButton from "./play-button";
 export default function QueueHeaderItem() {
   const { colors } = useAppTheme();
 
-  // 1. Get State Directly and Reactively
-  // This is much cleaner than the previous derived state object.
-  // The component will now automatically re-render when the track or progress changes.
+  // The header's single source of truth is the currently active track.
   const track = use$(audio$.currentTrack);
+  // The component will now automatically re-render when the track or progress changes.
   const progress = use$(audio$.progress);
 
-  // 2. Handle the "No Track" Case
   // If there's no track, the queue is empty, so render nothing.
   if (!track) {
     return null;

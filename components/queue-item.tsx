@@ -4,14 +4,21 @@ import { formatDate } from "@/utils/formatters";
 import { Image } from "expo-image";
 import { useAudio } from "@/context/audio-context";
 import { RenderTrackDuration } from "./duration";
-import { Track } from "react-native-track-player";
+import TrackPlayer, { Track } from "react-native-track-player";
 
 export default function QueueItem({ item }: { item: Track }) {
   const { colors } = useAppTheme();
   const { play, removeFromQueue } = useAudio();
 
-  const handleQueueItemPress = (item: Track) => {
-    play(item);
+  const handleQueueItemPress = async (item: Track) => {
+    // Instead of calling the complex `play` function, we can just tell
+    // the player to skip to this track's index. This is more direct.
+    const playerQueue = await TrackPlayer.getQueue();
+    const index = playerQueue.findIndex((track) => track.id === item.id);
+    if (index > -1) {
+      await TrackPlayer.skip(index);
+      play(item);
+    }
   };
 
   const handleLongPress = (item: Track) => {
