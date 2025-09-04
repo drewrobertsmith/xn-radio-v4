@@ -23,7 +23,9 @@ export default function ClipList({
     <LegendList
       data={data}
       keyExtractor={(item) => item.Id}
-      renderItem={({ item }) => <ClipItem item={item} />}
+      renderItem={({ item }) => (
+        <ClipItem item={item} isLoading={isLoading} isFetching={isFetching} />
+      )}
       refreshing={isFetching && !isLoading}
       onRefresh={() => refetch({ cancelRefetch: false })}
       contentContainerStyle={{

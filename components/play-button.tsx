@@ -71,15 +71,15 @@ export default function PlayButton({
     }
   };
   const renderIcon = () => {
-    if (isLiveStream && (isThisTrackLoading || isThisTrackBuffering)) {
-      return <MaterialIcons name="stop-circle" size={size} color={color} />;
-    }
-
-    if (!isLiveStream && (isThisTrackLoading || isThisTrackBuffering)) {
-      return (
-        <MaterialIcons name="pause-circle-filled" size={size} color={color} />
-      );
-    }
+    // if (isLiveStream) {
+    //   return <MaterialIcons name="stop-circle" size={size} color={color} />;
+    // }
+    //
+    // if (!isLiveStream) {
+    //   return (
+    //     <MaterialIcons name="pause-circle-filled" size={size} color={color} />
+    //   );
+    // }
 
     if (isThisTrackPlaying) {
       const iconName = isLiveStream ? "stop-circle" : "pause-circle-filled";

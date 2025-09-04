@@ -7,8 +7,17 @@ import PlayButton from "./play-button";
 import QueueButton from "./queue-button";
 import { RenderClipDuration } from "./duration";
 import { Track } from "react-native-track-player";
+import { Shimmer } from "react-native-fast-shimmer";
 
-export default function ClipItem({ item }: { item: Clip }) {
+export default function ClipItem({
+  item,
+  isLoading,
+  isFetching,
+}: {
+  item: Clip;
+  isLoading: boolean;
+  isFetching: boolean;
+}) {
   const { colors } = useAppTheme();
   const router = useRouter();
 
@@ -25,40 +34,50 @@ export default function ClipItem({ item }: { item: Clip }) {
 
   return (
     <View className="flex-row justify-between items-center">
-      <TouchableOpacity
-        className="flex-1 pr-4"
-        onPress={() => {
-          router.navigate(`/(episode)/${item.Id}`);
-        }}
-      >
-        <View className="flex-1">
-          <Text
-            className="text-sm font-[500]"
-            style={{ color: colors.secondaryText }}
+      {isLoading || isFetching ? (
+        <Shimmer />
+      ) : (
+        <>
+          <TouchableOpacity
+            className="flex-1 pr-4"
+            onPress={() => {
+              router.navigate(`/(episode)/${item.Id}`);
+            }}
           >
-            {formatDate(item.PublishedUtc)}
-          </Text>
-          <Text
-            className="text-base font-semibold"
-            style={{ color: colors.text }}
-            numberOfLines={2}
-            ellipsizeMode="tail"
-          >
-            {item.Title}
-          </Text>
-          <Text
-            className="text-sm font-[500]"
-            style={{ color: colors.secondaryText }}
-          >
-            <RenderClipDuration item={item} />
-          </Text>
-        </View>
-      </TouchableOpacity>
+            <View className="flex-1">
+              <Text
+                className="text-sm font-[500]"
+                style={{ color: colors.secondaryText }}
+              >
+                {formatDate(item.PublishedUtc)}
+              </Text>
+              <Text
+                className="text-base font-semibold"
+                style={{ color: colors.text }}
+                numberOfLines={2}
+                ellipsizeMode="tail"
+              >
+                {item.Title}
+              </Text>
+              <Text
+                className="text-sm font-[500]"
+                style={{ color: colors.secondaryText }}
+              >
+                <RenderClipDuration item={item} />
+              </Text>
+            </View>
+          </TouchableOpacity>
 
-      <View className="flex-row items-center gap-2">
-        <QueueButton size={32} item={clipToTrack} />
-        <PlayButton size={44} color={colors.secondary} track={clipToTrack} />
-      </View>
+          <View className="flex-row items-center gap-2">
+            <QueueButton size={32} item={clipToTrack} />
+            <PlayButton
+              size={44}
+              color={colors.secondary}
+              track={clipToTrack}
+            />
+          </View>
+        </>
+      )}
     </View>
   );
 }

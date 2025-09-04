@@ -19,7 +19,6 @@ export default function ProgressBar() {
   // --- 1. Call ALL hooks at the top level, unconditionally ---
   const { colors } = useAppTheme();
   const { seekTo, saveCurrentTrackProgress } = useAudio();
-
   const progress = use$(audio$.progress);
   const track = use$(audio$.currentTrack);
 

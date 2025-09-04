@@ -4,7 +4,7 @@ import { formatDate } from "@/utils/formatters";
 import { Image } from "expo-image";
 import { useAudio } from "@/context/audio-context";
 import { RenderTrackDuration } from "./duration";
-import TrackPlayer, { Track } from "react-native-track-player";
+import { Track } from "react-native-track-player";
 
 export default function QueueItem({ item }: { item: Track }) {
   const { colors } = useAppTheme();

@@ -1,6 +1,6 @@
 import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
 import { audio$ } from "@/state/audio";
-import TrackPlayer, { Event, State } from "react-native-track-player";
+import TrackPlayer, { Event, State, Track } from "react-native-track-player";
 
 export async function PlaybackService() {
   // --- Remote Control Listeners ---
@@ -63,6 +63,28 @@ export async function PlaybackService() {
     Event.PlaybackActiveTrackChanged,
     async (event) => {
       console.log("Event.PlaybackActiveTrackChanged", event);
+
+      // --- Get the new track from the event ---
+      const newTrack: Track | undefined = event.track ?? undefined;
+
+      // --- Update the current track in Legend State ---
+      audio$.currentTrack.set(newTrack);
+
+      // --- PREEMPTIVE PROGRESS UPDATE ---
+      // This is the key to preventing the UI flicker.
+      // When the track changes, we immediately find its saved progress
+      // and update the global progress state. The UI will then render
+      // with the correct position from the very first frame.
+      if (newTrack) {
+        const savedPosition = audio$.savedProgress[newTrack.id].get() || 0;
+        audio$.progress.set({
+          position: savedPosition,
+          // Use the duration from the track metadata if available
+          duration: newTrack.duration || 0,
+          // Buffered progress is unknown at this point
+          buffered: 0,
+        });
+      }
 
       // --- Queue Mgmt --- //
       // 1. Update the current track directly from the event payload (more efficient!)

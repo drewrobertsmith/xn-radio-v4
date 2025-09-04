@@ -8,14 +8,6 @@ export default function Podcasts() {
     usePodcasts();
   const { colors } = useAppTheme();
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="small" color={colors.primary} />
-      </View>
-    );
-  }
-
   if (isError) {
     return (
       <View className="flex-1 items-center justify-center">

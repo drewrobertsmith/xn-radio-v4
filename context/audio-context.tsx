@@ -29,16 +29,10 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
     const playerQueue = await TrackPlayer.getQueue();
     const currentTrack = await TrackPlayer.getActiveTrack();
 
-    // Scenario 1: The track is already active. Just play.
-    if (currentTrack?.id === item.id) {
-      await TrackPlayer.play();
-      return;
-    }
-
     // Check for a saved position BEFORE we do anything else.
     const savedPosition = audio$.savedProgress[item.id].get();
 
-    // Scenario 2: The track is in the queue, but not active.
+    // Scenario 1: The track is in the queue, but not active.
     const indexInQueue = playerQueue.findIndex((track) => track.id === item.id);
     if (indexInQueue > -1) {
       await TrackPlayer.skip(indexInQueue);
@@ -46,11 +40,12 @@ export const AudioProvider = ({ children }: { children: React.ReactNode }) => {
       if (savedPosition && savedPosition > 0) {
         await TrackPlayer.seekTo(savedPosition);
       }
+
       await TrackPlayer.play();
       return;
     }
 
-    // Scenario 3: The track is not in the queue at all.
+    // Scenario 2: The track is not in the queue at all.
     console.log("TRACK IS NOT IN QUEUE");
     await TrackPlayer.add(item, 0);
 

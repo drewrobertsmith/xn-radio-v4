@@ -15,6 +15,7 @@ import { audio$ } from "@/state/audio";
 import { use$ } from "@legendapp/state/react";
 import { useMetadata } from "@/hooks/useMetadata";
 import { usePlayerAnimation } from "@/context/player-animation-context";
+import { State } from "react-native-track-player";
 
 interface MiniPlayerProps {
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -27,9 +28,11 @@ export default function MiniPlayer({
   animatedMiniPlayerStyle,
   onExpand,
 }: MiniPlayerProps) {
-  const { title, id, artwork, currentTrack } = use$(() => {
+  const { title, id, artwork, currentTrack, state } = use$(() => {
     const currentTrack = audio$.currentTrack.get();
+    const state = audio$.playerState.get();
     return {
+      state,
       currentTrack,
       title: currentTrack?.title,
       id: currentTrack?.id,
@@ -43,6 +46,10 @@ export default function MiniPlayer({
     usePlayerAnimation();
 
   const handleMetadataDisplay = useCallback(() => {
+    if (state === State.Loading || state === State.Buffering) {
+      return "Loading...";
+    }
+
     if (id === "XNRD" && data) {
       return data?.cue_title;
     } else if (id === "XNRD" && !data) {
@@ -50,7 +57,7 @@ export default function MiniPlayer({
     } else {
       return title;
     }
-  }, [data, id, title]);
+  }, [data, id, title, state]);
 
   const handleSecondaryText = useCallback(() => {
     if (id === "XNRD" && data) {
@@ -72,8 +79,8 @@ export default function MiniPlayer({
   return (
     <Pressable
       onPress={onExpand}
-    //
-    //The mini player is only interactive when it's visible
+      //
+      //The mini player is only interactive when it's visible
     >
       <Animated.View
         style={[styles.miniPlayerContainer, animatedMiniPlayerStyle]}

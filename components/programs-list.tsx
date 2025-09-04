@@ -41,7 +41,9 @@ export default function ProgramsList({
     <LegendList
       data={data}
       keyExtractor={(item) => item.Id}
-      renderItem={({ item }) => <ProgramItem item={item} />}
+      renderItem={({ item }) => (
+        <ProgramItem item={item} isLoading={isLoading} />
+      )}
       onRefresh={() => refetch({ cancelRefetch: false })}
       refreshing={isFetching && !isLoading}
       estimatedItemSize={162}
