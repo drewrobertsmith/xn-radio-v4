@@ -18,6 +18,9 @@ import { useCallback } from "react";
 import { AudioProvider } from "@/context/audio-context";
 import { Player } from "@/components/player";
 import { PlayerAnimationProvider } from "@/context/player-animation-context";
+import TrackPlayer from "react-native-track-player";
+import { PlaybackService } from "@/services/playback-service";
+import { useSetupPlayer } from "@/services/useSetupPlayer";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -31,6 +34,9 @@ export const unstable_settings = {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 // SplashScreen.preventAutoHideAsync();
+//
+
+TrackPlayer.registerPlaybackService(() => PlaybackService);
 
 export default function RootLayout() {
   const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
@@ -61,6 +67,9 @@ export default function RootLayout() {
     (props: BottomTabBarProps) => <CustomTabBar {...props} />,
     [],
   );
+
+  const isPlayerReady = useSetupPlayer();
+  console.log("isPlayerReady? ", isPlayerReady);
 
   return (
     <ConvexAuthProvider
