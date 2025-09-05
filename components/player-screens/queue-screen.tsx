@@ -36,7 +36,8 @@ export default function QueueScreen() {
           paddingTop: 16,
           gap: 8,
         }}
-        data={queue.filter((track) => track.id !== current?.id)}
+        // data={queue.filter((track) => track.id !== current?.id)}
+        data={queue}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <QueueItem item={item} />}
         ListHeaderComponent={QueueHeaderItem}

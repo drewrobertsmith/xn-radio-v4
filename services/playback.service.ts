@@ -70,8 +70,6 @@ export async function PlaybackService() {
       // --- Update the current track in Legend State ---
       audio$.currentTrack.set(newTrack);
 
-      // --- PREEMPTIVE PROGRESS UPDATE ---
-      // This is the key to preventing the UI flicker.
       // When the track changes, we immediately find its saved progress
       // and update the global progress state. The UI will then render
       // with the correct position from the very first frame.

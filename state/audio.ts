@@ -1,5 +1,5 @@
 import { computed, observable } from "@legendapp/state";
-import { State, Track } from "react-native-track-player";
+import TrackPlayer, { State, Track } from "react-native-track-player";
 
 //simple interface based on Event.PlaybackProgressUpdated's first three params
 interface ProgressState {
@@ -23,28 +23,6 @@ This gives the best of both worlds:
 */
 
 export const audio$ = observable({
-  //NOTE: below is the old expo-audio gloabl state shape
-  /*
-  playbackState: "idle" as PlaybackState,
-  status: null as AudioStatus | null,
-  progress: {} as Record<Track["id"], number>, // { [trackId]: positionInMs }
-  error: null as string | null,
-  queue: {
-    tracks: [] as Track[],
-    total: computed((): number => {
-      return audio$.queue.tracks.get().length;
-    }),
-  },
-  // currentTrack is a computed function that automatically returns the first track
-  // in the queue, or null if the queue is empty.
-  // Any component observing this will automatically update when the queue changes.
-  currentTrack: computed((): Track | null => {
-    return audio$.queue.tracks.get()[0] || null;
-  }),
-  */
-
-  //NOTE: This is the new TrackPlayer global state shape
-
   /** The current playback state of the player (e.g., Playing, Paused, Buffering). */
   playerState: State.None as State,
 
