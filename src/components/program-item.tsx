@@ -1,8 +1,8 @@
-import { Program } from "@/types/types";
 import { Image } from "expo-image";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { useRouter } from "expo-router";
+import { Program } from "../types/types";
 
 export default function ProgramItem({ item }: { item: Program }) {
   const { colors } = useAppTheme();

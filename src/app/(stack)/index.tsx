@@ -8,6 +8,14 @@ export default function Podcasts() {
     usePodcasts();
   const { colors } = useAppTheme();
 
+  console.log("usePodcasts hook state: ", {
+    data,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+  });
+
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -25,6 +33,19 @@ export default function Podcasts() {
           onPress={() => {
             refetch();
           }}
+          color={colors.primary}
+        />
+      </View>
+    );
+  }
+
+  if (!data) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text style={{ color: colors.secondaryText }}>No Items Found</Text>
+        <Button
+          title="Refresh"
+          onPress={() => refetch()}
           color={colors.primary}
         />
       </View>

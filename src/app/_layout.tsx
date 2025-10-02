@@ -1,4 +1,3 @@
-import "../../global.css";
 import { Tabs } from "expo-router";
 import { ConvexReactClient } from "convex/react";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";

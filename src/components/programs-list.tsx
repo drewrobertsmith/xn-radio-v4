@@ -1,7 +1,7 @@
 import { LegendList } from "@legendapp/list";
 import ProgramItem from "./program-item";
 import { RefetchOptions } from "@tanstack/react-query";
-import { Button, Text, View } from "react-native";
+import { Button, FlatList, Text, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { Program } from "../types/types";
 import { useLayout } from "../context/layout-context";
@@ -19,6 +19,8 @@ export default function ProgramsList({
   isLoading,
   refetch,
 }: ListProps) {
+  console.log("Props received by ProgramsList: ", { data });
+
   const { tabBarHeight } = useLayout();
   const { colors } = useAppTheme();
 
@@ -44,8 +46,6 @@ export default function ProgramsList({
       renderItem={({ item }) => <ProgramItem item={item} />}
       onRefresh={() => refetch({ cancelRefetch: false })}
       refreshing={isFetching && !isLoading}
-      estimatedItemSize={162}
-      recycleItems={true}
       numColumns={3}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{

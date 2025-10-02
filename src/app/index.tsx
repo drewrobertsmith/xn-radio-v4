@@ -1,3 +1,5 @@
+import "../../global.css";
+
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import {
