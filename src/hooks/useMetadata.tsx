@@ -3,6 +3,7 @@ import { Metadata, Station } from "@/types/types";
 import { use$ } from "@legendapp/state/react";
 import { useQuery } from "@tanstack/react-query";
 import { XMLParser } from "fast-xml-parser";
+import { useActiveTrack, usePlaybackState } from "react-native-track-player";
 
 interface Property {
   name: string;
@@ -76,13 +77,15 @@ export const useMetadata = (
   tritonId: Station["callLetters"],
   numberToFetch: number,
 ) => {
-  const { playbackState, id } = use$(() => {
-    const currentTrack = audio$.currentTrack.get();
-    return {
-      playbackState: audio$.playbackState.get(),
-      id: currentTrack?.id,
-    };
-  });
+  // const { playbackState, id } = use$(() => {
+  //   const currentTrack = audio$.currentTrack.get();
+  //   return {
+  //     playbackState: audio$.playbackState.get(),
+  //     id: currentTrack?.id,
+  //   };
+  // });
+  const playbackState = usePlaybackState();
+  const activeTrack = useActiveTrack();
 
   return useQuery({
     queryKey: ["xn radio, station metadata", tritonId],
@@ -90,6 +93,6 @@ export const useMetadata = (
     refetchInterval: 1000 * 15,
     staleTime: 1000 * 60 * 3,
     gcTime: 1000 * 60 * 5,
-    enabled: playbackState === "playing" && id === "XNRD",
+    enabled: playbackState.state === "playing" && activeTrack?.id === "XNRD",
   });
 };

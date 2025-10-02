@@ -1,6 +1,3 @@
-import SignIn from "@/components/sign-in";
-import SignOut from "@/components/sign-out";
-import { api } from "@/convex/_generated/api";
 import {
   Authenticated,
   AuthLoading,
@@ -9,7 +6,10 @@ import {
 } from "convex/react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { Image } from "expo-image";
-import { useAppTheme } from "@/components/ui/theme-provider";
+import { useAppTheme } from "../components/ui/theme-provider";
+import SignIn from "../components/sign-in";
+import SignOut from "../components/sign-out";
+import { api } from "../convex/_generated/api";
 
 export default function Profile() {
   const { colors } = useAppTheme();

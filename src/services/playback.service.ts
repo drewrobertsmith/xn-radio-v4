@@ -1,5 +1,4 @@
 import { usePlaybackPersistence } from "@/hooks/usePlaybackPersistence";
-import { audio$ } from "@/state/audio";
 import TrackPlayer, { Event, State } from "react-native-track-player";
 
 export async function PlaybackService() {
@@ -56,7 +55,7 @@ export async function PlaybackService() {
   TrackPlayer.addEventListener(Event.PlaybackState, ({ state }) => {
     console.log("Event.PlaybackState", state);
     // Update Legend State with the new player state
-    audio$.playerState.set(state);
+    // audio$.playerState.set(state);
   });
 
   TrackPlayer.addEventListener(
@@ -64,60 +63,60 @@ export async function PlaybackService() {
     async (event) => {
       console.log("Event.PlaybackActiveTrackChanged", event);
 
-      // --- Queue Mgmt --- //
-      // 1. Update the current track directly from the event payload (more efficient!)
-      // We use `?? undefined` for type safety, as event.track can be undefined.
-      audio$.currentTrack.set(event.track ?? undefined);
-
-      // re-fetch the entire queue from the player to ensure our legendstate mirror is updated remotely.
-      const queue = await TrackPlayer.getQueue();
-      audio$.queue.tracks.set(queue);
-
-      // --- Automatic Seek --- //
-      // This logic now runs only when a track finishes playing naturally.
-      const { lastTrack, lastPosition } = event;
-      if (
-        lastTrack &&
-        lastTrack.duration &&
-        lastPosition >= lastTrack.duration - 1 // Check if the last track finished
-      ) {
-        const newTrack = event.track;
-        if (newTrack && !newTrack.isLiveStream) {
-          const savedPosition = audio$.savedProgress[newTrack.id].get();
-          if (savedPosition && savedPosition > 0) {
-            console.log(
-              `[PlaybackService] Auto-seeking to saved position for ${newTrack.title}`,
-            );
-            await TrackPlayer.seekTo(savedPosition);
-          }
-        }
-      }
+      // // --- Queue Mgmt --- //
+      // // 1. Update the current track directly from the event payload (more efficient!)
+      // // We use `?? undefined` for type safety, as event.track can be undefined.
+      // audio$.currentTrack.set(event.track ?? undefined);
+      //
+      // // re-fetch the entire queue from the player to ensure our legendstate mirror is updated remotely.
+      // const queue = await TrackPlayer.getQueue();
+      // audio$.queue.tracks.set(queue);
+      //
+      // // --- Automatic Seek --- //
+      // // This logic now runs only when a track finishes playing naturally.
+      // const { lastTrack, lastPosition } = event;
+      // if (
+      //   lastTrack &&
+      //   lastTrack.duration &&
+      //   lastPosition >= lastTrack.duration - 1 // Check if the last track finished
+      // ) {
+      //   const newTrack = event.track;
+      //   if (newTrack && !newTrack.isLiveStream) {
+      //     const savedPosition = audio$.savedProgress[newTrack.id].get();
+      //     if (savedPosition && savedPosition > 0) {
+      //       console.log(
+      //         `[PlaybackService] Auto-seeking to saved position for ${newTrack.title}`,
+      //       );
+      //       await TrackPlayer.seekTo(savedPosition);
+      //     }
+      //   }
+      // }
     },
   );
 
   TrackPlayer.addEventListener(Event.PlaybackProgressUpdated, (event) => {
     //console.log("Event.PlaybackProgressUpdated", event);
     // Update Legend State with the new progress
-    audio$.progress.set({
-      position: event.position ?? 0,
-      duration: event.duration ?? 0,
-      buffered: event.buffered ?? 0,
-    });
+    // audio$.progress.set({
+    //   position: event.position ?? 0,
+    //   duration: event.duration ?? 0,
+    //   buffered: event.buffered ?? 0,
+    // });
   });
 
   TrackPlayer.addEventListener(Event.PlaybackError, (event) => {
     console.error("Event.PlaybackError", event);
     // Update Legend State with the error message
-    audio$.error.set(event.message);
-    // reset other states here
-    audio$.playerState.set(State.Error);
+    // audio$.error.set(event.message);
+    // // reset other states here
+    // audio$.playerState.set(State.Error);
   });
 
   TrackPlayer.addEventListener(Event.PlaybackQueueEnded, async (event) => {
     console.log("Event.PlaybackQueueEnded", event);
     await TrackPlayer.reset(); //reset player and clear queue
-    audio$.currentTrack.set(undefined); //reset currentTrack
-    audio$.queue.tracks.set([]); //reset legendstate queue
+    // audio$.currentTrack.set(undefined); //reset currentTrack
+    // audio$.queue.tracks.set([]); //reset legendstate queue
   });
 
   TrackPlayer.addEventListener(Event.PlaybackPlayWhenReadyChanged, (event) => {

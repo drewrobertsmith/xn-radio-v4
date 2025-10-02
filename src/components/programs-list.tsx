@@ -1,10 +1,10 @@
 import { LegendList } from "@legendapp/list";
 import ProgramItem from "./program-item";
-import { Program } from "@/types/types";
 import { RefetchOptions } from "@tanstack/react-query";
-import { useLayout } from "@/context/layout-context";
 import { Button, Text, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
+import { Program } from "../types/types";
+import { useLayout } from "../context/layout-context";
 
 type ListProps = {
   data: Program[];

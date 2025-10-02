@@ -1,6 +1,6 @@
-import ClipList from "@/components/clip-list";
-import { useAppTheme } from "@/components/ui/theme-provider";
-import { useClips } from "@/hooks/useClips";
+import ClipList from "@/src/components/clip-list";
+import { useAppTheme } from "@/src/components/ui/theme-provider";
+import { useClips } from "@/src/hooks/useClips";
 import { useLocalSearchParams } from "expo-router";
 import { ActivityIndicator, Button, Text, View } from "react-native";
 

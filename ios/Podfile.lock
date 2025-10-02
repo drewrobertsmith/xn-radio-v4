@@ -3,7 +3,7 @@ PODS:
     - ExpoModulesCore
   - EXConstants (18.0.9):
     - ExpoModulesCore
-  - Expo (54.0.10):
+  - Expo (54.0.12):
     - ExpoModulesCore
     - hermes-engine
     - RCTRequired
@@ -36,13 +36,13 @@ PODS:
     - ExpoModulesCore
   - ExpoCrypto (15.0.7):
     - ExpoModulesCore
-  - ExpoFileSystem (19.0.15):
+  - ExpoFileSystem (19.0.16):
     - ExpoModulesCore
   - ExpoFont (14.0.8):
     - ExpoModulesCore
   - ExpoHaptics (15.0.7):
     - ExpoModulesCore
-  - ExpoHead (6.0.8):
+  - ExpoHead (6.0.10):
     - ExpoModulesCore
     - RNScreens
   - ExpoImage (3.0.8):
@@ -56,7 +56,7 @@ PODS:
     - ExpoModulesCore
   - ExpoLinking (8.0.8):
     - ExpoModulesCore
-  - ExpoModulesCore (3.0.18):
+  - ExpoModulesCore (3.0.20):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -87,7 +87,7 @@ PODS:
     - ExpoModulesCore
   - ExpoSystemUI (6.0.7):
     - ExpoModulesCore
-  - ExpoWebBrowser (15.0.7):
+  - ExpoWebBrowser (15.0.8):
     - ExpoModulesCore
   - EXTaskManager (14.0.7):
     - ExpoModulesCore
@@ -1973,7 +1973,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNReanimated (4.1.0):
+  - RNReanimated (4.1.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1995,10 +1995,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNReanimated/reanimated (= 4.1.0)
+    - RNReanimated/reanimated (= 4.1.2)
     - RNWorklets
     - Yoga
-  - RNReanimated/reanimated (4.1.0):
+  - RNReanimated/reanimated (4.1.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2020,10 +2020,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-    - RNReanimated/reanimated/apple (= 4.1.0)
+    - RNReanimated/reanimated/apple (= 4.1.2)
     - RNWorklets
     - Yoga
-  - RNReanimated/reanimated/apple (4.1.0):
+  - RNReanimated/reanimated/apple (4.1.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2505,24 +2505,24 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   EXApplication: a9d1c46d473d36f61302a9a81db2379441f3f094
   EXConstants: 59d46d25b89f88cc38291a56dbce4d550758f72d
-  Expo: 1cd9abd9defd18d40be911af623c6e833d5bacc3
+  Expo: 536e83746e1a0f3c22b75e1e9070350fccbac648
   ExpoAsset: 3c3b7dd9b1318846a02ef05ce420e63d542aeb9f
   ExpoAudio: ab777892702d1efb1ab758cb348434228b8d880b
   ExpoBlur: b5b7a26572b3c33a11f0b2aa2f95c17c4c393b76
   ExpoCrypto: 4c50a152f5939e16a2ca10be77b002a3a391c4d3
-  ExpoFileSystem: 72fef9c5cb92b9995eeee114a14acb66d94d5bd4
+  ExpoFileSystem: 86f029bfb474f194ce861ba697364f661b578d64
   ExpoFont: d3e56c7cc03d9fd113b90a5513ad32b4bf46b0ff
   ExpoHaptics: b48d913e7e5f23816c6f130e525c9a6501b160b5
-  ExpoHead: 511ab91efdcf6b04fdfe76fc83931bb4c0956b09
+  ExpoHead: 5c4e84af3fb4dbb1d7672f17500cc5c1f148aa3c
   ExpoImage: 306dd755c842dba9f3ee654c51834a9cc657e6ca
   ExpoKeepAwake: 3f5e3ac53627849174f3603271df8e08f174ed4a
   ExpoLinking: f5c171877e118e792cb9a77e5ade0b080d899b14
-  ExpoModulesCore: 470633df36cc688fc27b60ac9a4f78579a2332da
+  ExpoModulesCore: ffaeeab6bd868a3d29c56669237cc1272dd54866
   ExpoSecureStore: f44dee1354536bdb3d7fab8cc451ee737c41beca
   ExpoSplashScreen: 9d2ff8fa08f2c00336a83f93bebffed3a8312519
   ExpoSymbols: ef7b8ac77ac2d496b1bc3f0f7daf5e19c3a9933a
   ExpoSystemUI: 5e7fbe4b716edb9e3a7bc0441e4a3b6b1f9eb1ea
-  ExpoWebBrowser: 4f0dc52a559027cc0fba6920adc19a7604e2733d
+  ExpoWebBrowser: 51218ce6ef35ea769e33409aac87fea3df4b919d
   EXTaskManager: 7d80cb59c1faa3dcfa42035b185bcb5209ca7b1b
   FBLazyVector: 9e0cd874afd81d9a4d36679daca991b58b260d42
   hermes-engine: 35c763d57c9832d0eef764316ca1c4d043581394
@@ -2602,7 +2602,7 @@ SPEC CHECKSUMS:
   ReactCommon: b720ccad5e1e8a528746c39b671825fcb7207d3c
   ReactNativeDependencies: ed6d1e64802b150399f04f1d5728ec16b437251e
   RNGestureHandler: c971f0a10fdffe00dfb4c142e87f34cdcd704376
-  RNReanimated: e4285e0763b8ae9c27666bc498bc2ba1ef6d8d6c
+  RNReanimated: ccb448f7fec8eb8aa54a5525c28152ca133cbcdf
   RNScreens: e91463674394a1969b4688eb5db419d7045fce2d
   RNWorklets: 28ee7370ca8da356fcc914e3e68b97e9752196d2
   SDWebImage: f29024626962457f3470184232766516dee8dfea

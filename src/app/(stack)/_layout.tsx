@@ -1,4 +1,4 @@
-import { useAppTheme } from "@/components/ui/theme-provider";
+import { useAppTheme } from "@/src/components/ui/theme-provider";
 import { Stack } from "expo-router";
 
 export default function PodcastLayout() {

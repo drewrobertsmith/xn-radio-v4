@@ -12,9 +12,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.mediated-reality.xnradio",
       "infoPlist": {
-        "UIBackgroundModes": [
-          "audio"
-        ],
+        "UIBackgroundModes": ["audio"],
         "ITSAppUsesNonExemptEncryption": false,
         "NSAppTransportSecurity": {
           "NSExceptionDomains": {
@@ -40,9 +38,7 @@
             }
           }
         },
-        "LSApplicationQueriesSchemes": [
-          "mailto"
-        ]
+        "LSApplicationQueriesSchemes": ["mailto"]
       }
     },
     "android": {
@@ -93,7 +89,8 @@
       "expo-web-browser"
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "reactCompiler": true
     },
     "extra": {
       "router": {},

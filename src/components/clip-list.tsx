@@ -1,9 +1,9 @@
 import { LegendList } from "@legendapp/list";
 import ClipItem from "./clip-item";
 import Separator from "./ui/separator";
-import { Clip } from "@/types/types";
 import { RefetchOptions } from "@tanstack/react-query";
-import { useLayout } from "@/context/layout-context";
+import { Clip } from "../types/types";
+import { useLayout } from "../context/layout-context";
 
 type ListProps = {
   data: Clip[];

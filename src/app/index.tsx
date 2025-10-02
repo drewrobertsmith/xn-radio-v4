@@ -1,14 +1,17 @@
-import { useAppTheme } from "@/components/ui/theme-provider";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
-import PlayButton from "@/components/play-button";
-import { useMetadata } from "@/hooks/useMetadata";
-import { audio$ } from "@/state/audio";
-import { use$ } from "@legendapp/state/react";
-import { State, Track } from "react-native-track-player";
+import {
+  State,
+  Track,
+  useActiveTrack,
+  usePlaybackState,
+} from "react-native-track-player";
+import { useAppTheme } from "../components/ui/theme-provider";
+import { useMetadata } from "../hooks/useMetadata";
+import PlayButton from "../components/play-button";
 
-const xnLogo = require("../assets/images/splash-icon.png");
-const xnMotionLogo = require("../assets/gifs/xn_motion1x1.gif");
+const xnLogo = require("../../assets/images/splash-icon.png");
+const xnMotionLogo = require("../../assets/gifs/xn_motion1x1.gif");
 
 const XN: Track = {
   id: "XNRD",
@@ -22,15 +25,15 @@ const XN: Track = {
 export default function Index() {
   const { colors } = useAppTheme();
   const { data } = useMetadata(XN.id, 1);
-  const currentTrack = use$(audio$.currentTrack);
-  const playerState = use$(audio$.playerState);
+  const currentTrack = useActiveTrack();
+  const playerState = usePlaybackState();
 
   return (
     <View className="flex-1 justify-between items-center">
       <View className="items-center justify-evenly">
         <Image
           source={
-            playerState === State.Playing && currentTrack?.isLiveStream
+            playerState.state === State.Playing && currentTrack?.isLiveStream
               ? xnMotionLogo
               : xnLogo
           }

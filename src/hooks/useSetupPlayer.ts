@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import TrackPlayer, { Track } from "react-native-track-player";
-import { QueueInitialTracksService } from "@/services/queue-initial-track.service";
-import { SetupService } from "@/services/setup-track-player.service";
-import { audio$ } from "@/state/audio";
-import { mmkv } from "@/utils/mmkv-storage";
+import { SetupService } from "../services/setup-track-player.service";
+import { mmkv } from "../utils/mmkv-storage";
+import { QueueInitialTracksService } from "../services/queue-initial-track.service";
 
 const QUEUE_KEY = "audio_queue";
 
@@ -38,7 +37,7 @@ export function useSetupPlayer() {
       } else {
         // The queue key does NOT exist. This is a TRUE first launch.
         console.log("No saved queue found. Adding initial track.");
-        initialQueue = [await QueueInitialTracksService()];
+        // initialQueue = [await QueueInitialTracksService()];
       }
 
       // 3. Command both systems with our definitive queue
@@ -49,7 +48,7 @@ export function useSetupPlayer() {
 
       // Set our Legend State mirror to match EXACTLY what we just decided.
       if (!isMounted) return;
-      audio$.queue.tracks.set(initialQueue);
+      // audio$.queue.tracks.set(initialQueue);
 
       setPlayerReady(true);
     }

@@ -1,11 +1,13 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
-import { use$ } from "@legendapp/state/react";
 import { XNTheme } from "./ui/theme-provider";
-import { useAudio } from "@/context/audio-context";
-import { State, Track } from "react-native-track-player";
-import { audio$ } from "@/state/audio";
-import { useRef } from "react";
+import {
+  State,
+  Track,
+  useActiveTrack,
+  usePlaybackState,
+} from "react-native-track-player";
+import { useAudio } from "../context/audio-context";
 
 type PlayButtonProps = {
   size: number;
@@ -30,29 +32,23 @@ export default function PlayButton({
   isLiveStream,
 }: PlayButtonProps) {
   const { play, pause, stop } = useAudio();
-
-  const { playbackState, currentTrackId } = use$(() => {
-    const currentTrack = audio$.currentTrack.get(); // Get the whole object
-    return {
-      playbackState: audio$.playerState.get(),
-      // Safely get the id, returning null if no track exists
-      currentTrackId: currentTrack ? currentTrack.id : null,
-    };
-  });
+  const playbackState = usePlaybackState();
+  const activeTrack = useActiveTrack();
 
   // If there's no track associated with this button, render nothing.
   if (!track) {
     return null;
   }
 
-  const isThisTrackCurrent = currentTrackId === track.id;
+  const isThisTrackCurrent = activeTrack?.id === track.id;
   const isThisTrackPlaying =
-    playbackState === State.Playing && isThisTrackCurrent;
+    playbackState.state === State.Playing && isThisTrackCurrent;
   const isThisTrackLoading =
-    playbackState === State.Loading && isThisTrackCurrent;
+    playbackState.state === State.Loading && isThisTrackCurrent;
   const isThisTrackBuffering =
-    playbackState === State.Buffering && isThisTrackCurrent;
-  const isThisTrackReady = playbackState === State.Ready && isThisTrackCurrent;
+    playbackState.state === State.Buffering && isThisTrackCurrent;
+  const isThisTrackReady =
+    playbackState.state === State.Ready && isThisTrackCurrent;
 
   const handleButtonPress = () => {
     // Case 1: This specific track is currently playing.

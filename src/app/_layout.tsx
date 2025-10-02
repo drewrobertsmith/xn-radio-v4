@@ -1,5 +1,4 @@
-import ThemeProvider from "@/components/ui/theme-provider";
-import "../global.css";
+import "../../global.css";
 import { Tabs } from "expo-router";
 import { ConvexReactClient } from "convex/react";
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
@@ -8,19 +7,19 @@ import { Platform } from "react-native";
 import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import { mmkvStorage } from "@/utils/mmkv-storage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { LayoutProvider } from "@/context/layout-context";
-import { CustomTabBar } from "@/components/ui/custom-tab-bar";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useCallback } from "react";
-import { Player } from "@/components/player";
-import { PlayerAnimationProvider } from "@/context/player-animation-context";
 import TrackPlayer from "react-native-track-player";
-import { useSetupPlayer } from "@/hooks/useSetupPlayer";
-import { PlaybackService } from "@/services/playback.service";
-import { AudioProvider } from "@/context/audio-context";
+import { PlaybackService } from "../services/playback.service";
+import { mmkvStorage } from "../utils/mmkv-storage";
+import { CustomTabBar } from "../components/ui/custom-tab-bar";
+import { useSetupPlayer } from "../hooks/useSetupPlayer";
+import { AudioProvider } from "../context/audio-context";
+import ThemeProvider from "../components/ui/theme-provider";
+import { LayoutProvider } from "../context/layout-context";
+import { PlayerAnimationProvider } from "../context/player-animation-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -92,7 +91,8 @@ export default function RootLayout() {
             <LayoutProvider>
               <PlayerAnimationProvider>
                 <GestureHandlerRootView style={{ flex: 1 }}>
-                  <Tabs tabBar={renderTabBar}>
+                  {/* <Tabs tabBar={renderTabBar}> */}
+                  <Tabs>
                     <Tabs.Screen
                       name="index"
                       options={{
@@ -135,7 +135,7 @@ export default function RootLayout() {
                       }}
                     />
                   </Tabs>
-                  <Player />
+                  {/* <Player /> */}
                 </GestureHandlerRootView>
               </PlayerAnimationProvider>
             </LayoutProvider>

@@ -1,7 +1,7 @@
-import { usePodcasts } from "@/hooks/usePodcasts";
+import ProgramsList from "@/src/components/programs-list";
+import { useAppTheme } from "@/src/components/ui/theme-provider";
+import { usePodcasts } from "@/src/hooks/usePodcasts";
 import { ActivityIndicator, Button, Text, View } from "react-native";
-import ProgramsList from "@/components/programs-list";
-import { useAppTheme } from "@/components/ui/theme-provider";
 
 export default function Podcasts() {
   const { data, isLoading, isFetching, isError, error, refetch } =

@@ -1,17 +1,17 @@
-import { useAppTheme } from "@/components/ui/theme-provider";
-import { useIndividualClip } from "@/hooks/useIndividualClip";
-import { Clip } from "@/types/types";
-import { formatDate } from "@/utils/formatters";
 import { Image } from "expo-image";
 import { useLocalSearchParams } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
-import { useLayout } from "@/context/layout-context";
-import PlayButton from "@/components/play-button";
-import QueueButton from "@/components/queue-button";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import DescriptionHTML from "@/components/description-html";
 import { Track } from "react-native-track-player";
-import { RenderClipDuration } from "@/components/duration";
+import { useAppTheme } from "@/src/components/ui/theme-provider";
+import { Clip } from "@/src/types/types";
+import { useIndividualClip } from "@/src/hooks/useIndividualClip";
+import { useLayout } from "@/src/context/layout-context";
+import PlayButton from "@/src/components/play-button";
+import QueueButton from "@/src/components/queue-button";
+import { formatDate } from "@/src/utils/formatters";
+import { RenderClipDuration } from "@/src/components/duration";
+import DescriptionHTML from "@/src/components/description-html";
 
 export default function ClipPage() {
   const { colors } = useAppTheme();

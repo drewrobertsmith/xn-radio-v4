@@ -1,5 +1,3 @@
-import { Clip } from "@/types/types";
-import { formatDate } from "@/utils/formatters";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { useRouter } from "expo-router";
@@ -7,6 +5,8 @@ import PlayButton from "./play-button";
 import QueueButton from "./queue-button";
 import { RenderClipDuration } from "./duration";
 import { Track } from "react-native-track-player";
+import { Clip } from "../types/types";
+import { formatDate } from "../utils/formatters";
 
 export default function ClipItem({ item }: { item: Clip }) {
   const { colors } = useAppTheme();
