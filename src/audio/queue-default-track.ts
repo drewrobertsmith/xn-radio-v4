@@ -1,8 +1,8 @@
 import { Image } from "react-native";
 import { type Track } from "react-native-track-player";
 
-export const QueueInitialTracksService = async (): Promise<Track> => {
-  const xnLogo = require("../assets/images/splash-icon.png");
+export const QueueDefaultTrack = async (): Promise<Track> => {
+  const xnLogo = require("../../assets/images/splash-icon.png");
   // Resolve the asset to get its properties, including the URI
   const resolvedArtwork = Image.resolveAssetSource(xnLogo);
 
@@ -11,7 +11,7 @@ export const QueueInitialTracksService = async (): Promise<Track> => {
     url: "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3",
     title: "XN Radio LIVE",
     artist: "XN Radio",
-    artwork: resolvedArtwork.uri,
+    // artwork: resolvedArtwork.uri,
     isLiveStream: true,
   };
 

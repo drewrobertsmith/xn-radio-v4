@@ -35,61 +35,56 @@ export default function PlayButton({
   const playbackState = usePlaybackState();
   const activeTrack = useActiveTrack();
 
+  console.log("Play button state: ", playbackState);
+
   // If there's no track associated with this button, render nothing.
   if (!track) {
     return null;
   }
 
-  const isThisTrackCurrent = activeTrack?.id === track.id;
-  const isThisTrackPlaying =
-    playbackState.state === State.Playing && isThisTrackCurrent;
-  const isThisTrackLoading =
-    playbackState.state === State.Loading && isThisTrackCurrent;
-  const isThisTrackBuffering =
-    playbackState.state === State.Buffering && isThisTrackCurrent;
-  const isThisTrackReady =
-    playbackState.state === State.Ready && isThisTrackCurrent;
+  const currentTrackIsPlaying =
+    playbackState.state === State.Playing && activeTrack?.id === track.id;
 
   const handleButtonPress = () => {
     // Case 1: This specific track is currently playing.
-    if (isThisTrackPlaying) {
+    if (currentTrackIsPlaying) {
       // If it's playing, we decide whether to stop or pause.
       if (isLiveStream) {
+        console.log("stoppping live stream");
         stop();
       } else {
+        console.log("pausing item");
         pause();
       }
     }
     // Case 2: This track is NOT playing (it's paused, stopped, idle, or a different track is playing).
     else {
       // In all other cases, the desired action is to start playing this track.
+      console.log("Playing item");
       play(track);
     }
   };
   const renderIcon = () => {
-    if (isLiveStream && (isThisTrackLoading || isThisTrackBuffering)) {
-      return <MaterialIcons name="stop-circle" size={size} color={color} />;
-    }
+    if (currentTrackIsPlaying) {
+      if (isLiveStream) {
+        return <MaterialIcons name="stop-circle" size={size} color={color} />;
+      }
 
-    if (!isLiveStream && (isThisTrackLoading || isThisTrackBuffering)) {
+      if (!isLiveStream) {
+        return (
+          <MaterialIcons name="pause-circle-filled" size={size} color={color} />
+        );
+      }
+    } else {
+      // Default case for paused, stopped, idle, etc.
       return (
-        <MaterialIcons name="pause-circle-filled" size={size} color={color} />
+        <MaterialIcons name="play-circle-filled" size={size} color={color} />
       );
     }
-
-    if (isThisTrackPlaying) {
-      const iconName = isLiveStream ? "stop-circle" : "pause-circle-filled";
-      return <MaterialIcons name={iconName} size={size} color={color} />;
-    }
-
-    // Default case for paused, stopped, idle, etc.
-    return (
-      <MaterialIcons name="play-circle-filled" size={size} color={color} />
-    );
   };
 
   return (
-    <TouchableOpacity onPress={handleButtonPress} disabled={isThisTrackLoading}>
+    <TouchableOpacity onPress={handleButtonPress}>
       {renderIcon()}
     </TouchableOpacity>
   );

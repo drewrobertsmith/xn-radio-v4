@@ -14,7 +14,7 @@ const setupPlayer = async (
   await TrackPlayer.setupPlayer(options);
 };
 
-export const SetupService = async () => {
+export const SetupServiceWithOptions = async () => {
   try {
     await setupPlayer({
       autoHandleInterruptions: true,

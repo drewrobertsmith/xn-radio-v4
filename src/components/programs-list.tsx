@@ -1,7 +1,7 @@
 import { LegendList } from "@legendapp/list";
 import ProgramItem from "./program-item";
 import { RefetchOptions } from "@tanstack/react-query";
-import { Button, FlatList, Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
 import { Program } from "../types/types";
 import { useLayout } from "../context/layout-context";

@@ -14,11 +14,11 @@ import TrackPlayer from "react-native-track-player";
 import { PlaybackService } from "../services/playback.service";
 import { mmkvStorage } from "../utils/mmkv-storage";
 import { CustomTabBar } from "../components/ui/custom-tab-bar";
-import { useSetupPlayer } from "../hooks/useSetupPlayer";
 import { AudioProvider } from "../context/audio-context";
 import ThemeProvider from "../components/ui/theme-provider";
 import { LayoutProvider } from "../context/layout-context";
 import { PlayerAnimationProvider } from "../context/player-animation-context";
+import useInitializePlayerWithInitialQueue from "../audio/useInitializePlayer";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -66,7 +66,9 @@ export default function RootLayout() {
     [],
   );
 
-  const isPlayerReady = useSetupPlayer();
+  // setup trackplayer
+  const isPlayerReady = useInitializePlayerWithInitialQueue();
+  // get isPlayerReady from RNTP
   console.log("isPlayerReady? ", isPlayerReady);
 
   return (

@@ -1,8 +1,9 @@
 import "../../global.css";
 
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
-import {
+import TrackPlayer, {
   State,
   Track,
   useActiveTrack,
@@ -20,7 +21,7 @@ const XN: Track = {
   url: "https://playerservices.streamtheworld.com/api/livestream-redirect/XNRD.mp3",
   title: "XN Radio LIVE",
   artist: "XN Radio",
-  artwork: xnLogo,
+  // artwork: xnLogo,
   isLiveStream: true,
 };
 
