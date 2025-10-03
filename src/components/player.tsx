@@ -1,19 +1,17 @@
-import { useLayout } from "@/context/layout-context";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useCallback, useMemo, useRef, useState } from "react";
 import Animated, {
   interpolate,
-  runOnJS,
   useAnimatedReaction,
   useAnimatedStyle,
 } from "react-native-reanimated";
 import { useAppTheme } from "./ui/theme-provider";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PlayerUI } from "./ui/player-ui";
-import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
-import { usePlayerAnimation } from "@/context/player-animation-context";
-import { State } from "react-native-track-player";
+import { State, usePlaybackState } from "react-native-track-player";
+import { useLayout } from "../context/layout-context";
+import { usePlayerAnimation } from "../context/player-animation-context";
+import { scheduleOnRN } from "react-native-worklets";
 
 const MINI_PLAYER_HEIGHT = 64;
 
@@ -24,13 +22,7 @@ export const Player = () => {
   const area = useSafeAreaInsets();
   const { screenHeight, animatedIndex } = usePlayerAnimation();
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
-
-  const { playbackState, queueLength } = use$(() => {
-    return {
-      playbackState: audio$.playerState.get(),
-      queueLength: audio$.queue.total.get(),
-    };
-  });
+  const playbackState = usePlaybackState();
 
   // When using a wrapper, the snap points are relative to the wrapper.
   const snapPoints = useMemo(() => [MINI_PLAYER_HEIGHT, "100%"], []);
@@ -49,7 +41,7 @@ export const Player = () => {
     (currentValue, previousValue) => {
       // Check if the sheet has just arrived at the fully expanded state (index 1)
       if (currentValue === 1 && previousValue !== 1) {
-        runOnJS(setIsAnimationComplete)(true);
+        scheduleOnRN(setIsAnimationComplete, true);
       }
     },
     [animatedIndex],
@@ -100,7 +92,7 @@ export const Player = () => {
   });
 
   // The player should show if the state is NOT idle, OR if there are items in the queue.
-  const isPlayerVisible = playbackState !== State.None || queueLength > 0;
+  const isPlayerVisible = playbackState.state !== State.None;
 
   if (!isPlayerVisible) {
     return null;

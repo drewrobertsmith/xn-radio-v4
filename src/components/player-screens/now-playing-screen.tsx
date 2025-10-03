@@ -6,10 +6,10 @@ import { useAppTheme } from "../ui/theme-provider";
 import ProgressBar from "../progress-bar";
 import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
-import { useMetadata } from "@/hooks/useMetadata";
 import { useCallback } from "react";
-import { usePlayerAnimation } from "@/context/player-animation-context";
+import { useMetadata } from "@/src/hooks/useMetadata";
+import { usePlayerAnimation } from "@/src/context/player-animation-context";
+import { useActiveTrack } from "react-native-track-player";
 
 const AnimatedExpoImage = Animated.createAnimatedComponent(Image);
 
@@ -18,17 +18,19 @@ export default function NowPlayingScreen() {
   const { data } = useMetadata("XNRD", 1);
   const { animatedImageStyle, animatedImageContainerStyle } =
     usePlayerAnimation();
-  const { title, artwork, id, isLiveStream } = use$(() => {
-    return {
-      id: audio$.currentTrack.id.get(),
-      title: audio$.currentTrack.title.get(),
-      artwork: audio$.currentTrack.artwork.get(),
-      isLiveStream: audio$.currentTrack.isLiveStream.get(),
-    };
-  });
+  // const { title, artwork, id, isLiveStream } = use$(() => {
+  //   return {
+  //     id: audio$.currentTrack.id.get(),
+  //     title: audio$.currentTrack.title.get(),
+  //     artwork: audio$.currentTrack.artwork.get(),
+  //     isLiveStream: audio$.currentTrack.isLiveStream.get(),
+  //   };
+  // });
+
+  const activeTrack = useActiveTrack();
 
   const handleSecondaryText = useCallback(() => {
-    if (id === "XNRD" && data) {
+    if (activeTrack?.id === "XNRD" && data) {
       return (
         <Text className="text-sm" style={{ color: colors.secondaryText }}>
           {data?.track_artist_name}
@@ -36,7 +38,7 @@ export default function NowPlayingScreen() {
       );
     }
     return null;
-  }, [id, data, colors.secondaryText]);
+  }, [activeTrack, data, colors.secondaryText]);
 
   return (
     <BottomSheetScrollView
@@ -50,7 +52,7 @@ export default function NowPlayingScreen() {
     >
       <Animated.View style={[animatedImageContainerStyle]}>
         <AnimatedExpoImage
-          source={artwork}
+          source={activeTrack?.artwork}
           style={[{ height: "100%", width: "100%" }, animatedImageStyle]}
           contentFit="cover"
         />
@@ -61,11 +63,11 @@ export default function NowPlayingScreen() {
           style={{ color: colors.text }}
           numberOfLines={4}
         >
-          {id === "XNRD" ? data?.cue_title : title}
+          {activeTrack?.id === "XNRD" ? data?.cue_title : activeTrack?.title}
         </Text>
         {handleSecondaryText()}
       </View>
-      {isLiveStream ? null : <ProgressBar />}
+      {activeTrack?.isLiveStream ? null : <ProgressBar />}
       <PlayerControls />
     </BottomSheetScrollView>
   );

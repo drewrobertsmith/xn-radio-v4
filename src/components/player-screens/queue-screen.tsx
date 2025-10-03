@@ -4,9 +4,7 @@ import Separator from "../ui/separator";
 import { Button, Text, View } from "react-native";
 import QueueHeaderItem from "../queue-header-item";
 import QueueItem from "../queue-item";
-import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
-import { useAudio } from "@/context/audio-context";
+import { Track, useActiveTrack } from "react-native-track-player";
 
 const ListEmptyComponent = () => {
   const { colors } = useAppTheme();
@@ -19,15 +17,16 @@ const ListEmptyComponent = () => {
 
 export default function QueueScreen() {
   const { colors } = useAppTheme();
-  const { clearQueue } = useAudio();
-  const queue = use$(audio$.queue.tracks); //subscribe to queue updates
-  const current = use$(audio$.currentTrack);
+  // TODO: Add to async audio controller
+  // const queue = use$(audio$.queue.tracks); //subscribe to queue updates
+  const queue: Track[] = [];
+  const current = useActiveTrack();
 
   return (
     <View className="flex-1">
       <Button
         onPress={() => {
-          clearQueue();
+          // clearQueue();
         }}
         title="Clear Queue"
       />
@@ -39,8 +38,8 @@ export default function QueueScreen() {
           gap: 8,
         }}
         data={queue.filter((track) => track.id !== current?.id)}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <QueueItem item={item} />}
+        keyExtractor={(item: Track) => item.id}
+        renderItem={({ item }: { item: Track }) => <QueueItem item={item} />}
         ListHeaderComponent={QueueHeaderItem}
         ItemSeparatorComponent={Separator}
         ListEmptyComponent={ListEmptyComponent}

@@ -11,10 +11,9 @@ import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { useAppTheme } from "./ui/theme-provider";
 import { Image } from "expo-image";
 import PlayButton from "./play-button";
-import { audio$ } from "@/state/audio";
-import { use$ } from "@legendapp/state/react";
-import { useMetadata } from "@/hooks/useMetadata";
-import { usePlayerAnimation } from "@/context/player-animation-context";
+import { useActiveTrack } from "react-native-track-player";
+import { useMetadata } from "../hooks/useMetadata";
+import { usePlayerAnimation } from "../context/player-animation-context";
 
 interface MiniPlayerProps {
   animatedMiniPlayerStyle: StyleProp<AnimatedStyle<ViewStyle>>;
@@ -27,33 +26,24 @@ export default function MiniPlayer({
   animatedMiniPlayerStyle,
   onExpand,
 }: MiniPlayerProps) {
-  const { title, id, artwork, currentTrack } = use$(() => {
-    const currentTrack = audio$.currentTrack.get();
-    return {
-      currentTrack,
-      title: currentTrack?.title,
-      id: currentTrack?.id,
-      artwork: currentTrack?.artwork,
-    };
-  });
-
+  const track = useActiveTrack();
   const { data } = useMetadata("XNRD", 1);
   const { colors } = useAppTheme();
   const { animatedImageStyle, animatedImageContainerStyle } =
     usePlayerAnimation();
 
   const handleMetadataDisplay = useCallback(() => {
-    if (id === "XNRD" && data) {
+    if (track?.id === "XNRD" && data) {
       return data?.cue_title;
-    } else if (id === "XNRD" && !data) {
+    } else if (track?.id === "XNRD" && !data) {
       return "XN Radio Stream";
     } else {
-      return title;
+      return track?.title;
     }
-  }, [data, id, title]);
+  }, [data, track]);
 
   const handleSecondaryText = useCallback(() => {
-    if (id === "XNRD" && data) {
+    if (track?.id === "XNRD" && data) {
       return (
         <Text className="text-sm" style={{ color: colors.secondaryText }}>
           {data?.track_artist_name}
@@ -61,13 +51,13 @@ export default function MiniPlayer({
       );
     }
     return null;
-  }, [id, data, colors.secondaryText]);
+  }, [track, data, colors.secondaryText]);
 
-  if (!currentTrack) {
+  if (!track) {
     return null;
   }
 
-  const isLiveStream = id === "XNRD";
+  const isLiveStream = track.id === "XNRD";
 
   return (
     <Pressable
@@ -80,7 +70,7 @@ export default function MiniPlayer({
       >
         <Animated.View style={[animatedImageContainerStyle]}>
           <AnimatedExpoImage
-            source={artwork}
+            source={track?.artwork}
             contentFit="cover"
             style={[
               styles.albumArt,
@@ -104,10 +94,10 @@ export default function MiniPlayer({
           {handleSecondaryText()}
         </View>
         <PlayButton
-          track={currentTrack}
+          track={track}
           size={44}
           color={colors.secondary}
-          isLiveStream={currentTrack.isLiveStream}
+          isLiveStream={track?.isLiveStream}
         />
       </Animated.View>
     </Pressable>

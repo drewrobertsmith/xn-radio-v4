@@ -1,27 +1,25 @@
 import { View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
-import { useAudio } from "@/context/audio-context";
 import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-  runOnJS,
   useSharedValue,
   useAnimatedStyle,
   useDerivedValue,
   withTiming,
 } from "react-native-reanimated";
-import { formatDurationForProgressBar } from "@/utils/formatDurationForProgressBar";
 import { AnimatedText } from "./ui/animatedText";
 import { useEffect } from "react";
+import { useActiveTrack, useProgress } from "react-native-track-player";
+import { formatDurationForProgressBar } from "../utils/formatDurationForProgressBar";
+import { scheduleOnRN } from "react-native-worklets";
 
 export default function ProgressBar() {
   // --- 1. Call ALL hooks at the top level, unconditionally ---
   const { colors } = useAppTheme();
-  const { seekTo, saveCurrentTrackProgress } = useAudio();
 
-  const progress = use$(audio$.progress);
-  const track = use$(audio$.currentTrack);
+  const progress = useProgress();
+  const track = useActiveTrack();
 
   // --- 2. Define local variables safely ---
   // These will correctly be 0 if there's no track or duration.
@@ -64,8 +62,8 @@ export default function ProgressBar() {
         const newPosition = (event.x / barWidth.value) * duration;
         const clampedPosition = Math.max(0, Math.min(newPosition, duration));
         // Run the JS-thread actions after the tap is complete
-        runOnJS(seekTo)(clampedPosition);
-        runOnJS(saveCurrentTrackProgress)();
+        // scheduleOnRN(seekTo, clampedPosition);
+        // scheduleOnRN(saveCurrentTrackProgress);
       }
     });
 
@@ -78,8 +76,8 @@ export default function ProgressBar() {
       progressPosition.value = Math.max(0, Math.min(newPosition, duration));
     })
     .onEnd(() => {
-      runOnJS(seekTo)(progressPosition.value);
-      runOnJS(saveCurrentTrackProgress)();
+      // runOnJS(seekTo)(progressPosition.value);
+      // runOnJS(saveCurrentTrackProgress)();
     })
     .onFinalize(() => {
       isScrubbing.value = false;

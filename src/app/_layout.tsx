@@ -19,6 +19,7 @@ import ThemeProvider from "../components/ui/theme-provider";
 import { LayoutProvider } from "../context/layout-context";
 import { PlayerAnimationProvider } from "../context/player-animation-context";
 import useInitializePlayerWithInitialQueue from "../audio/useInitializePlayer";
+import { Player } from "../components/player";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -92,8 +93,7 @@ export default function RootLayout() {
             <LayoutProvider>
               <PlayerAnimationProvider>
                 <GestureHandlerRootView style={{ flex: 1 }}>
-                  {/* <Tabs tabBar={renderTabBar}> */}
-                  <Tabs>
+                  <Tabs tabBar={renderTabBar}>
                     <Tabs.Screen
                       name="index"
                       options={{
@@ -136,7 +136,7 @@ export default function RootLayout() {
                       }}
                     />
                   </Tabs>
-                  {/* <Player /> */}
+                  <Player />
                 </GestureHandlerRootView>
               </PlayerAnimationProvider>
             </LayoutProvider>

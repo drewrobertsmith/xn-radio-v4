@@ -1,21 +1,13 @@
 import { Text, View } from "react-native";
 import { useAppTheme } from "../ui/theme-provider";
 import Separator from "../ui/separator";
-import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
 import { RenderTrackDuration } from "../duration";
 import DescriptionHTML from "../description-html";
+import { useActiveTrack } from "react-native-track-player";
 
 export default function DetailsScreen() {
   const { colors } = useAppTheme();
-
-  const { title, currentTrack } = use$(() => {
-    return {
-      title: audio$.currentTrack.title.get(),
-      isLiveStream: audio$.currentTrack.isLiveStream.get(),
-      currentTrack: audio$.currentTrack.get(),
-    };
-  });
+  const currentTrack = useActiveTrack();
 
   if (!currentTrack) {
     return null;
@@ -27,7 +19,7 @@ export default function DetailsScreen() {
       style={{ backgroundColor: colors.card }}
     >
       <Text className="text-lg font-bold" style={{ color: colors.text }}>
-        {title}
+        {currentTrack?.title}
       </Text>
       {!currentTrack.duration ? (
         <Text className="font-semibold" style={{ color: colors.error }}>

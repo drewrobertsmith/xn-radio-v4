@@ -8,20 +8,21 @@ import {
   usePlaybackState,
 } from "react-native-track-player";
 import { useAudio } from "../context/audio-context";
+import { useAudioController } from "../audio/useAudioController";
 
 type PlayButtonProps = {
   size: number;
   // The track prop can sometimes be null when the parent is loading
   track: Track | null;
   color: XNTheme["colors"][
-    | "background"
-    | "border"
-    | "card"
-    | "notification"
-    | "primary"
-    | "secondary"
-    | "secondaryText"
-    | "text"];
+  | "background"
+  | "border"
+  | "card"
+  | "notification"
+  | "primary"
+  | "secondary"
+  | "secondaryText"
+  | "text"];
   isLiveStream?: boolean;
 };
 
@@ -31,9 +32,9 @@ export default function PlayButton({
   color,
   isLiveStream,
 }: PlayButtonProps) {
-  const { play, pause, stop } = useAudio();
   const playbackState = usePlaybackState();
   const activeTrack = useActiveTrack();
+  const { play, pause, stop } = useAudioController();
 
   console.log("Play button state: ", playbackState);
 

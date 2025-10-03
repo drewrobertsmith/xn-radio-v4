@@ -2,15 +2,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Text, TouchableOpacity, View } from "react-native";
 import PlayButton from "./play-button";
 import { useAppTheme } from "./ui/theme-provider";
-import { useAudio } from "@/context/audio-context";
-import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
+import { useActiveTrack, useProgress } from "react-native-track-player";
 
 export default function PlayerControls() {
   const { colors } = useAppTheme();
-  const { seekTo } = useAudio();
-  const currentTrack = use$(audio$.currentTrack);
-  const currentProgress = use$(audio$.progress);
+  const currentTrack = useActiveTrack();
+  const currentProgress = useProgress();
 
   if (!currentTrack) {
     return null;
@@ -32,7 +29,8 @@ export default function PlayerControls() {
       <View className="flex-row items-center gap-5">
         <TouchableOpacity
           onPress={() => {
-            seekTo(currentProgress.position - 15);
+            // TODO: Move to async controller file
+            // seekTo(currentProgress.position - 15);
           }}
         >
           <View className="relative h-24 w-24 items-center justify-center">
@@ -53,7 +51,8 @@ export default function PlayerControls() {
         />
         <TouchableOpacity
           onPress={() => {
-            seekTo(currentProgress.position + 30);
+            // TODO: Move to async controller file
+            // seekTo(currentProgress.position + 30);
           }}
         >
           <View className="relative h-24 w-24 items-center justify-center">

@@ -1,26 +1,24 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { useAppTheme } from "./ui/theme-provider";
-import { formatDate } from "@/utils/formatters";
 import { Image } from "expo-image";
-import { useAudio } from "@/context/audio-context";
 import { RenderTrackDuration } from "./duration";
 import TrackPlayer, { Track } from "react-native-track-player";
+import { formatDate } from "../utils/formatters";
 
 export default function QueueItem({ item }: { item: Track }) {
   const { colors } = useAppTheme();
-  const { play, removeFromQueue } = useAudio();
 
   const handleQueueItemPress = (item: Track) => {
     // const playerQueue = await TrackPlayer.getQueue();
     // const index = playerQueue.findIndex((track) => track.id === item.id);
     // if (index > -1) {
     //   await TrackPlayer.skip(index);
-    play(item);
+    // play(item);
     // }
   };
 
   const handleLongPress = (item: Track) => {
-    removeFromQueue(item.id);
+    // removeFromQueue(item.id);
   };
 
   return (

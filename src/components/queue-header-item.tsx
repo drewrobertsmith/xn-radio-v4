@@ -1,19 +1,19 @@
 import { useAppTheme } from "./ui/theme-provider";
 import { Text, View } from "react-native";
 import { Image } from "expo-image";
-import { formatDate } from "@/utils/formatters";
 import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
 import { RenderTrackDuration } from "./duration";
 import PlayButton from "./play-button";
+import { useActiveTrack, useProgress } from "react-native-track-player";
+import { formatDate } from "../utils/formatters";
 
 export default function QueueHeaderItem() {
   const { colors } = useAppTheme();
 
   // The header's single source of truth is the currently active track.
-  const track = use$(audio$.currentTrack);
+  const track = useActiveTrack();
   // The component will now automatically re-render when the track or progress changes.
-  const progress = use$(audio$.progress);
+  const progress = useProgress();
 
   // If there's no track, the queue is empty, so render nothing.
   if (!track) {

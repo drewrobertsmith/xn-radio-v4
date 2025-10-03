@@ -18,8 +18,6 @@ import NowPlayingScreen from "./player-screens/now-playing-screen";
 import ThemeProvider, { useAppTheme } from "./ui/theme-provider";
 import DetailsScreen from "./player-screens/details-screen";
 import QueueScreen from "./player-screens/queue-screen";
-import { use$ } from "@legendapp/state/react";
-import { audio$ } from "@/state/audio";
 import { createContext, useContext, useEffect } from "react";
 
 interface AnimationCompletionContextType {
@@ -63,7 +61,7 @@ const Tab = createMaterialTopTabNavigator();
 
 const PlayerTabNavigator = ({ onCollapse }: { onCollapse: () => void }) => {
   const { colors } = useAppTheme();
-  const queueLength = use$(() => audio$.queue.total.get());
+  // const queueLength = use$(() => audio$.queue.total.get());
 
   const TabBarBadge = () => (
     <View
@@ -71,7 +69,7 @@ const PlayerTabNavigator = ({ onCollapse }: { onCollapse: () => void }) => {
       style={{ backgroundColor: colors.secondary }}
     >
       <Text className="text-xs font-semibold" style={{ color: colors.card }}>
-        {queueLength}
+        {/* {queueLength} */}
       </Text>
     </View>
   );
